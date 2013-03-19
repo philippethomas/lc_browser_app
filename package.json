@@ -1,0 +1,30 @@
+{
+  "name": "lc_browser_app",
+  "version": "0.0.1",
+  "description":"file and proj crawler UI and search interface",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rbhughes/lc_browser_app.git"
+  },
+  "keywords": [
+    "logicalcat",
+    "petra",
+    "geographix",
+    "kingdom"
+  ],
+  "author": "R. Bryan Hughes",
+  "license": "MIT",
+  "dependencies": {
+    "socket.io":"0.9.x",
+    "express": ">= 0.0.1",
+    "jade": ">= 0.0.1",
+    "lc_file_crawlers":"0.0.1"
+  },
+  "devDependencies":{
+    "mocha": ">=1.8.x"
+  },
+  "readmeFilename": "README.md"
+}
