@@ -32,19 +32,21 @@ var fakeOpts = {
   cs_max: 26214400 
 }
 
-
+//
+//http://vimeo.com/56166857
 
 // Configuration
 
 app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.set('view options', {layout: false});
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
+  //app.set('views', __dirname + '/views');
+  //app.set('view engine', 'jade');
+  //app.set('view options', {layout: false});
+  //app.use(express.bodyParser());
+  //app.use(express.methodOverride());
+  //app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
+
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -54,34 +56,38 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
-// Routes
-// 
-//
 // yep, this triggers a real scan. just need to figure out routes
 // scanner.scan(fakeOpts);
 
+
+/*
 function User(name, email) {
   this.name = name;
   this.email = email;
 }
 
-// Dummy users
 var users = [
-    new User('tj', 'tj@vision-media.ca')
-  , new User('ciaran', 'ciaranj@gmail.com')
-  , new User('aaron', 'aaron.heckmann+github@gmail.com')
+  new User('tj', 'tj@vision-media.ca'),
+  new User('ciaran', 'ciaranj@gmail.com'),
+  new User('aaron', 'aaron.heckmann+github@gmail.com')
 ];
 
 app.get('/users', function(req, res){
   res.render('users', { users: users });
 });
+*/
 
 
+//app.get('/', routes.index);
+
+var home = require('./lib/home');
+var las = require('./lib/las');
+
+app.use(home);
+app.use(las);
 
 
-
-app.get('/', routes.index);
-
+/*
 io.sockets.on('connection', function (socket) {
   socket.emit('greeting', { hello: 'world' });
 
@@ -98,7 +104,4 @@ io.sockets.on('connection', function (socket) {
   });
 
 });
-
-//app.listen(3000, function(){
-//  console.log("express-bootstrap app running");
-//});
+*/
