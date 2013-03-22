@@ -1,0 +1,61 @@
+extends ../layout
+
+block content
+  #accord_las.accordion
+      .accordion-group
+        .accordion-heading
+          a.accordion-toggle(data-toggle='collapse', data-parent='#accord_las', href='#collapseOne')
+            | Crawl Setup
+        #collapseOne.accordion-body.collapse
+          .accordion-inner
+
+
+            //---------- define new crawl form
+            ul.nav.nav-pills.pull-left
+              li.dropdown
+                a#drop4.dropdown-toggle(data-toggle='dropdown', href='#')
+                  | Previous Crawls
+                  b.caret
+                ul#menu1.dropdown-menu
+                  li
+                    a(href='#') Previous One
+                  li
+                    a(href='#') Previous Two 
+                  li
+                    a(href='#') Something else here
+                  li.divider
+                  li
+                    a(href="#') just a fake link
+                  li
+                    a(href='#') Separated link
+
+            form(action='/las', method='post', class='lascrawl')
+              input(type='text', name='label', 'placeholder'='unlabeled')
+              input(type='text', name='fw_root', 'placeholder'='start path')
+              input(type='checkbox', name="ziplas", checked=(true===false ? "checked" : undefined))
+              'ziplas'
+              
+              input(type='submit', value='Run Crawl')
+
+
+      .accordion-group
+        .accordion-heading
+          a.accordion-toggle(data-toggle='collapse', data-parent='#accord_las', href='#collapseTwo')
+            | Index Stats
+        #collapseTwo.accordion-body.collapse
+          .accordion-inner
+
+            //----------stats on this index
+            | Stats on the LAS index
+
+        .accordion-heading
+          a.accordion-toggle(data-toggle='collapse', data-parent='#accord_las', href='#collapseThree')
+            | Index Contents
+        #collapseThree.accordion-body.collapse.in
+          .accordion-inner
+
+            //----------paginated list of stuff in elasticsearch
+            | Paginated list of elasticsearch contents
+            ul#laslist
+
+

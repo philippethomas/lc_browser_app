@@ -1,0 +1,22 @@
+.navbar .nav,
+.navbar .nav > li {
+  float:none;
+  display:inline-block;
+  *display:inline; /* ie7 fix */
+  *zoom:1; /* hasLayout ie7 trigger */
+  vertical-align: top;
+}
+
+.navbar-inner {
+  text-align:center;
+}
+
+/* uniform width for links */
+.navbar a{
+  width:60px;
+}
+
+/* spacer below navbar */
+#navbuff{
+  height:60px;
+}
