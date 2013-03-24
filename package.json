@@ -18,13 +18,14 @@
   "author": "R. Bryan Hughes",
   "license": "MIT",
   "dependencies": {
-    "socket.io":"0.9.x",
-    "express": ">= 0.0.1",
-    "jade": ">= 0.0.1",
-    "lc_file_crawlers":"0.0.1"
+    "socket.io": "0.9.x",
+    "express": "3.1.x",
+    "jade": "0.28.x",
+    "express-validator": "0.3.x",
+    "lc_file_crawlers": "0.0.1"
   },
   "devDependencies":{
-    "mocha": ">=1.8.x"
+    "mocha": "1.8.x"
   },
   "readmeFilename": "README.md"
 }
