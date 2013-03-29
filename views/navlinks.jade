@@ -1,18 +1,37 @@
+- a = ['thing one','thing two','thing three'];
+
 .navbar.navbar-fixed-top
   .navbar-inner
     .container
-      a(href='/').brand LogicalCat
-      ul.nav
 
-        li: a(href='las') las
-        li: a(href='segy') segy
-        li: a(href='imagery') imagery
-        li: a(href='shapefile') shapefile
+      a.logo(href='/')
+        img(src='images/lc_logo_orange_tiny.png')
+
+      ul.nav
 
         li.divider-vertical
 
-        li: a(href='petra') petra
-        li: a(href='discovery') discovery
-        li: a(href='kingdom') kingdom 
+        li 
+          a(href='/ep_files') E&P Files
+        li
+          a(href='/petra') Petra
+        li
+          a(href='/discovery') Discovery
+        li
+          a(href='/kingdom') Kingdom 
+
+        li.divider-vertical
+        
+
+      form.navbar-search.form-search.pull-right
+        .input-prepend.input-append
+          span.add-on
+            i.icon-filter
+          select.span2
+            for o in a
+              option= o
+          input(type='search', placeholder='Search')
+          span.add-on
+            i.icon-search
 
 

@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+
+  #accord_petra.accordion
+
+
+    .accordion-group
+      .accordion-heading
+        a.accordion-toggle(data-toggle='collapse', data-parent='#accord_petra', href='#collapseOne')
+          | Crawl Setup
+      #collapseOne.accordion-body.collapse
+        .accordion-inner
+          include crawl_form
+
+
+  include es_index
+
+

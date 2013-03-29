@@ -1,22 +1,17 @@
-.navbar .nav,
-.navbar .nav > li {
-  float:none;
-  display:inline-block;
-  *display:inline; /* ie7 fix */
-  *zoom:1; /* hasLayout ie7 trigger */
-  vertical-align: top;
+#navpad{
+  height:40px;
 }
 
-.navbar-inner {
-  text-align:center;
+
+.logo{
+  float: left;
+  padding-top: 3px;
+  margin-right: 40px;
 }
 
-/* uniform width for links */
-.navbar a{
-  width:60px;
+
+.right{
+  text-align:right;
 }
 
-/* spacer below navbar */
-#navbuff{
-  height:50px;
-}
+

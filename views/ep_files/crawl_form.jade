@@ -1,0 +1,106 @@
+- a = ['prev crawl one', 'prev crawl two', 'prev crawl three']
+
+.row-fluid
+  .span2
+    ul.nav.nav-pills.pull-left
+      li.dropdown
+        a#drop4.dropdown-toggle(data-toggle='dropdown', href='#')
+          | Previous Crawls
+          b.caret
+        ul#menu1.dropdown-menu
+          for o in a
+            li
+              a(href='#')= o 
+
+  .span10
+    .row-fluid
+      form#ep_crawl_form.form-inline(action='/ep_files', method='post')
+        .control-group
+          .controls
+
+
+            .row-fluid 
+              .span6.right
+                label
+                  | Label:  
+                  input.input-xlarge(type='text', name='label', value='unlabeled')
+              .span6.right
+                label
+                  | Start Path:  
+                  input.input-xlarge(type='text', name='fw_root', placeholder="(enter a directory)")
+
+
+
+
+            .row-fluid
+              .span6.right
+                label
+                  | Work Dir:  
+                  input.input-xlarge(type='text', name='work_dir', value='#{process.env.TMP}')
+
+              .span6.right
+                label
+                  | ElasticSearch:  
+                  input.input-xlarge(type='text', name='es_url', value='http://localhost:9200')
+
+
+
+            hr
+
+            .row-fluid
+              .span2.offset1
+                label.checkbox
+                  input(type='checkbox', name='find_LAS', checked=true)
+                  | LAS
+              .span3
+                label.checkbox
+                  input(type='checkbox', name='zip_las', checked=(true===false ? "checked" : undefined))
+                  | Include ZIP Archives
+              .span4.offset2
+                label.checkbox
+                  input(type='checkbox', name='write_csv', checked=(true===false ? "checked" : undefined))
+                  | Write to CSV (time-stamped file in Work Dir)
+
+
+
+            .row-fluid
+              .span2.offset1
+                label.checkbox
+                  input(type='checkbox', name='find_SGY', checked=(true===false ? "checked" : undefined))
+                  |  SEGY
+              .span3
+                label.checkbox
+                  input(type='checkbox', name='sgy_deep', checked=(true===false ? "checked" : undefined))
+                  |  Deep SEGY Scan
+              .span4.offset2
+                label.checkbox
+                  input(type='checkbox', name='write_es', checked=(true===false ? "checked" : undefined))
+                  | Write to ElasticSearch
+
+
+
+
+            .row-fluid 
+              .span2.offset1
+                label.checkbox
+                  input(type='checkbox', name='find_IMG', checked=(true===false ? "checked" : undefined))
+                  |  Imagery
+              .span9
+                label
+                  input.input-mini(type='text', name='img_size', value='300') 
+                  |  Minimum Size Threshold (MB)
+
+            .row-fluid 
+              .span2.offset1
+                label.checkbox
+                  input(type='checkbox', name='find_SHP', checked=(true===false ? "checked" : undefined))
+                  |  Shapefiles
+              .span5
+                label
+                  input.input-mini(type='text', name='shp_feat', value='50') 
+                  |  Shapefile Feature Count
+
+              .span4
+                button#ep_crawl_btn.btn.btn-warning(type='submit') Save & Run Crawl
+
+
