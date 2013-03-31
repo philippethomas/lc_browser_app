@@ -6,6 +6,17 @@ exports.list = function(req, res){
 };
 
 
+/*
+exports.flash = function(req, res){
+  req.flash('info', 'Flash is Flashy')
+  res.render('ep_files', { 
+    message: req.flash(),
+    title: 'E&P Files'
+  });
+};
+*/
+
+
 exports.save_and_run = function(req, res){
 
   var app = require('./app').app
@@ -28,6 +39,7 @@ exports.save_and_run = function(req, res){
   var cs_max = 26214400;
   var app = app;
 
+  /*
   req.assert('label', 'Invalid field: label').isAlphanumeric();
   req.assert('es_url', 'Invalid field: es_url').isUrl();
   req.assert('fw_root', 'Invalid field: fw_root').regex(/^((\\\\[a-zA-Z0-9-]+\\[a-zA-Z0-9`~!@#$%^&(){}'._-]+([ ]+[a-zA-Z0-9`~!@#$%^&(){}'._-]+)*)|([a-zA-Z]:))(\\[^ \\/:*?""<>|]+([ ]+[^ \\/:*?""<>|]+)*)*\\?$/);
@@ -41,20 +53,27 @@ exports.save_and_run = function(req, res){
   req.assert('img_size', 'Invalid field: img_size').isInt();
   req.sanitize('sgy_deep').toBoolean();
 
-  req.sanitize('find_LAS').toBoolean();
-  req.sanitize('find_SHP').toBoolean();
+  req.sanitize('find_LAS').toBoolean();;
   req.sanitize('find_SGY').toBoolean();
   req.sanitize('find_IMG').toBoolean();
+  */
 
   //req.assert('cs_max', 'Invalid field: cs_max').isInt();
 
-  var errors = req.validationErrors();
+
+  //var errors = req.validationErrors();
   console.log('*****************************');
-  console.log(errors);
+  //console.log(errors);
   console.log('*****************************');
-  if (errors){
-    req.flash('error', {message: errors});
-  };
+  /*
+  if (errors){ 
+    req.flash('info', "CHECK YO FORM");
+    res.render('ep_files', { 
+      message: req.flash(),
+      title: 'AFTER CLICK'
+    });
+  }
+  */
 
 
   var opts = { 
@@ -77,8 +96,10 @@ exports.save_and_run = function(req, res){
   }
 
   var scanner = require('lc_file_crawlers/scanner.js');
-  //console.log('@@@@@@@@@@@@@ new scan @@@@@@@@@@@@@'+new Date().toISOString());
+  console.log('@@@@@@@@@@@@@ new scan @@@@@@@@@@@@@'+new Date().toISOString());
+
   scanner.scan(opts);
+  
 
 };
 

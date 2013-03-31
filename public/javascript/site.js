@@ -3,6 +3,7 @@ jQuery(function($){
   // navbar link selection
   $('ul.nav > li > a[href="' + document.location.pathname + '"]').parent().addClass('active');
 
+  //$('.alert').alert();
 
   // socket emissions "router"
   var socket = io.connect('http://localhost');
