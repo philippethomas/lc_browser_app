@@ -1,19 +1,35 @@
 jQuery(function($){
 
+
+  jQuery.validator.addMethod("isWindowsPath",
+    function(value, element) {
+    return /^((\\\\[a-zA-Z0-9-]+\\[a-zA-Z0-9`~!@#$%^&(){}'._-]+([ ]+[a-zA-Z0-9`~!@#$%^&(){}'._-]+)*)|([a-zA-Z]:))(\\[^ \\/:*?""<>|]+([ ]+[^ \\/:*?""<>|]+)*)*\\?$/.test( element.value );
+  }, "Use a Windows path (UNC or drive letter).");
+  
+  jQuery.validator.addMethod("isURL",
+    function(value, element) {
+    return /(http|https).*\d*/.test( element.value );
+  }, "Usually like: 'http://server:9200'.");
+
   
   $('#ep_crawl_form').submit(function(e){
-    
 
-    //$('#ep_files_accord a.accordion-toggle').click();
 
     $('#ep_list').empty();
-
     if( $('#ep_crawl_form').valid() ){
+      $('#ep_files_accord a.accordion-toggle').click();
 
-      alert('yep, its valid');
-    }else{
-      alert('NOPE');
+      /* REGULAR POST TO AVOID PAGE REFRESH */
+      var $this = $(this);
+      $.post(
+	$this.attr('action'),
+	$this.serialize(),
+	function(data){},
+	'json'
+      );
+
     }
+
 
     /* REGULAR POST TO AVOID PAGE REFRESH */
     /*
@@ -48,23 +64,23 @@ jQuery(function($){
 
     e.preventDefault();
 
-    /* AJAX POST USING ajaxForm + Validation */
-    //$('#ep_crawl_form').ajaxForm({beforeSubmit: validate});
 
   });
   
 
-
+   
 
 
 
   $('#ep_crawl_form').validate(
     {
       rules: {
-	label: { minlength: 1, required: true },
-	fw_root: { required: true, required: true },
-	es_url: { minlength: 2, required: true, url: true },
-	work_dir: { minlength: 2, required: true }
+	label:    { minlength: 1, required: true },
+	fw_root:  { isWindowsPath: 2, required: true },
+	es_url:   { isURL: 2, required: true },
+	work_dir: { isWindowsPath: true, required: true },
+        img_size: { min: 1, number: true, required: true },
+        shp_feat: { min: 1, number: true, required: true }
       },
       highlight: function(element) {
 	$(element).closest('.control-group').removeClass('success').addClass('error');
@@ -72,7 +88,6 @@ jQuery(function($){
       success: function(element) {
 	element
 	  //.text('OK!').addClass('valid')
-	  //.addClass('valid')
 	  .closest('.control-group').removeClass('error').addClass('success');
       }
     }

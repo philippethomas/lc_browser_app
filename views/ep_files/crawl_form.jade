@@ -1,3 +1,8 @@
+<!-- much of this layout was determined by the somewhat wonky behavior of client-side 
+form validators. After testing jqBootStrapValidation I ended up using this one:
+http://alittlecode.com/files/jQuery-Validate-Demo/index.html
+It uses the older jQuery validate plugin even though it does odd things with labels. -->
+
 - a = ['prev crawl one', 'prev crawl two', 'prev crawl three']
 
 .row-fluid
@@ -18,35 +23,57 @@
 
 
         .row-fluid 
-          .span6.right
-            label
-              | Label:  
-              input.input-xlarge(type='text', name='label', value='unlabeled')
-          .span6.right
-            label
-              | Start Path:  
-              input.input-xlarge(type='text', name='fw_root', placeholder='(enter directory path)', data-validation-regex-regex='a.*z', data-validation-regex-message='Must be a valid Windows path')
-                p.right.help-block
+          .control-group
+            .span2.right
+              label
+                | Label:
+            .span10.bumper
+              input.rather-long(type='text', name='label', value='unlabeled')
 
+        .row-fluid 
+          .control-group
+            .span2.right
+              label
+                | Start Path:
+            .span10.bumper
+              input.rather-long(type='text', name='fw_root', placeholder='(directory path)')
 
+        .row-fluid 
+          .control-group
+            .span2.right
+              label
+                | Work Dir:
+            .span10.bumper
+              input.rather-long(type='text', name='work_dir', value='#{process.env.TMP}')
 
-        .row-fluid
-          .span6.right
-            label
-              | Work Dir:  
-              input.input-xlarge(type='text', name='work_dir', value='#{process.env.TMP}')
+        .row-fluid 
+          .control-group
+            .span2.right
+              label
+                | ElasticSearch:
+            .span10.bumper
+              input.rather-long(type='text', name='es_url', value='http://localhost:9200')
+        
+        hr
+        .row-fluid 
+          .control-group
+            .span6.offset2
+              label.checkbox
+                input(type='checkbox', name='write_es', checked=(true===false ? "checked" : undefined))
+              | Write results to ElasticSearch
 
-          .span6.right
-            label
-              | ElasticSearch:  
-              input.input-xlarge(type='text', name='es_url', value='http://localhost:9200')
-
-
+        .row-fluid 
+          .control-group
+            .span6.offset2
+              label.checkbox
+                input(type='checkbox', name='write_csv', checked=(true===false ? "checked" : undefined))
+                | Write results to CSV 
+                i (as time-stamped files in Work Dir)
 
         hr
 
         .row-fluid
-          .span2.offset1
+          .span2.offset2.bumper
             label.checkbox
               input(type='checkbox', name='find_LAS', checked=true)
               | LAS
@@ -54,15 +81,10 @@
             label.checkbox
               input(type='checkbox', name='zip_las', checked=(true===false ? "checked" : undefined))
               | Include ZIP Archives
-          .span4.offset2
-            label.checkbox
-              input(type='checkbox', name='write_csv', checked=(true===false ? "checked" : undefined))
-              | Write to CSV (time-stamped file in Work Dir)
-
 
 
         .row-fluid
-          .span2.offset1
+          .span2.offset2.bumper
             label.checkbox
               input(type='checkbox', name='find_SGY', checked=(true===false ? "checked" : undefined))
               |  SEGY
@@ -70,26 +92,21 @@
             label.checkbox
               input(type='checkbox', name='sgy_deep', checked=(true===false ? "checked" : undefined))
               |  Deep SEGY Scan
-          .span4.offset2
-            label.checkbox
-              input(type='checkbox', name='write_es', checked=(true===false ? "checked" : undefined))
-              | Write to ElasticSearch
-
-
 
 
         .row-fluid 
-          .span2.offset1
+          .span2.offset2
             label.checkbox
               input(type='checkbox', name='find_IMG', checked=(true===false ? "checked" : undefined))
               |  Imagery
-          .span9
+          .span6
             label
               input.input-mini(type='text', name='img_size', value='300') 
               |  Minimum Size Threshold (MB)
 
+
         .row-fluid 
-          .span2.offset1
+          .span2.offset2
             label.checkbox
               input(type='checkbox', name='find_SHP', checked=(true===false ? "checked" : undefined))
               |  Shapefiles
@@ -98,7 +115,7 @@
               input.input-mini(type='text', name='shp_feat', value='50') 
               |  Shapefile Feature Count
 
-          .span4
+          .span3
             button#ep_crawl_btn.btn(type='submit') Save & Run Crawl
 
 

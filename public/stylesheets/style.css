@@ -9,8 +9,23 @@
   margin-right: 40px;
 }
 
-
 .right{
   text-align:right;
+}
+
+.rather-long{
+  width:500px;
+}
+
+.bumper{
+  margin-bottom: 3px;
+}
+
+
+label.error {
+  font-weight: bold;
+  color: red;
+  padding: 2px 8px;
+  margin-top: 2px;
 }
 
