@@ -1,8 +1,23 @@
+var es = require('./models/elasticsearch.js');
 
 exports.list = function(req, res){
-  res.render('ep_files', { 
-    title: 'E&P Files'
+
+  es.previousCrawls('ep_files_crawl', function(error, result){
+    if(error){
+      console.log('---------------ERRRRRRRRR');
+      console.log(error);
+      res.send(error);
+    }else{
+
+      res.render('ep_files', { 
+	title: 'E&P Files',
+	previousCrawls: result
+      });
+
+    }
   });
+
+
 };
 
 
@@ -29,15 +44,14 @@ exports.save_and_run = function(req, res){
   var write_csv = req.body.write_csv;
   var write_es = req.body.write_es;
   var zip_las = req.body.zip_las;
-  var shp_feat = req.body.shp_feat || 50;
-  var img_size = req.body.img_size || 300;
+  var shp_feat = Math.round(req.body.shp_feat);
+  var img_size = Math.round(req.body.img_size);
   var sgy_deep = req.body.sgy_deep; 
   var find_LAS = req.body.find_LAS;
   var find_SHP = req.body.find_SHP;
   var find_SGY = req.body.find_SGY;
   var find_IMG = req.body.find_IMG;
   var cs_max = 26214400;
-  var app = app;
 
   /*
   req.assert('label', 'Invalid field: label').isAlphanumeric();
@@ -62,9 +76,9 @@ exports.save_and_run = function(req, res){
 
 
   //var errors = req.validationErrors();
-  console.log('*****************************');
+  //console.log('*****************************');
   //console.log(errors);
-  console.log('*****************************');
+  //console.log('*****************************');
   /*
   if (errors){ 
     req.flash('info', "CHECK YO FORM");
@@ -92,8 +106,28 @@ exports.save_and_run = function(req, res){
     find_SGY: find_SGY,
     find_IMG: find_IMG,
     cs_max: cs_max,
-    app: app
   }
+
+  // add some attributes for storing in ElasticSearch
+  opts.doctype = 'ep_files_crawl';
+  opts.guid = es.guidify(JSON.stringify(opts));
+  opts.saved = new Date().toISOString();
+
+  
+  
+  es.writeDoc(opts, function(error,result){
+    if(error){
+      res.send(error);
+    }else{
+      res.send(result);
+    }
+  });
+  
+
+
+
+  // hijack app's EventEmitter properties
+  opts.app = app;
 
   var scanner = require('lc_file_crawlers/scanner.js');
   console.log('@@@@@@@@@@@@@ new scan @@@@@@@@@@@@@'+new Date().toISOString());

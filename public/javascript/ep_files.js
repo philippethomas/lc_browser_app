@@ -1,6 +1,7 @@
 jQuery(function($){
 
 
+  // custom windows path and url validators for crawler forms
   jQuery.validator.addMethod("isWindowsPath",
     function(value, element) {
     return /^((\\\\[a-zA-Z0-9-]+\\[a-zA-Z0-9`~!@#$%^&(){}'._-]+([ ]+[a-zA-Z0-9`~!@#$%^&(){}'._-]+)*)|([a-zA-Z]:))(\\[^ \\/:*?""<>|]+([ ]+[^ \\/:*?""<>|]+)*)*\\?$/.test( element.value );
@@ -8,70 +9,37 @@ jQuery(function($){
   
   jQuery.validator.addMethod("isURL",
     function(value, element) {
-    return /(http|https).*\d*/.test( element.value );
+    return /(http|https).*\d*/i.test( element.value );
   }, "Usually like: 'http://server:9200'.");
 
-  
+  // 1. validation happens client-side
+  // 2. prevent page reload when submitting crawl form
+  // 3. toggle (hide) crawl form on submit
+  // 4. add crawldata to the prevCrawls array
   $('#ep_crawl_form').submit(function(e){
-
-
     $('#ep_list').empty();
     if( $('#ep_crawl_form').valid() ){
-      $('#ep_files_accord a.accordion-toggle').click();
 
-      /* REGULAR POST TO AVOID PAGE REFRESH */
+      $('#crawlSetup').click()
+      
       var $this = $(this);
+
+      placeholderCrawl($this.serializeArray());
+
       $.post(
 	$this.attr('action'),
 	$this.serialize(),
 	function(data){},
 	'json'
       );
-
     }
 
-
-    /* REGULAR POST TO AVOID PAGE REFRESH */
-    /*
-    var $this = $(this);
-    $.post(
-      $this.attr('action'),
-      $this.serialize(),
-      function(data){},
-      'json'
-    );
-
     e.preventDefault();
-    */
-
-    /* AJAX POST
-    var form = e.currentTarget;
-    $.ajaxForm({
-      url: form.action,
-      type: 'POST',
-      data: $(form).serialize(),
-      success: function(x){
-        console.log("::::::::::::::::::::::::::::");
-	console.log(e);
-      },
-      error: function(y){
-	console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	console.log(y);
-      }
-
-    });
-    */
-
-    e.preventDefault();
-
-
   });
   
 
-   
-
-
-
+  // validation rules for jquery validation plugin
+  // commented out wonky 'OK!' label stuff
   $('#ep_crawl_form').validate(
     {
       rules: {
@@ -95,4 +63,54 @@ jQuery(function($){
   
 
 
+  //----------
+  // populate crawl form with previous crawl data
+  // prev is rendered on the page by the view with data from ES
+  $('#previousCrawls li').click(function(){
+    var i = $(this).index();
+    var c = prevCrawls[i];
+    if (c !== undefined){
+      populateForm('#ep_crawl_form',c);
+    }
+  });
+
+
+  $('#prevCrawlToggle').dblclick(function(){
+    location.reload(true);
+    $('#crawlSetup').click()
+  });
+
+
+
 });
+
+
+
+//----------
+// append a new row in the list just to show user something got saved
+function placeholderCrawl(a){
+  /*
+  adapted from http://benalman.com/projects/jquery-misc-plugins/#serializeobject
+  var obj = {};
+  $.each(a, function(i,o){
+    var n = o.name,
+    v = o.value;
+
+  obj[n] = obj[n] === undefined ? v
+    : $.isArray( obj[n] ) ? obj[n].concat( v )
+    : [ obj[n], v ];
+  });
+
+  obj.saved = 'pending (refresh page)';
+  prevCrawls.push(obj);
+  console.log(obj);
+  console.log(prevCrawls);
+  */
+  var li = '<li><a href="#"> <code>'+ a[0].value +'</code><span> </span><span class="mono">'+a[1].value+'</span><span> </span><span class="small-orange">(refresh page for saved crawls)</span></a></li>'
+  $('#previousCrawls').append(li);
+
+};
+
+
+
+

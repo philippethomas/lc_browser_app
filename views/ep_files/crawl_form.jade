@@ -3,19 +3,28 @@ form validators. After testing jqBootStrapValidation I ended up using this one:
 http://alittlecode.com/files/jQuery-Validate-Demo/index.html
 It uses the older jQuery validate plugin even though it does odd things with labels. -->
 
-- a = ['prev crawl one', 'prev crawl two', 'prev crawl three']
+script 
+  var prevCrawls = !{JSON.stringify(previousCrawls)}
+
+
 
 .row-fluid
   .span2
     ul.nav.nav-pills.pull-left
       li.dropdown
-        a#drop4.dropdown-toggle(data-toggle='dropdown', href='#')
+        a.dropdown-toggle#prevCrawlToggle(data-toggle='dropdown', href='#')
           | Previous Crawls
           b.caret
-        ul#menu1.dropdown-menu
-          for o in a
+        ul#previousCrawls.dropdown-menu
+          each o in previousCrawls
             li
-              a(href='#')= o 
+              a(href='#', guid=o.guid) 
+                code= o.label
+                span=' '
+                span.mono= o.fw_root
+                span=' '
+                span.small-orange= o.saved
+              
 
   .span10
     .row-fluid
@@ -34,7 +43,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
           .control-group
             .span2.right
               label
-                | Start Path:
+                | Start Directory:
             .span10.bumper
               input.rather-long(type='text', name='fw_root', placeholder='(directory path)')
 
@@ -42,7 +51,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
           .control-group
             .span2.right
               label
-                | Work Dir:
+                | Work Directory:
             .span10.bumper
               input.rather-long(type='text', name='work_dir', value='#{process.env.TMP}')
 
@@ -68,7 +77,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               label.checkbox
                 input(type='checkbox', name='write_csv', checked=(true===false ? "checked" : undefined))
                 | Write results to CSV 
-                i (as time-stamped files in Work Dir)
+                i (saved as time-stamped files in Work Dir)
 
         hr
 
@@ -117,5 +126,4 @@ It uses the older jQuery validate plugin even though it does odd things with lab
 
           .span3
             button#ep_crawl_btn.btn(type='submit') Save & Run Crawl
-
 

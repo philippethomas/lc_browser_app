@@ -29,3 +29,13 @@ label.error {
   margin-top: 2px;
 }
 
+
+.mono{
+  font-family: monospace;
+}
+
+.small-orange{
+  font-size: 12px;
+  color: #ff9900;
+  font-style: oblique;
+}
