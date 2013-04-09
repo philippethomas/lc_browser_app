@@ -1,0 +1,9 @@
+extends ../layout
+
+block content
+  h1 wonky results
+
+  h4
+    ul
+    each doc in searchResults
+      li= doc.guid+'  '+doc.fullpath+'  '+doc.basename

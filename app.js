@@ -24,18 +24,31 @@ app.configure(function(){
 
 
 
+//TODO maybe store config stuff for the Express app elsewhere: 
+//check out https://github.com/flatiron/nconf
+var es = require('./models/elasticsearcher.js');
+AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
+
+
+
+
+
 var home = require('./home');
 app.get('/', home.index);
 
 
 var ep_files = require('./ep_files');
 app.get('/ep_files', ep_files.list);
-app.post('/ep_files', ep_files.save_and_run)
+app.post('/ep_files', ep_files.save_and_run);
 //app.get('/flash', ep_files.flash);
 
 var petra = require('./petra');
 app.get('/petra', petra.list);
-app.post('/petra', petra.run_and_save_crawl)
+app.post('/petra', petra.run_and_save_crawl);
+
+
+var search = require('./search');
+app.post('/search', search.index);
 
 
 var maintenance = require('./maintenance');

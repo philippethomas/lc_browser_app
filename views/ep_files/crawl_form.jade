@@ -15,7 +15,7 @@ script
         a.dropdown-toggle#prevCrawlToggle(data-toggle='dropdown', href='#')
           | Previous Crawls
           b.caret
-        ul#previousCrawls.dropdown-menu
+        ul#previousCrawlList.dropdown-menu
           each o in previousCrawls
             li
               a(href='#', guid=o.guid) 
@@ -61,7 +61,9 @@ script
               label
                 | ElasticSearch:
             .span10.bumper
-              input.rather-long(type='text', name='es_url', value='http://localhost:9200')
+              input.input-xlarge(type='text', name='es_host', value='localhost', placeholder='localhost')
+              &nbsp &nbsp &nbsp
+              input.input-small(type='text', name='es_port', value='9200', placeholder='9200')
         
         hr
         .row-fluid 

@@ -1,5 +1,4 @@
-- a = ['thing one','thing two','thing three'];
-
+- searchFilters = [ { show: "LAS Files", value: "las" }, { show: "Shapefiles", value: "shp" }, { show: "SEGY Files", value: "sgy" },{ show: "Imagery Files", value: "img" }]
 
 
 .navbar.navbar-fixed-top
@@ -28,14 +27,14 @@
           .btn
             | Crawl Setup
 
-      form.navbar-search.form-search.pull-right
+      form.navbar-search.form-search.pull-right(action='/search', method='post')
         .input-prepend.input-append
           span.add-on
             i.icon-filter
-          select.span2
-            for o in a
-              option= o
-          input(type='search', placeholder='Search')
+          select(name='searchFilter').span2
+            for filt in searchFilters
+              option(value= filt.value)= filt.show
+          input(name='searchText', type='search', placeholder='Search')
           span.add-on
             i.icon-search
 

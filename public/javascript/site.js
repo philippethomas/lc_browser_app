@@ -5,7 +5,7 @@ jQuery(function($){
 
 
   // show/hide crawlSetup button with appropriate route
-  if (loc === ""){
+  if (loc === '' || loc === 'search'){
     $('#crawlSetup').hide();
   }else{
     $('#crawlSetup').show();

@@ -1,16 +1,11 @@
 jQuery(function($){
 
 
-  // custom windows path and url validators for crawler forms
   jQuery.validator.addMethod("isWindowsPath",
     function(value, element) {
     return /^((\\\\[a-zA-Z0-9-]+\\[a-zA-Z0-9`~!@#$%^&(){}'._-]+([ ]+[a-zA-Z0-9`~!@#$%^&(){}'._-]+)*)|([a-zA-Z]:))(\\[^ \\/:*?""<>|]+([ ]+[^ \\/:*?""<>|]+)*)*\\?$/.test( element.value );
   }, "Use a Windows path (UNC or drive letter).");
   
-  jQuery.validator.addMethod("isURL",
-    function(value, element) {
-    return /(http|https).*\d*/i.test( element.value );
-  }, "Usually like: 'http://server:9200'.");
 
   // 1. validation happens client-side
   // 2. prevent page reload when submitting crawl form
@@ -45,7 +40,8 @@ jQuery(function($){
       rules: {
 	label:    { minlength: 1, required: true },
 	fw_root:  { isWindowsPath: 2, required: true },
-	es_url:   { isURL: 2, required: true },
+	es_host:  { required: true },
+	es_port:  { required: true },
 	work_dir: { isWindowsPath: true, required: true },
         img_size: { min: 1, number: true, required: true },
         shp_feat: { min: 1, number: true, required: true }
@@ -66,7 +62,7 @@ jQuery(function($){
   //----------
   // populate crawl form with previous crawl data
   // prev is rendered on the page by the view with data from ES
-  $('#previousCrawls li').click(function(){
+  $('#previousCrawlList li').click(function(){
     var i = $(this).index();
     var c = prevCrawls[i];
     if (c !== undefined){
@@ -87,28 +83,11 @@ jQuery(function($){
 
 
 //----------
-// append a new row in the list just to show user something got saved
+// append a new row in the list to show user something got saved (if they look)
 function placeholderCrawl(a){
-  /*
-  adapted from http://benalman.com/projects/jquery-misc-plugins/#serializeobject
-  var obj = {};
-  $.each(a, function(i,o){
-    var n = o.name,
-    v = o.value;
-
-  obj[n] = obj[n] === undefined ? v
-    : $.isArray( obj[n] ) ? obj[n].concat( v )
-    : [ obj[n], v ];
-  });
-
-  obj.saved = 'pending (refresh page)';
-  prevCrawls.push(obj);
-  console.log(obj);
-  console.log(prevCrawls);
-  */
-  var li = '<li><a href="#"> <code>'+ a[0].value +'</code><span> </span><span class="mono">'+a[1].value+'</span><span> </span><span class="small-orange">(refresh page for saved crawls)</span></a></li>'
-  $('#previousCrawls').append(li);
-
+  var li = '<li><a href="#"> <code>'+ a[0].value +'</code><span> </span><span class="mono">'+a[1].value+'</span><span> </span><span class="small-orange">(refresh page for saved crawls)</span></a></li>';
+  
+  $('#previousCrawlList').append(li);
 };
 
 

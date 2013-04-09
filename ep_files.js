@@ -1,17 +1,27 @@
-var es = require('./models/elasticsearch.js');
+var createHash = require('crypto').createHash
 
 exports.list = function(req, res){
 
-  es.previousCrawls('ep_files_crawl', function(error, result){
+  var stuff = [444,555,66];
+  AppES.search('las', 'las', function(error, result){
     if(error){
-      console.log('---------------ERRRRRRRRR');
+      console.log(error);
+    }else{
+      stuff = result;
+    }
+  });
+
+
+  AppES.getPreviousCrawls('ep_files_crawl', function(error, result){
+    if(error){
       console.log(error);
       res.send(error);
     }else{
 
       res.render('ep_files', { 
 	title: 'E&P Files',
-	previousCrawls: result
+	previousCrawls: result,
+	stuff: stuff
       });
 
     }
@@ -33,11 +43,11 @@ exports.flash = function(req, res){
 
 
 exports.save_and_run = function(req, res){
-
-  var app = require('./app').app
+  var app = require('./app').app;
 
   var label = req.body.label || 'unlabeled';
-  var es_url = req.body.es_url || 'http://localhost:9200';
+  var es_host = req.body.es_host || 'localhost';
+  var es_port = req.body.es_port || '9200';
   var fw_root = req.body.fw_root || 'c:/temp';
   var work_dir = req.body.work_dir || process.env.TMP;
 
@@ -53,46 +63,10 @@ exports.save_and_run = function(req, res){
   var find_IMG = req.body.find_IMG;
   var cs_max = 26214400;
 
-  /*
-  req.assert('label', 'Invalid field: label').isAlphanumeric();
-  req.assert('es_url', 'Invalid field: es_url').isUrl();
-  req.assert('fw_root', 'Invalid field: fw_root').regex(/^((\\\\[a-zA-Z0-9-]+\\[a-zA-Z0-9`~!@#$%^&(){}'._-]+([ ]+[a-zA-Z0-9`~!@#$%^&(){}'._-]+)*)|([a-zA-Z]:))(\\[^ \\/:*?""<>|]+([ ]+[^ \\/:*?""<>|]+)*)*\\?$/);
-  req.assert('work_dir', 'Invalid field: workdir').regex(/^((\\\\[a-zA-Z0-9-]+\\[a-zA-Z0-9`~!@#$%^&(){}'._-]+([ ]+[a-zA-Z0-9`~!@#$%^&(){}'._-]+)*)|([a-zA-Z]:))(\\[^ \\/:*?""<>|]+([ ]+[^ \\/:*?""<>|]+)*)*\\?$/);
-
-  req.sanitize('write_csv').toBoolean();
-  req.sanitize('write_es').toBoolean();
-
-  req.sanitize('zip_las').toBoolean();
-  req.assert('shp_feat', 'Invalid field: shp_feat').isInt();
-  req.assert('img_size', 'Invalid field: img_size').isInt();
-  req.sanitize('sgy_deep').toBoolean();
-
-  req.sanitize('find_LAS').toBoolean();;
-  req.sanitize('find_SGY').toBoolean();
-  req.sanitize('find_IMG').toBoolean();
-  */
-
-  //req.assert('cs_max', 'Invalid field: cs_max').isInt();
-
-
-  //var errors = req.validationErrors();
-  //console.log('*****************************');
-  //console.log(errors);
-  //console.log('*****************************');
-  /*
-  if (errors){ 
-    req.flash('info', "CHECK YO FORM");
-    res.render('ep_files', { 
-      message: req.flash(),
-      title: 'AFTER CLICK'
-    });
-  }
-  */
-
-
   var opts = { 
     label: label,
-    es_url: es_url,
+    es_host: es_host,
+    es_port: es_port,
     fw_root: fw_root,
     work_dir: work_dir,
     write_csv: write_csv,
@@ -110,32 +84,32 @@ exports.save_and_run = function(req, res){
 
   // add some attributes for storing in ElasticSearch
   opts.doctype = 'ep_files_crawl';
-  opts.guid = es.guidify(JSON.stringify(opts));
+  opts.guid = guidify(JSON.stringify(opts));
   opts.saved = new Date().toISOString();
 
-  
-  
-  es.writeDoc(opts, function(error,result){
+  AppES.writeDoc(opts, function(error,result){
     if(error){
-      res.send(error);
+      console.log(error);
     }else{
-      res.send(result);
+      if (result.ok){
+	opts.app = app; // hijack app's EventEmitter properties
+
+	var scanner = require('lc_file_crawlers/scanner.js');
+	scanner.scan(opts);
+      }
     }
   });
   
-
-
-
-  // hijack app's EventEmitter properties
-  opts.app = app;
-
-  var scanner = require('lc_file_crawlers/scanner.js');
-  console.log('@@@@@@@@@@@@@ new scan @@@@@@@@@@@@@'+new Date().toISOString());
-
-  scanner.scan(opts);
+  
   
 
 };
 
 
-
+//----------
+// used to make a sort of natural key as doc id
+var guidify = function(s){
+  var guid = createHash('md5');
+  guid.update(s);
+  return guid.digest('hex');
+}

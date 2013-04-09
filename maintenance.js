@@ -1,8 +1,6 @@
-var es = require('./models/elasticsearch.js');
-
 
 exports.indexInit = function(req, res){
-  es.indexInit(function(error, result){
+  AppES.indexInit(function(error, result){
     if(error){
       res.send(error);
     }else{
@@ -11,8 +9,9 @@ exports.indexInit = function(req, res){
   });
 };
 
+
 exports.indexStatus = function(req, res){
-  es.indexStatus(function(error,result){
+  AppES.indexStatus(function(error,result){
     if(error){
       res.send(error);
     }else{
@@ -23,7 +22,7 @@ exports.indexStatus = function(req, res){
 
 
 exports.indexMapping = function(req, res){
-  es.indexMapping(function(error,result){
+  AppES.indexMapping(function(error,result){
     if(error){
       res.send(error);
     }else{
@@ -31,3 +30,4 @@ exports.indexMapping = function(req, res){
     }
   });
 };
+
