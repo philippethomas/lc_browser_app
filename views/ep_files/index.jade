@@ -13,5 +13,5 @@ block content
           include crawl_form
 
   ul#ep_list
-  p#stuff
-    = stuff
+  each doc in searchResults
+    li= doc.guid+'  <--------->   '+doc.crawled

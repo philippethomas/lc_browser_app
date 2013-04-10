@@ -72,9 +72,9 @@ app.on('lasdoc', function(data){
   io.sockets.emit('lasdoc', data);
 });
 
-app.on('ziplasdoc', function(data){
-  io.sockets.emit('ziplasdoc', data);
-});
+//app.on('ziplasdoc', function(data){
+//  io.sockets.emit('ziplasdoc', data);
+//});
 
 
 

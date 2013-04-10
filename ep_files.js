@@ -2,7 +2,7 @@ var createHash = require('crypto').createHash
 
 exports.list = function(req, res){
 
-  var stuff = [444,555,66];
+  /*
   AppES.search('las', 'las', function(error, result){
     if(error){
       console.log(error);
@@ -10,8 +10,22 @@ exports.list = function(req, res){
       stuff = result;
     }
   });
+  */
 
+  AppES.priorCrawlsAndDocs('ep_files', function(error, result){
+    if(error){
+      console.log(error);
+    }else{
+      res.render('ep_files', { 
+	title: 'E&P Files',
+	previousCrawls: result.previousCrawls,
+	searchResults: result.searchResults
+      });
+    }
 
+  });
+
+  /*
   AppES.getPreviousCrawls('ep_files_crawl', function(error, result){
     if(error){
       console.log(error);
@@ -26,6 +40,7 @@ exports.list = function(req, res){
 
     }
   });
+  */
 
 
 };
@@ -85,7 +100,7 @@ exports.save_and_run = function(req, res){
   // add some attributes for storing in ElasticSearch
   opts.doctype = 'ep_files_crawl';
   opts.guid = guidify(JSON.stringify(opts));
-  opts.saved = new Date().toISOString();
+  opts.crawled = new Date().toISOString();
 
   AppES.writeDoc(opts, function(error,result){
     if(error){

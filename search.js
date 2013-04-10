@@ -1,23 +1,18 @@
 
 exports.index = function(req, res){
 
+  var idx = req.body.searchFilter;
+  var query = req.body.searchText; 
 
-  var filter = req.body.searchFilter;
-  var text = req.body.searchText; 
-  console.log(filter+'    '+text);
+  console.log('filter='+idx+'    text='+query);
   
 
 
 
-  AppES.search('las', text, function(error, result){
+  AppES.doSearch(idx, 0, 20, query, function(error, result){
     if(error){
-      console.log('---------------ERRRRRRRRR');
       console.log(error);
-      res.send(error);
     }else{
-      console.log('---------------------');
-      //console.log(result);
-
       res.render('search', { 
 	title: 'Search Results',
 	searchResults: result

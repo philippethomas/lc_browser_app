@@ -23,7 +23,7 @@ ElasticSearcher = function(opts){
       "find_SHP": {"type":"string"},
       "find_SGY": {"type":"string"},
       "find_IMG": {"type":"string"},
-      "saved":  {"type":"date"}
+      "crawled":  {"type":"date"}
   } } }
   
 };
@@ -130,10 +130,11 @@ ElasticSearcher.prototype.indexMapping = function(callback){
 
 //----------
 // http://localhost:9200/lc_app_idx/_search?doctype:ep_files_crawl
+/*
 ElasticSearcher.prototype.getPreviousCrawls = function(doctype, callback){
   var qryObj = {
     "query" : { "term" : { "doctype" : doctype } },
-    "sort" : [ { "saved" : {"order" : "desc"} } ]
+    "sort" : [ { "crawled" : {"order" : "desc"} } ]
   };
 
   var cmd = ESClient.search('lc_app_idx', doctype, qryObj);
@@ -156,9 +157,62 @@ ElasticSearcher.prototype.getPreviousCrawls = function(doctype, callback){
     }
   });
 }
+*/
 
 
-//get previousCrawls and current index contents in one (blocking) call
+//get previousCrawls and latest index contents for this particular type
+//
+ElasticSearcher.prototype.priorCrawlsAndDocs = function(crawlType, callback){
+  var self = this;
+
+  var crawlIndices;
+  var crawlQuery;
+  var docIndices;
+  var docQuery;
+
+  switch(crawlType){
+    case 'ep_files':
+      crawlIndices = 'lc_app_idx';
+      crawlQuery = 'doctype:ep_files_crawl';
+      docIndices = 'las_idx,shp_idx,sgy_idx,img_idx'
+      docQuery = 'doctype:las OR doctype:shp OR doctype:sgy OR doctype:img';
+      break;
+    case 'petra':
+      query = 'pet_project';
+      break;
+    case 'discovery':
+      query = 'ggx_project';
+      break;
+    case 'kingdom':
+      query = 'tks_project';
+      break;
+    default:
+      console.log('Sorry, did not recognize type: '+type);
+      return;
+  }
+
+
+  self.doSearch(crawlIndices, 0, 10, crawlQuery, function(error, result){
+    if(error){
+      console.log(error);
+      callback(error);
+    }else{
+      ////
+      var previousCrawls = result;
+
+      self.doSearch(docIndices, 0, 20, docQuery, function(error, result){
+	if(error){
+	  callback(error);
+	}else{
+	  ////
+	  callback(null,{ searchResults: result, previousCrawls: previousCrawls });
+	}
+      });
+
+
+    }
+  });
+}
 
 
 
@@ -188,20 +242,26 @@ ElasticSearcher.prototype.getPreviousCrawls = function(doctype, callback){
 
 
 //----------
+// doctypes: one or more doctypes separated by comma: 'las,
 //
-ElasticSearcher.prototype.search = function(doctype, queryString, callback){
-  var idxName = doctype+'_idx';
+ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callback){
+  
+  //var indices = nimble.map(idxTypes.split(','), function(x){
+  //  return (x+'_idx').trim()
+  //}).join(',');
 
   var qryObj = {
-    "size":2000,
-    "query" : { "query_string" : { "query" : queryString, "default_operator": "AND" } },
+    "from":from,
+    "size":size,
+    "query" : { "query_string" : { "query" : query, "default_operator": "AND" } },
     "sort" : [ { "crawled" : {"order" : "desc"} } ]
   };
 
-
+  //===
   console.log(qryObj);
+  //===
 
-  var cmd = ESClient.search(idxName, doctype, qryObj);
+  var cmd = ESClient.search(indices, qryObj);
   cmd.exec(function(err, data){
     if(err){
       callback(error);
