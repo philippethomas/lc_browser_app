@@ -5,9 +5,12 @@ var server = app.listen(3000, function(){
   console.log('LogicalCat browser listening on port 3000');
 });
 var io = require('socket.io').listen(server);
+//io.set('transports', [ 'jsonp-polling' ]);
 //var expressValidator = require('express-validator');
 
+
 // Configuration
+var store  = new express.session.MemoryStore;
 app.configure(function(){
   app.use(express.bodyParser());
   //app.use(expressValidator);
@@ -15,7 +18,8 @@ app.configure(function(){
   app.set('view engine', 'jade');
   app.set('view options', {layout: false});
   app.use(express.methodOverride());
-  //app.use(express.cookieParser('logicalcat'));
+  app.use(express.cookieParser('logicalcat'));
+  app.use(express.session({ secret: 'lOgIcAlCaT', store: store }));
   //app.use(express.session({cookie:{maxAge:60000}}));
   //app.use(flash());
   app.use(express.static(__dirname + '/public'));
@@ -32,14 +36,13 @@ AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 
 
-
 var home = require('./home');
 app.get('/', home.index);
 
 
 var ep_files = require('./ep_files');
 app.get('/ep_files', ep_files.list);
-app.post('/ep_files', ep_files.save_and_run);
+app.post('/save_and_run', ep_files.save_and_run);
 //app.get('/flash', ep_files.flash);
 
 var petra = require('./petra');
@@ -48,7 +51,7 @@ app.post('/petra', petra.run_and_save_crawl);
 
 
 var search = require('./search');
-app.post('/search', search.index);
+app.post('/ajaxSearch', search.ajaxSearch);
 
 
 var maintenance = require('./maintenance');
@@ -66,17 +69,9 @@ app.configure('production', function(){
 });
 
 
-
-
 app.on('lasdoc', function(data){
   io.sockets.emit('lasdoc', data);
 });
-
-//app.on('ziplasdoc', function(data){
-//  io.sockets.emit('ziplasdoc', data);
-//});
-
-
 
 
 

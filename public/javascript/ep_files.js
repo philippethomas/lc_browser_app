@@ -5,13 +5,14 @@ jQuery(function($){
     function(value, element) {
     return /^((\\\\[a-zA-Z0-9-]+\\[a-zA-Z0-9`~!@#$%^&(){}'._-]+([ ]+[a-zA-Z0-9`~!@#$%^&(){}'._-]+)*)|([a-zA-Z]:))(\\[^ \\/:*?""<>|]+([ ]+[^ \\/:*?""<>|]+)*)*\\?$/.test( element.value );
   }, "Use a Windows path (UNC or drive letter).");
-  
+ 
 
   // 1. validation happens client-side
   // 2. prevent page reload when submitting crawl form
   // 3. toggle (hide) crawl form on submit
   // 4. add crawldata to the prevCrawls array
   $('#ep_crawl_form').submit(function(e){
+    e.preventDefault();
     $('#ep_list').empty();
     if( $('#ep_crawl_form').valid() ){
 
@@ -20,16 +21,13 @@ jQuery(function($){
       var $this = $(this);
 
       placeholderCrawl($this.serializeArray());
+  
+      $.post('/save_and_run', $this.serialize() , function(data, status, jqXHR){
+        //console.log(status);
+      });
 
-      $.post(
-	$this.attr('action'),
-	$this.serialize(),
-	function(data){},
-	'json'
-      );
     }
 
-    e.preventDefault();
   });
   
 
@@ -58,7 +56,6 @@ jQuery(function($){
   );
   
 
-
   //----------
   // populate crawl form with previous crawl data
   // prev is rendered on the page by the view with data from ES
@@ -77,7 +74,6 @@ jQuery(function($){
   });
 
 
-
 });
 
 
@@ -89,7 +85,5 @@ function placeholderCrawl(a){
   
   $('#previousCrawlList').append(li);
 };
-
-
 
 

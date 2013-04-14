@@ -5,7 +5,7 @@ jQuery(function($){
 
 
   // show/hide crawlSetup button with appropriate route
-  if (loc === '' || loc === 'search'){
+  if (loc === ''){
     $('#crawlSetup').hide();
   }else{
     $('#crawlSetup').show();
@@ -18,20 +18,18 @@ jQuery(function($){
 
 
 
-  // socket emissions "router"
   var socket = io.connect('http://localhost');
 
-  socket.on('lasdoc', function(data){
-    $('#ep_list').prepend('<li>'+data.crawled+' --- '+data.fullpath+'</li>');
+  socket.on('lasdoc', function(doc){
+    $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    //$('#search_results').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
   });
 
-  //socket.on('ziplasdoc', function(data){
-  //  $('#ep_list').prepend('<li>'+data.crawled+' --- '+data.fullpath+'</li>');
-  //});
 
-  
 
 });
+
+
 
 
 function populateForm(frm, data) {   

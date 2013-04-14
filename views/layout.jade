@@ -13,6 +13,7 @@ html
     script(src="/libs/bootstrap/js/bootstrap.min.js")
     script(src="/socket.io/socket.io.js")
     script(src="/javascript/site.js")
+    script(src="/javascript/search.js")
     script(src="/javascript/ep_files.js")
 
      
@@ -22,5 +23,12 @@ html
     include navlinks
     #navpad
 
-    block content
+    .block-content
+      block content
+
+    .block-search
+      block search
+        ul#search_results
+        #results
+        #pager
 

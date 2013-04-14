@@ -5,13 +5,26 @@ block content
 
   #ep_files_accordion.accordion
 
-
     .accordion-group
       .accordion-heading
       #ep_files_collapse.accordion-body.collapse
         .accordion-inner
           include crawl_form
 
-  ul#ep_list
-  each doc in searchResults
-    li= doc.guid+'  <--------->   '+doc.crawled
+  .row-fluid
+
+    .span3.well 
+      p LAS Summary
+    .span3.well 
+      p SEGY Summary
+    .span3.well 
+      p IMG Summary
+    .span3.well 
+      p SHP Summary
+
+    .row-fluid
+
+    ul#ep_list
+
+    each doc in searchResults
+      li= doc.guid+'  <--------->   '+doc.crawled

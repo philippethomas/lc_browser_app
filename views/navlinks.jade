@@ -27,14 +27,14 @@
           .btn
             | Crawl Setup
 
-      form.navbar-search.form-search.pull-right(action='/search', method='post')
+      form#search.navbar-search.form-search.pull-right(action='/search')
         .input-prepend.input-append
           span.add-on
             i.icon-filter
-          select#searchFilter(name='searchFilter').span2
+          select(name='searchFilter').span2
             for filt in searchFilters
               option(value= filt.value)= filt.show
-          input#searchText(name='searchText', type='search', placeholder='Search')
+          input(name='searchText', type='search', placeholder='Search')
           span.add-on
             i.icon-search
 

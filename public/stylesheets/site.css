@@ -39,3 +39,7 @@ label.error {
   color: #ff9900;
   font-style: oblique;
 }
+
+.thing{
+  color: red;
+}

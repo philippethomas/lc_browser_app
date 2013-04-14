@@ -65,13 +65,14 @@ script
               &nbsp &nbsp &nbsp
               input.input-small(type='text', name='es_port', value='9200', placeholder='9200')
         
-        hr
-        .row-fluid 
-          .control-group
-            .span6.offset2
-              label.checkbox
+        p
+        //hr
+        //.row-fluid 
+        //  .control-group
+        //    .span6.offset2
+        //      label.checkbox
                 input(type='checkbox', name='write_es', checked=(true===false ? "checked" : undefined))
-              | Write results to ElasticSearch
+        //      | Write results to ElasticSearch
 
         .row-fluid 
           .control-group
@@ -79,7 +80,7 @@ script
               label.checkbox
                 input(type='checkbox', name='write_csv', checked=(true===false ? "checked" : undefined))
                 | Write results to CSV 
-                i (saved as time-stamped files in Work Dir)
+                i (saved as time-stamped files in Work Directory)
 
         hr
 

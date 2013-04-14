@@ -128,39 +128,8 @@ ElasticSearcher.prototype.indexMapping = function(callback){
 }
 
 
-//----------
-// http://localhost:9200/lc_app_idx/_search?doctype:ep_files_crawl
-/*
-ElasticSearcher.prototype.getPreviousCrawls = function(doctype, callback){
-  var qryObj = {
-    "query" : { "term" : { "doctype" : doctype } },
-    "sort" : [ { "crawled" : {"order" : "desc"} } ]
-  };
-
-  var cmd = ESClient.search('lc_app_idx', doctype, qryObj);
-  cmd.exec(function(err, data){
-    if(err){
-      callback(error);
-    }else{
-
-      data = JSON.parse(data);
-      if (data.error){
-	console.log('Cannot retrieve previous crawls (probably none exist)')
-        callback(null,[])
-      }else{
-	var crawls = [];
-	data.hits.hits.forEach(function(hit){
-	  crawls.push(hit._source);
-	});
-	callback(null, crawls);
-      }
-    }
-  });
-}
-*/
-
-
 //get previousCrawls and latest index contents for this particular type
+// http://localhost:9200/lc_app_idx/_search?doctype:ep_files_crawl
 //
 ElasticSearcher.prototype.priorCrawlsAndDocs = function(crawlType, callback){
   var self = this;
@@ -198,14 +167,14 @@ ElasticSearcher.prototype.priorCrawlsAndDocs = function(crawlType, callback){
       callback(error);
     }else{
       ////
-      var previousCrawls = result;
+      var previousCrawls = result.docs;
 
       self.doSearch(docIndices, 0, 20, docQuery, function(error, result){
 	if(error){
 	  callback(error);
 	}else{
 	  ////
-	  callback(null,{ searchResults: result, previousCrawls: previousCrawls });
+	  callback(null,{ searchResults: result.docs, previousCrawls: previousCrawls });
 	}
       });
 
@@ -272,11 +241,12 @@ ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callba
 	console.log(data.error);
         callback(data.error,[]);
       }else{
-	var crawls = [];
+	var docs = [];
+	var total = data.hits.total;
 	data.hits.hits.forEach(function(hit){
-	  crawls.push(hit._source);
+	  docs.push(hit._source);
 	});
-	callback(null, crawls);
+	callback(null, { total: total, docs: docs });
       }
     }
   });

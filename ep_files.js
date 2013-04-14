@@ -2,15 +2,6 @@ var createHash = require('crypto').createHash
 
 exports.list = function(req, res){
 
-  /*
-  AppES.search('las', 'las', function(error, result){
-    if(error){
-      console.log(error);
-    }else{
-      stuff = result;
-    }
-  });
-  */
 
   AppES.priorCrawlsAndDocs('ep_files', function(error, result){
     if(error){
@@ -24,24 +15,6 @@ exports.list = function(req, res){
     }
 
   });
-
-  /*
-  AppES.getPreviousCrawls('ep_files_crawl', function(error, result){
-    if(error){
-      console.log(error);
-      res.send(error);
-    }else{
-
-      res.render('ep_files', { 
-	title: 'E&P Files',
-	previousCrawls: result,
-	stuff: stuff
-      });
-
-    }
-  });
-  */
-
 
 };
 
@@ -67,7 +40,7 @@ exports.save_and_run = function(req, res){
   var work_dir = req.body.work_dir || process.env.TMP;
 
   var write_csv = req.body.write_csv;
-  var write_es = req.body.write_es;
+  var write_es = true; //see below
   var zip_las = req.body.zip_las;
   var shp_feat = Math.round(req.body.shp_feat);
   var img_size = Math.round(req.body.img_size);
@@ -97,26 +70,29 @@ exports.save_and_run = function(req, res){
     cs_max: cs_max,
   }
 
-  // add some attributes for storing in ElasticSearch
-  opts.doctype = 'ep_files_crawl';
-  opts.guid = guidify(JSON.stringify(opts));
-  opts.crawled = new Date().toISOString();
+  // We always write to ElasticSearch in the browser app, but leave the option
+  // just in case (the command line utility has a choice).
+  if (opts.write_es){
 
-  AppES.writeDoc(opts, function(error,result){
-    if(error){
-      console.log(error);
-    }else{
-      if (result.ok){
-	opts.app = app; // hijack app's EventEmitter properties
+    opts.doctype = 'ep_files_crawl';
+    opts.guid = guidify(JSON.stringify(opts));
+    opts.crawled = new Date().toISOString();
 
-	var scanner = require('lc_file_crawlers/scanner.js');
-	scanner.scan(opts);
+    AppES.writeDoc(opts, function(error,result){
+      if(error){
+	console.log(error);
+      }else{
+	if (result.ok){
+	  opts.app = app; // hijack app's to use its EventEmitter behavior
+	  var scanner = require('lc_file_crawlers/scanner.js');
+	  scanner.scan(opts);
+	}
       }
-    }
-  });
+    });
+
+  }
   
-  
-  
+  res.end();
 
 };
 
