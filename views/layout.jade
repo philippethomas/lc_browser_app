@@ -7,6 +7,8 @@ html
     link(rel='stylesheet', href='/libs/bootstrap/css/bootstrap-responsive.min.css')
     link(rel='stylesheet', href='/stylesheets/site.css')
     script(src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js")
+
+    //TODO: check for SEC7112 mime type mismatch on IE -- download for production
     script(src="//raw.github.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.js")
     script(src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js")
 
@@ -20,15 +22,12 @@ html
     
   body
 
-    include navlinks
+    #nav.container-fluid
+      include navlinks
+
     #navpad
 
-    .block-content
+    .block-content.container-fluid
       block content
 
-    .block-search
-      block search
-        ul#search_results
-        #results
-        #pager
 

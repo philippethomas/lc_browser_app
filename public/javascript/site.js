@@ -1,11 +1,14 @@
 jQuery(function($){
 
+
+  $('#spinner').hide();
+ 
   // current page
   var loc = document.location.pathname.replace(/\//,'');
 
 
   // show/hide crawlSetup button with appropriate route
-  if (loc === ''){
+  if (loc === '' || loc === 'search'){
     $('#crawlSetup').hide();
   }else{
     $('#crawlSetup').show();
@@ -21,8 +24,8 @@ jQuery(function($){
   var socket = io.connect('http://localhost');
 
   socket.on('lasdoc', function(doc){
-    $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
-    //$('#search_results').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    //$('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    $('#search_results').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
   });
 
 

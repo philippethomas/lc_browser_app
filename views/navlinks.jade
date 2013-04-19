@@ -1,4 +1,4 @@
-- searchFilters = [ { show: "LAS Files", value: "las_idx" }, { show: "ESRI Shapefiles", value: "shp_idx" }, { show: "SEGY Files", value: "sgy_idx" },{ show: "Imagery Files", value: "img_idx" }]
+- filters = [ { show: "LAS Files", value: "las_idx" }, { show: "ESRI Shapefiles", value: "shp_idx" }, { show: "SEGY Files", value: "sgy_idx" },{ show: "Imagery Files", value: "img_idx" }]
 
 
 .navbar.navbar-fixed-top
@@ -22,19 +22,22 @@
           a(href='/kingdom') Kingdom 
 
         li.divider-vertical
+
+        li#spinner
+          img(src='images/spinner.gif')
         
         a#crawlSetup.accordion-toggle(data-toggle='collapse', data-parent='#ep_files_accordion', href='#ep_files_collapse')
           .btn
             | Crawl Setup
 
-      form#search.navbar-search.form-search.pull-right(action='/search')
+      form#search.navbar-search.form-search.pull-right(action='/search', method='POST')
         .input-prepend.input-append
           span.add-on
             i.icon-filter
-          select(name='searchFilter').span2
-            for filt in searchFilters
-              option(value= filt.value)= filt.show
-          input(name='searchText', type='search', placeholder='Search')
+          select(name='idx').span2
+            for f in filters
+              option(value= f.value)= f.show
+          input(name='query', type='search', placeholder='Search')
           span.add-on
             i.icon-search
 

@@ -23,6 +23,7 @@
     "jade": "0.28.x",
     "nimble":"0.0.x",
     "elasticsearchclient":"0.4.x",
+    "string":"1.3.x",
     "lc_file_crawlers": "0.0.1"
   },
   "devDependencies":{

@@ -35,23 +35,32 @@ AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 
 
-
 var home = require('./home');
 app.get('/', home.index);
 
 
 var ep_files = require('./ep_files');
-app.get('/ep_files', ep_files.list);
-app.post('/save_and_run', ep_files.save_and_run);
-//app.get('/flash', ep_files.flash);
+app.get('/ep_files', ep_files.stats);
+app.post('/ep_files_crawl', ep_files.crawl);
 
 var petra = require('./petra');
-app.get('/petra', petra.list);
-app.post('/petra', petra.run_and_save_crawl);
+app.get('/petra', petra.stats);
+app.post('/petra_crawl', petra.crawl);
 
+/*
+var discovery = require('./discovery');
+app.get('/discovery', discovery.stats);
+app.post('/discovery_crawl', discovery.crawl);
+
+var kingdom = require('./kingdom');
+app.get('/kingdom', kingdom.stats);
+app.post('/kingdom_crawl', kingdom.crawl);
+*/
 
 var search = require('./search');
 app.post('/ajaxSearch', search.ajaxSearch);
+app.post('/search', search.search);
+app.post('/csvExport', search.csvExport);
 
 
 var maintenance = require('./maintenance');

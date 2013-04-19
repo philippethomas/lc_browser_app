@@ -196,15 +196,34 @@ ElasticSearcher.prototype.priorCrawlsAndDocs = function(crawlType, callback){
 
 
 
+//----------
+ElasticSearcher.prototype.doctypes = function(callback){
+  var qryObj = {
+    "query" : { "match_all" : { } },
+    "facets" : { "doctypes" : { "terms" : {"field":"doctype", "all_terms":true} } },
+  };
+  var cmd = ESClient.search('las_idx,shp_idx,img_idx,sgy_idx', qryObj);
+  cmd.exec(function(err, data){
+    if(err){
+      callback(error);
+    }else{
 
+      data = JSON.parse(data);
+      if (data.error){
+	console.log(data.error);
+        callback(data.error,[]);
+      }else{
+	var doctypes = [];
+	
+	//TODO fill in this behavior when we get more doctypes
+	console.log(data.facets.doctypes.terms);
 
+	callback(null, { doctypes: doctypes });
+      }
+    }
+  });
 
-
-
-
-
-
-
+}
 
 
 
@@ -227,7 +246,7 @@ ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callba
   };
 
   //===
-  console.log(qryObj);
+  //console.log(qryObj);
   //===
 
   var cmd = ESClient.search(indices, qryObj);

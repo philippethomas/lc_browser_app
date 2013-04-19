@@ -1,19 +1,24 @@
 extends ../layout
 
+
 block content
 
-  #accord_petra.accordion
-
+  #ep_files_accordion.accordion
 
     .accordion-group
       .accordion-heading
-        a.accordion-toggle(data-toggle='collapse', data-parent='#accord_petra', href='#collapseOne')
-          | Crawl Setup
-      #collapseOne.accordion-body.collapse
+      #ep_files_collapse.accordion-body.collapse
         .accordion-inner
           include crawl_form
 
+  .row-fluid
 
-  include es_index
+    .span3.well 
+      p Petra Project Summary
 
+    .row-fluid
 
+    ul#petra_list
+
+    each doc in searchResults
+      li= doc.guid+'  <--------->   '+doc.crawled

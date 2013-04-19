@@ -22,7 +22,7 @@ jQuery(function($){
 
       placeholderCrawl($this.serializeArray());
   
-      $.post('/save_and_run', $this.serialize() , function(data, status, jqXHR){
+      $.post('/ep_files_crawl', $this.serialize() , function(data, status, jqXHR){
         //console.log(status);
       });
 

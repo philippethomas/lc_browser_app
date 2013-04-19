@@ -1,7 +1,6 @@
 var createHash = require('crypto').createHash
 
-exports.list = function(req, res){
-
+exports.stats = function(req, res){
 
   AppES.priorCrawlsAndDocs('ep_files', function(error, result){
     if(error){
@@ -30,7 +29,7 @@ exports.flash = function(req, res){
 */
 
 
-exports.save_and_run = function(req, res){
+exports.crawl = function(req, res){
   var app = require('./app').app;
 
   var label = req.body.label || 'unlabeled';
@@ -70,8 +69,8 @@ exports.save_and_run = function(req, res){
     cs_max: cs_max,
   }
 
-  // We always write to ElasticSearch in the browser app, but leave the option
-  // just in case (the command line utility has a choice).
+  // We always write to ElasticSearch in the browser app, but... 
+  // leave the option just in case (the command line utility has a choice).
   if (opts.write_es){
 
     opts.doctype = 'ep_files_crawl';
@@ -83,7 +82,7 @@ exports.save_and_run = function(req, res){
 	console.log(error);
       }else{
 	if (result.ok){
-	  opts.app = app; // hijack app's to use its EventEmitter behavior
+	  opts.app = app; // hijack "app" to use its EventEmitter behavior
 	  var scanner = require('lc_file_crawlers/scanner.js');
 	  scanner.scan(opts);
 	}

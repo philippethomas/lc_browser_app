@@ -1,55 +1,99 @@
 jQuery(function($){
 
+  //var perX = parseInt($.ajax({
+  //  type: 'GET',
+  //  url: '/perPage',
+  //  async: false
+  //}).responseText);
+
   /*
-  $('#search').submit(function(){
-    console.log('search got focus');
-    location.href = "/search"
+  $('#csv').submit( function(e){
+    $('#spinner').show(); 
+    e.preventDefault();
+
+    $.post('/csvExport', {}, function(data){
+
+      console.log(data);
+    })
+    .done(function(){
+      $('#csv').unbind('submit').submit();
+    });
+
+    return false;
   });
   */
 
-  //$('#search').click(function(e){
-  //$('#dumb').click(function(e){
-  $('#search').submit(function(e){
-    console.log('search form submitted');
-    $('.block-content').hide();
-    $('.block-search').show();
+
+
+
+
+
+
+
+  $('#search').submit( function(e){
+    $('#spinner').show(); // gets hidden on rendering the index page
     $('#crawlSetup').hide();
-    $('ul.nav li').removeClass('active');
-
-    //show search content
-    //hide crawl setup button
-    //deselect navbar item
-    
     e.preventDefault();
-
-    //spinner show
-
-    var formData = $(this).serialize();
-      
-    //$.post('/ajaxSearch', $(this).serialize() , function(data){
-    $.post('/ajaxSearch', formData , function(data){
-      console.log(data);
-      $('#results').append(data.docs[0].guid);
-
-      $('#pager').bootpag({
-	total: data.total/2
-      }).on("page", function(event, num){
-	console.log('=============='+num);
-      });
-
-      //spinner hide
-    }); 
-
-      
+    this.submit();
   });
 
 
 
+  $('#pager').on("page", function(event, num){
+    $('#spinner').show();
 
+    var perPage = 10; //should match what's in controller
 
+    var newFrom = (num * perPage) - perPage;
 
+    var pageData = {
+      from: newFrom
+    };
+
+    $.post('/ajaxSearch', pageData, function(data){
+
+      var showFrom = newFrom + 1;
+      var showEnd = showFrom - 1  + data.docs.length;
+
+      if (data.docs.length === 1){
+        $('#summary').text('Showing '+ showEnd + ' of ' + data.total);
+      }else if (data.docs.length < perPage){
+        $('#summary').text('Showing '+ showFrom + ' through ' + data.docs.length + ' of ' + data.total);
+      }else{
+        $('#summary').text('Showing '+ showFrom + ' through ' + showEnd + ' of ' + data.total);
+      }
+
+      replaceSearchResults(data.docs);
+
+    });
+
+    $('#spinner').hide();
+
+  });
 
 
 });
+
+
+function replaceSearchResults(docs){
+  $('#results tr').remove();
+
+  $('#results tbody').append('<tr> <th>label</th> <th>path</th> <th>identifier</th> <th>details</th>')
+
+  docs.forEach( function(doc){
+    var row = '<tr id="'+doc.guid+'" class='+doc.doctype+'>'+
+    '<td>'+doc.label+'</td>'+
+    '<td>'+doc.fullpath+'</td>'+
+    '<td>'+doc.uwi+'</td>'+
+    '<td>'+doc.curves+'</td>'+
+    '</tr>'
+    $('#results tbody').append(row);
+  });
+
+}
+
+
+
+
 
 
