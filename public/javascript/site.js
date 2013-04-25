@@ -24,8 +24,12 @@ jQuery(function($){
   var socket = io.connect('http://localhost');
 
   socket.on('lasdoc', function(doc){
-    //$('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
-    $('#search_results').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    //$('#search_results').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+  });
+
+  socket.on('sgydoc', function(doc){
+    $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
   });
 
 

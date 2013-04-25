@@ -67,6 +67,7 @@ var maintenance = require('./maintenance');
 app.get('/maintenance/indexInit', maintenance.indexInit);
 app.get('/maintenance/indexStatus', maintenance.indexStatus);
 app.get('/maintenance/indexMapping', maintenance.indexMapping);
+//app.get('/maintenance/purge/:idx', maintenance.purge
 
 
 app.configure('development', function(){
@@ -82,6 +83,9 @@ app.on('lasdoc', function(data){
   io.sockets.emit('lasdoc', data);
 });
 
+app.on('sgydoc', function(data){
+  io.sockets.emit('sgydoc', data);
+});
 
 
 

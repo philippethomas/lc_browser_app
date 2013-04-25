@@ -3,6 +3,7 @@ var nimble = require('nimble');
 var path = require('path');
 var fs = require('fs');
 var S = require('string');
+var scanner = require('lc_file_crawlers/scanner.js');
 
 exports.search = function(req, res){
 
@@ -37,23 +38,18 @@ exports.search = function(req, res){
 //}
 
 
-//----------
+/**
+ * Simplest possible CSV file download--it's just a string. This avoids
+ * worrying about temp file clean up, but could eat memory. Also, this will
+ * break if the search options allow more than one doctype at a time.
+ * (would need to process one file per doctype and send zip like the Rails app)
+ */
 exports.csvExport = function(req, res){
   var idx = req.session.idx;
   var query = req.session.query; 
   var from = 0;
   var size = 100;
 
-  //AppES.doctypes(function(error, result){
-    //console.log(result);
-  //});
-
-  //1. wrap a bunch of doSearches for each doctype.
-  //2. if there's only one doctype, send the file directly
-  //3. if there's more than one, process each each doctype, writing
-  //   a temp file for each one
-  //4. zip them all up and send
-  //5. delete temps 
 
   AppES.doSearch(idx, from, size, query, function(error, result){
     if(error){
@@ -61,52 +57,15 @@ exports.csvExport = function(req, res){
       res.end();
     }else{
 
-      //TODO this only works with LAS, expand!!!
+      var docKeys = result.docs[0].doctype.toUpperCase() + '_KEYS';
+      var csvString = eval(docKeys).join(',')+'\r\n';
 
-      //var workDir = process.env.TMP;
-      //var csvPath = path.join(workDir, 'las_'+new Date().getTime()+'.csv');
-
-      syncWriteCSV(result.docs, function(error, result){
-	if(error){
-	  console.error('Problem writing CSV file: '+error);
-	}else{
-	  res.attachment('export.csv');
-	  res.send(result);
-	}
+      result.docs.forEach(function(doc){
+        csvString += scanner.csvRowString(doc);
       });
-
-
-      /*
-      nimble.series([
-
-	function(callback){
-
-	  syncWriteCSV(csvPath, result.docs, function(error, result){
-	    if(error){
-	      console.error('Problem writing CSV file: '+error);
-	    }else{
-	      console.log('RESULT========='+result);
-	      res.attachment('export.csv');
-	      res.send(result);
-	    }
-	  });
-	  callback();
-	},
-
-	function(callback){
-	  fs.unlink(csvPath, function (err) {
-	    if (err) throw err;
-	    console.log('successfully deleted '+csvPath);
-	  });
-	  
-	  //res.attachment('export.csv');
-	  //res.sendfile(csvPath);
-	  callback();
-	}
-
-	]);
-      */
-
+      
+      res.attachment('export.csv');
+      res.send(csvString);
 
     }
   });
@@ -126,28 +85,9 @@ function syncWriteCSV(docs, callback){
   docs.forEach(function(doc){
     var a = [];
 
-    LAS_KEYS.forEach(function(key){
-      var val = doc[key];
-      if (val === undefined){
-	console.log('Error, Undefined document key: '+key);
-      }else if (val === null){
-	a.push(null);
-      }else if (key === 'cloud'){
-	a.push('(excluded)');
-      }else{
-	val = S(val).trim().s;
-	val = S(val).replaceAll('"', '""').s ;
-	val = '"'+val+'"';
-	a.push(val);
-      }
-    });
+    var bigString = scanner.csvRowString(doc);
+    console.log(bigString)
 
-    bigString += a.join(',')+'\r\n';
-
-    //var line = a.join(',')+'\r\n';
-    //fs.appendFileSync(csvPath, line, 'UTF-8', function (err) {
-    //  if (err) throw err;
-    //});
     
   });
 

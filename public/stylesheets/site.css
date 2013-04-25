@@ -45,9 +45,11 @@ label.error {
   margin-top: 3px;
 }
 
-.doc.las{
+.las{
   color: red;
-  background: #feefff;
+}
+.sgy{
+  color: blue;
 }
 
 #pager{
