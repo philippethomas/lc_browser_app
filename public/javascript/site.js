@@ -32,6 +32,9 @@ jQuery(function($){
     $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
   });
 
+  socket.on('walkerDone', function(n){
+    console.log('received a walkerDone event!');
+  });
 
 
 });

@@ -22,14 +22,48 @@ jQuery(function($){
     return false;
   });
   */
+  
+  var modalWidth = $(window).width() * 0.80 + 'px';
+  var modalHeight = $(window).height() * 0.80 + 'px';
+  var modalLeft = $(window).width() * 0.10 + 'px';
+  var modalTop = $(window).height() * 0.10 + 'px';
+  var modalBodyHeight = $(window).height() * 0.80 - 100 + 'px';
+
+  $('#modalDocDetail').css(
+      { 
+	'width': modalWidth,
+        'height': modalHeight,
+        'max-height': modalHeight,
+        'left': modalLeft,
+        'top': modalTop,
+        'margin': '0 auto' 
+      }
+  );
+
+  $('#modalDocDetail .modal-body').css(
+      { 
+	'height': modalBodyHeight, 
+	'max-height': modalBodyHeight
+      }
+  );
+
+  /** **/
+  $('table tr').click(function(a){
+    var guid = $(this).attr('id');
+    var options = {
+      toggle:true,
+      remote:'/ajaxGetDoc/'+guid
+    }
+    $('#modalDocTitle').text('Details for Document ID: '+guid);
+    $('#modalDocDetail').modal(options)
+  });
 
 
 
 
 
 
-
-
+  /** **/
   $('#search').submit( function(e){
     $('#spinner').show(); // gets hidden on rendering the index page
     $('#crawlSetup').hide();

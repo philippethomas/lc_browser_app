@@ -59,6 +59,7 @@ app.post('/kingdom_crawl', kingdom.crawl);
 
 var search = require('./search');
 app.post('/ajaxSearch', search.ajaxSearch);
+app.get('/ajaxGetDoc/:id', search.ajaxGetDoc);
 app.post('/search', search.search);
 app.post('/csvExport', search.csvExport);
 
@@ -87,7 +88,9 @@ app.on('sgydoc', function(data){
   io.sockets.emit('sgydoc', data);
 });
 
-
+app.on('walkerDone', function(data){
+  io.sockets.emit('walkerDone', data);
+});
 
 
 module.exports.app = app;

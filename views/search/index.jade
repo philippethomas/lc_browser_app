@@ -3,6 +3,17 @@ extends ../layout
 
 block content
 
+  #modalDocDetail.modal.hide.fade
+    .modal-header
+      button.close(type='button', data-dismiss='modal')
+      p.small-orange#modalDocTitle
+
+    .modal-body
+
+    .modal-footer
+      button.btn(data-dismiss='modal') Close
+  
+
 
   mixin arow(doc)
     tr(class=doc.doctype, id=doc.guid)

@@ -3,7 +3,9 @@ var nimble = require('nimble');
 var path = require('path');
 var fs = require('fs');
 var S = require('string');
+var util = require('util');
 var scanner = require('lc_file_crawlers/scanner.js');
+
 
 exports.search = function(req, res){
 
@@ -19,7 +21,7 @@ exports.search = function(req, res){
 
   AppES.doSearch(idx, from, size, query, function(error, result){
     if(error){
-      console.log(error);
+      util.debug(error);
     }else{
       res.render('search', { 
 	title: 'Search',
@@ -33,9 +35,6 @@ exports.search = function(req, res){
 }
 
 
-//exports.perPage = function(req, res){
-//  res.send("8");
-//}
 
 
 /**
@@ -53,7 +52,7 @@ exports.csvExport = function(req, res){
 
   AppES.doSearch(idx, from, size, query, function(error, result){
     if(error){
-      console.log(error);
+      util.debug(error);
       res.end();
     }else{
 
@@ -74,25 +73,39 @@ exports.csvExport = function(req, res){
 }
 
 
-//process docs and return a big csv string. This avoids writing and then having to
-//delete a temp file. Check out npm 'tmp' if this is too memory hoggy.
-function syncWriteCSV(docs, callback){
 
-  //ep_filesScanner.csvWriteLASHeader(csvPath);
 
-  var bigString = LAS_KEYS.join(',')+'\r\n';
+exports.ajaxGetDoc = function(req, res){
 
-  docs.forEach(function(doc){
-    var a = [];
+  var idx = 'las_idx,shp_idx,sgy_idx,img_idx';
+  var query = 'guid:'+req.params.id;
+  var from = 0;
+  var size = 1;
 
-    var bigString = scanner.csvRowString(doc);
-    console.log(bigString)
+  AppES.doSearch(idx, from, size, query, function(error, result){
+    if(error){
+      util.debug(error);
+      res.end();
+    }else{
 
+      var s = '<dl class="dl-horizontal">\r\n';
+      var doc = result.docs[0];
+      var keys = eval(doc.doctype.toUpperCase() + '_KEYS');
+      keys.forEach(function(k){
+
+
+      });
+      s += '</dl>\r\n';
+      
+
+
+
+      res.send(doc);
     
+
+      //res.send( { docs: result.docs, total: result.total } );
+    }
   });
-
-
-  callback(null, bigString)
 
 }
 
@@ -106,7 +119,7 @@ exports.ajaxSearch = function(req, res){
 
   AppES.doSearch(idx, from, size, query, function(error, result){
     if(error){
-      console.log(error);
+      util.debug(error);
       res.end();
     }else{
       res.send( { docs: result.docs, total: result.total } );
