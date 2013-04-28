@@ -1,60 +1,31 @@
 extends ../layout
 
-
 block content
 
   #modalDocDetail.modal.hide.fade
     .modal-header
       button.close(type='button', data-dismiss='modal')
-      p.small-orange#modalDocTitle
+      p.lead.modal-title#modalDocTitle
 
     .modal-body
 
     .modal-footer
       button.btn(data-dismiss='modal') Close
-  
 
 
-  mixin arow(doc)
-    tr(class=doc.doctype, id=doc.guid)
-      td= doc.label
-      td= doc.fullpath
-      td= doc.uwi
-      td= doc.curves
+  - if (total === 0)
+    include noResults
+
+  - else
+
+    - var type = docs[0].doctype
+
+    - if (type === 'las')
+      include lasTable
+
+    - if (type === 'sgy')
+      include sgyTable
 
 
-  .row-fluid#results
-    table.table.table-condensed.table-bordered.table-hover
-      th label
-      th path
-      th identifier
-      th details
-
-      each doc in docs
-        mixin arow(doc)
-
-
-  .row-fluid
-    .span7#summary
-      - var x = (total < size) ? total : size
-      - if(total === 0)
-        p.lead no results
-      - else
-        p.lead Showing 1 through #{x} of #{total}
-    
-
-    .span5
-      form#csv(action='/csvExport', method='post')
-        button.btn.pull-right#csv Export CSV
-
-      #pager
-  
-
-  script
-    var numPages = Math.ceil(#{total}/#{size});
-    $('#pager').bootpag({
-      total: numPages,
-      page: 1,
-      maxVisible: 5,
-      leaps:false
-    });
+    .well#summaryBox
+      include summaryAndCSV

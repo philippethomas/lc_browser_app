@@ -19,11 +19,12 @@ script
           each o in previousCrawls
             li
               a(href='#', guid=o.guid) 
+                - var crd = new Date(o.crawled).toFormat('YYYY-MMM-DD HH:MI:SS PP')
+                span.badge.badge-warning= crd
+                span=' ... '
                 code= o.label
-                span=' '
+                span=' ... '
                 span.mono= o.fw_root
-                span=' '
-                span.small-orange= o.crawled
               
 
   .span10

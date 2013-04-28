@@ -22,12 +22,15 @@ jQuery(function($){
     return false;
   });
   */
-  
-  var modalWidth = $(window).width() * 0.80 + 'px';
-  var modalHeight = $(window).height() * 0.80 + 'px';
-  var modalLeft = $(window).width() * 0.10 + 'px';
-  var modalTop = $(window).height() * 0.10 + 'px';
-  var modalBodyHeight = $(window).height() * 0.80 - 100 + 'px';
+ 
+
+
+  // adjustments for dynamically sized model dialog
+  var modalWidth = $(window).width() * 0.70 + 'px';
+  var modalHeight = $(window).height() * 0.70 + 'px';
+  var modalLeft = $(window).width() * 0.15 + 'px';
+  var modalTop = $(window).height() * 0.15 + 'px';
+  var modalBodyHeight = $(window).height() * 0.70 - 130 + 'px';
 
   $('#modalDocDetail').css(
       { 
@@ -47,23 +50,22 @@ jQuery(function($){
       }
   );
 
-  /** **/
+
+
+  // click a search result table row, get a modal popup
   $('table tr').click(function(a){
     var guid = $(this).attr('id');
-    var options = {
-      toggle:true,
-      remote:'/ajaxGetDoc/'+guid
-    }
-    $('#modalDocTitle').text('Details for Document ID: '+guid);
-    $('#modalDocDetail').modal(options)
+    if (guid === undefined) { return };
+    var pageData = { guid: guid };
+    $.post('/ajaxGetDoc', pageData, function(data){
+      $('#modalDocDetail .modal-body').html(data.body);
+      $('#modalDocTitle').text(data.title);
+    });
+    $('#modalDocDetail').modal('toggle')
   });
 
 
-
-
-
-
-  /** **/
+  // hijack event just to show spinner while searching
   $('#search').submit( function(e){
     $('#spinner').show(); // gets hidden on rendering the index page
     $('#crawlSetup').hide();
@@ -73,6 +75,7 @@ jQuery(function($){
 
 
 
+  // reload table via ajax pagination
   $('#pager').on("page", function(event, num){
     $('#spinner').show();
 
@@ -80,9 +83,7 @@ jQuery(function($){
 
     var newFrom = (num * perPage) - perPage;
 
-    var pageData = {
-      from: newFrom
-    };
+    var pageData = { from: newFrom };
 
     $.post('/ajaxSearch', pageData, function(data){
 
@@ -91,13 +92,31 @@ jQuery(function($){
 
       if (data.docs.length === 1){
         $('#summary').text('Showing '+ showEnd + ' of ' + data.total);
-      }else if (data.docs.length < perPage){
-        $('#summary').text('Showing '+ showFrom + ' through ' + data.docs.length + ' of ' + data.total);
-      }else{
-        $('#summary').text('Showing '+ showFrom + ' through ' + showEnd + ' of ' + data.total);
+      } else if (data.docs.length < perPage) {
+        $('#summary').text('Showing '+ showFrom + ' through ' + 
+	  data.docs.length + ' of ' + data.total);
+      } else {
+        $('#summary').text('Showing '+ showFrom + ' through ' + 
+	  showEnd + ' of ' + data.total);
       }
 
-      replaceSearchResults(data.docs);
+      $('#results tr').remove();
+
+      // add table header 
+      var h = '<tr>';
+      data.header.forEach(function(key){
+	h += '<th>'+ key +'</th>';
+      });
+      h += '</tr>';
+      $('#results tbody').append(h);
+
+      // add table rows
+      data.docs.forEach(function(doc){
+	var r = '<tr id="'+doc.id+'" class='+doc.doctype+'>';
+	data.header.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
+	r += '</tr>'
+	$('#results tbody').append(r);
+      });
 
     });
 
@@ -107,27 +126,4 @@ jQuery(function($){
 
 
 });
-
-
-function replaceSearchResults(docs){
-  $('#results tr').remove();
-
-  $('#results tbody').append('<tr> <th>label</th> <th>path</th> <th>identifier</th> <th>details</th>')
-
-  docs.forEach( function(doc){
-    var row = '<tr id="'+doc.guid+'" class='+doc.doctype+'>'+
-    '<td>'+doc.label+'</td>'+
-    '<td>'+doc.fullpath+'</td>'+
-    '<td>'+doc.uwi+'</td>'+
-    '<td>'+doc.curves+'</td>'+
-    '</tr>'
-    $('#results tbody').append(row);
-  });
-
-}
-
-
-
-
-
 

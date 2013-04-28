@@ -81,7 +81,13 @@ jQuery(function($){
 //----------
 // append a new row in the list to show user something got saved (if they look)
 function placeholderCrawl(a){
-  var li = '<li><a href="#"> <code>'+ a[0].value +'</code><span> </span><span class="mono">'+a[1].value+'</span><span> </span><span class="small-orange">(refresh page for saved crawls)</span></a></li>';
+  var li = '<li><a href="#">'+ 
+    '<span class="small-orange">(refresh for saved crawls)</span>'+
+    '<span> ... </span>'+
+    '<code>'+ a[0].value +'</code>'+
+    '<span> ... </span>'+
+    '<span class="mono">' + a[1].value +'</span>'+
+    '</a></li>';
   
   $('#previousCrawlList').append(li);
 };

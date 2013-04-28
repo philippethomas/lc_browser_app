@@ -1,0 +1,17 @@
+mixin arow(doc)
+  tr(class=doc.doctype, id=doc.guid)
+    td= doc.label
+    td= doc.fullpath
+    td= doc.cdp_count
+    td= doc.size
+
+
+.row-fluid#results
+  table.table.table-condensed.table-bordered.table-hover
+    th label
+    th path
+    th cdp count
+    th size
+
+    each doc in docs
+      mixin arow(doc)

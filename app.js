@@ -7,7 +7,7 @@ var server = app.listen(3000, function(){
 var io = require('socket.io').listen(server);
 //io.set('transports', [ 'jsonp-polling' ]);
 //var expressValidator = require('express-validator');
-
+var dateUtils = require('date-utils');
 
 // Configuration
 var store  = new express.session.MemoryStore;
@@ -59,9 +59,10 @@ app.post('/kingdom_crawl', kingdom.crawl);
 
 var search = require('./search');
 app.post('/ajaxSearch', search.ajaxSearch);
-app.get('/ajaxGetDoc/:id', search.ajaxGetDoc);
+app.post('/ajaxGetDoc', search.ajaxGetDoc);
 app.post('/search', search.search);
 app.post('/csvExport', search.csvExport);
+app.get('/search',search.search);
 
 
 var maintenance = require('./maintenance');

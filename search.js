@@ -7,6 +7,9 @@ var util = require('util');
 var scanner = require('lc_file_crawlers/scanner.js');
 
 
+/**
+ *
+ */
 exports.search = function(req, res){
 
   var idx = req.body.idx;
@@ -35,6 +38,76 @@ exports.search = function(req, res){
 }
 
 
+/**
+ *
+ */
+exports.ajaxGetDoc = function(req, res){
+
+  var idx = 'las_idx,shp_idx,sgy_idx,img_idx';
+  var query = 'guid:'+req.body.guid;
+  var from = 0;
+  var size = 1;
+
+  AppES.doSearch(idx, from, size, query, function(error, result){
+    if(error){
+      util.debug(error);
+      res.end();
+    }else{
+      var body = '<dl class="dl-horizontal">';
+      var doc = result.docs[0];
+      var keys = eval(doc.doctype.toUpperCase() + '_KEYS');
+
+      keys.forEach(function(k){
+	if (k === 'cloud') {
+	  body += '<dt>'+k+'</dt>'
+	  body += '<dd>...</dd>'
+	  body += '<pre>'+doc[k]+'</pre>'
+	} else {
+	  var val = (doc[k] === undefined) ? '' : doc[k];
+	  body += '<dt>'+k+'</dt>'
+	  body += '<dd>'+val+'</dd>'
+	}
+      });
+      body += '</dl>';
+      
+      var title = 'Document Details for '+doc.basename;
+
+      res.send( { 
+	body: body, 
+	title: title 
+      } );
+    }
+  });
+
+}
+
+
+/**
+ *
+ */
+exports.ajaxSearch = function(req, res){
+
+  var idx = req.session.idx;
+  var query = req.session.query; 
+  var from = req.body.from; // from the pager
+  var size = req.session.size;
+
+  AppES.doSearch(idx, from, size, query, function(error, result){
+    if(error){
+      util.debug(error);
+      res.end();
+    }else{
+      var header = [ 'label', 'fullpath', 'uwi', 'company', 'curves' ];
+
+      res.send( { 
+	docs: result.docs, 
+	total: result.total, 
+	header: header
+      } );
+    }
+  });
+
+}
 
 
 /**
@@ -69,64 +142,4 @@ exports.csvExport = function(req, res){
     }
   });
 
-
 }
-
-
-
-
-exports.ajaxGetDoc = function(req, res){
-
-  var idx = 'las_idx,shp_idx,sgy_idx,img_idx';
-  var query = 'guid:'+req.params.id;
-  var from = 0;
-  var size = 1;
-
-  AppES.doSearch(idx, from, size, query, function(error, result){
-    if(error){
-      util.debug(error);
-      res.end();
-    }else{
-
-      var s = '<dl class="dl-horizontal">\r\n';
-      var doc = result.docs[0];
-      var keys = eval(doc.doctype.toUpperCase() + '_KEYS');
-      keys.forEach(function(k){
-
-
-      });
-      s += '</dl>\r\n';
-      
-
-
-
-      res.send(doc);
-    
-
-      //res.send( { docs: result.docs, total: result.total } );
-    }
-  });
-
-}
-
-
-exports.ajaxSearch = function(req, res){
-
-  var idx = req.session.idx;
-  var query = req.session.query; 
-  var from = req.body.from; // set in the pager
-  var size = req.session.size;
-
-  AppES.doSearch(idx, from, size, query, function(error, result){
-    if(error){
-      util.debug(error);
-      res.end();
-    }else{
-      res.send( { docs: result.docs, total: result.total } );
-    }
-  });
-
-}
-
-
-
