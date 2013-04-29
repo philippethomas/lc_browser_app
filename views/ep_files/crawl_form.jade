@@ -83,7 +83,7 @@ script
                 | Write results to CSV 
                 i (saved as time-stamped files in Work Directory)
 
-        hr
+        p
 
         .row-fluid
           .span2.offset2.bumper
@@ -96,6 +96,7 @@ script
               | Include ZIP Archives
 
 
+        hr
         .row-fluid
           .span2.offset2.bumper
             label.checkbox
@@ -107,6 +108,7 @@ script
               |  Deep SEGY Scan
 
 
+        hr
         .row-fluid 
           .span2.offset2
             label.checkbox
@@ -118,6 +120,7 @@ script
               |  Minimum Size Threshold (MB)
 
 
+        hr
         .row-fluid 
           .span2.offset2
             label.checkbox
@@ -129,5 +132,5 @@ script
               |  Shapefile Feature Count
 
           .span3
-            button#ep_crawl_btn.btn(type='submit') Save & Run Crawl
+            button#ep_crawl_btn.btn.btn-warning(type='submit') Save & Run Crawl
 
