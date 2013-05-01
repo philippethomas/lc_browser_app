@@ -1,11 +1,3 @@
-- filters = [] 
-//- filters.push({ show: "Search All", value: "las_idx,shp_idx,sgy_idx,img_idx" })
-- filters.push({ show: "LAS Files", value: "las_idx" }) 
-- filters.push({ show: "ESRI Shapefiles", value: "shp_idx" })
-- filters.push({ show: "SEGY Files", value: "sgy_idx" })
-- filters.push({ show: "Imagery Files", value: "img_idx" })
-
-
 .navbar.navbar-fixed-top
   .navbar-inner
     .container
@@ -40,7 +32,7 @@
           span.add-on
             i.icon-filter
           select(name='idx').span2
-            for f in filters
+            for f in searchFilters
               option(value= f.value)= f.show
           input(name='query', type='search', placeholder='Search')
           span.add-on

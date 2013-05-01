@@ -9,6 +9,7 @@ var io = require('socket.io').listen(server);
 //var expressValidator = require('express-validator');
 var dateUtils = require('date-utils');
 
+
 // Configuration
 var store  = new express.session.MemoryStore;
 app.configure(function(){
@@ -25,6 +26,15 @@ app.configure(function(){
   app.use(express.static(__dirname + '/public'));
 })
 
+//collect all available search filters, make them available globally
+var fields = require('lc_file_crawlers/fields.js');
+var ep_files_filters = require('lc_file_crawlers/fields.js').navSearchFilters;
+var sf = [];
+var searchFilters = sf.concat(ep_files_filters);
+app.locals({
+  searchFilters: searchFilters,
+  fields: fields
+});
 
 
 
@@ -32,7 +42,6 @@ app.configure(function(){
 //check out https://github.com/flatiron/nconf
 var es = require('./models/elasticsearcher.js');
 AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
-
 
 
 var home = require('./home');
@@ -62,7 +71,7 @@ app.post('/ajaxSearch', search.ajaxSearch);
 app.post('/ajaxGetDoc', search.ajaxGetDoc);
 app.post('/search', search.search);
 app.post('/csvExport', search.csvExport);
-app.get('/search',search.search);
+//app.get('/search',search.search);
 
 
 var maintenance = require('./maintenance');
@@ -92,6 +101,8 @@ app.on('sgydoc', function(data){
 app.on('walkerDone', function(data){
   io.sockets.emit('walkerDone', data);
 });
+
+
 
 
 module.exports.app = app;

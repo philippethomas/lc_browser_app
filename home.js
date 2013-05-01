@@ -1,3 +1,5 @@
 exports.index = function(req, res){
-  res.render('index', { title: 'LogicalCat Home' });
+  res.render('index', { 
+    title: 'LogicalCat Home'
+  });
 };
