@@ -1,31 +1,6 @@
 jQuery(function($){
 
-  //var perX = parseInt($.ajax({
-  //  type: 'GET',
-  //  url: '/perPage',
-  //  async: false
-  //}).responseText);
-
-  /*
-  $('#csv').submit( function(e){
-    $('#spinner').show(); 
-    e.preventDefault();
-
-    $.post('/csvExport', {}, function(data){
-
-      console.log(data);
-    })
-    .done(function(){
-      $('#csv').unbind('submit').submit();
-    });
-
-    return false;
-  });
-  */
- 
-
-
-  // adjustments for dynamically sized model dialog
+  // adjustments for dynamically sized modal dialog
   var modalWidth = $(window).width() * 0.70 + 'px';
   var modalHeight = $(window).height() * 0.70 + 'px';
   var modalLeft = $(window).width() * 0.15 + 'px';
@@ -56,8 +31,8 @@ jQuery(function($){
   $('table tr').click(function(a){
     var guid = $(this).attr('id');
     if (guid === undefined) { return };
-    var pageData = { guid: guid };
-    $.post('/ajaxGetDoc', pageData, function(data){
+    var arg = { guid: guid };
+    $.post('/ajaxGetDoc', arg, function(data){
       $('#modalDocDetail .modal-body').html(data.body);
       $('#modalDocTitle').text(data.title);
     });
@@ -102,18 +77,18 @@ jQuery(function($){
 
       $('#results tr').remove();
 
-      // add table header 
+      // table header 
       var h = '<tr>';
-      data.header.forEach(function(key){
+      data.showFields.forEach(function(key){
 	h += '<th>'+ key +'</th>';
       });
       h += '</tr>';
       $('#results tbody').append(h);
 
-      // add table rows
+      // table rows
       data.docs.forEach(function(doc){
 	var r = '<tr id="'+doc.id+'" class='+doc.doctype+'>';
-	data.header.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
+	data.realFields.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
 	r += '</tr>'
 	$('#results tbody').append(r);
       });

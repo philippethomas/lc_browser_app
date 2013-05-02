@@ -11,20 +11,9 @@ block content
         .accordion-inner
           include crawl_form
 
-  .row-fluid
+  include stats
 
-    .span3.well 
-      p LAS Summary
-    .span3.well 
-      p SEGY Summary
-    .span3.well 
-      p IMG Summary
-    .span3.well 
-      p SHP Summary
+  include scroller
 
-    .row-fluid
+  
 
-    ul#ep_list
-
-    each doc in searchResults
-      li= doc.guid+'  <--------->   '+doc.crawled

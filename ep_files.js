@@ -2,22 +2,33 @@ var createHash = require('crypto').createHash;
 var scanner = require('lc_file_crawlers/scanner.js');
 var util = require('util');
 
-exports.stats = function(req, res){
+exports.index = function(req, res){
 
-  AppES.priorCrawlsAndDocs('ep_files', function(error, result){
+  AppES.previousCrawls('ep_files', function(error, result){
     if(error){
       console.log(error);
     }else{
       res.render('ep_files', { 
 	title: 'E&P Files',
-	previousCrawls: result.previousCrawls,
-	searchResults: result.searchResults
+	previousCrawls: result.previousCrawls
       });
     }
-
   });
 
 };
+
+
+/** called via ajax to populate file stats stuff */
+exports.stats = function(req, res){
+  var doctype = req.body.doctype; 
+  AppES.fileStats(doctype, function(error, result){
+    if(error){
+      console.log(error);
+    }else{
+      console.log(result);
+    }
+  });
+}
 
 
 /*
@@ -31,6 +42,11 @@ exports.flash = function(req, res){
 */
 
 
+/**
+ * Invoke the scanner of the ep_files crawler cli with supplied args.
+ * We hijack "app" to use its EventEmitter behavior to send real-time
+ * results and a "work done" message.
+ */
 exports.crawl = function(req, res){
   var app = require('./app').app;
 
@@ -71,7 +87,6 @@ exports.crawl = function(req, res){
     cs_max: cs_max,
   }
 
-
   opts.doctype = 'ep_files_crawl';
   opts.guid = guidify(JSON.stringify(opts));
   opts.crawled = new Date().toISOString();
@@ -81,7 +96,7 @@ exports.crawl = function(req, res){
       util.debug(error);
     } else {
       if (result.ok) {
-	opts.app = app; // hijack "app" to use its EventEmitter behavior
+	opts.app = app; 
 	scanner.scan(opts);
       }
     }
@@ -90,6 +105,8 @@ exports.crawl = function(req, res){
   res.end();
 
 };
+
+
 
 
 //----------

@@ -1,6 +1,7 @@
 var nimble = require('nimble');
 var ElasticSearchClient = require('elasticsearchclient');
 var util = require('util');
+var humanize = require('humanize');
 
 
 ElasticSearcher = function(opts){
@@ -149,6 +150,51 @@ ElasticSearcher.prototype.indexMapping = function(callback){
 /**
  * Get previousCrawls and some stats for this particular doctype
  * Previous crawls are displayed on the (hidden) crawl setup form
+ *
+ * http://localhost:9200/lc_app_idx/_search?doctype:ep_files_crawl
+ *
+ * @param {String} crawlType [ep_files, petra, discovery, kingdom]
+ * @return {String} 
+ */
+ElasticSearcher.prototype.previousCrawls = function(crawlType, callback){
+  var self = this;
+  switch(crawlType){
+    case 'ep_files':
+      crawlQuery = 'doctype:ep_files_crawl';
+      break;
+    case 'petra':
+      query = 'pet_project';
+      break;
+    case 'discovery':
+      query = 'ggx_project';
+      break;
+    case 'kingdom':
+      query = 'tks_project';
+      break;
+    default:
+      util.debug('Sorry, did not recognize type: '+crawlType);
+      return;
+  }
+
+  self.doSearch('lc_app_idx', 0, 10, crawlQuery, function(error, result){
+    if(error){
+      util.debug(error);
+      callback(error);
+    }else{
+      result.docs.forEach(function(doc){
+        doc['crawled'] = humanize.date('Y-M-d h:i:s A', new Date(doc['crawled'])); 
+      });
+      
+      callback(null,{ previousCrawls: result.docs });
+    }
+  });
+}
+
+
+
+/**
+ * Get previousCrawls and some stats for this particular doctype
+ * Previous crawls are displayed on the (hidden) crawl setup form
  * Doctype-specific stats are displayed on the index
  *
  * http://localhost:9200/lc_app_idx/_search?doctype:ep_files_crawl
@@ -156,20 +202,37 @@ ElasticSearcher.prototype.indexMapping = function(callback){
  * @param {String} crawlType [ep_files, petra, discovery, kingdom]
  * @return {String} 
  */
-ElasticSearcher.prototype.priorCrawlsAndDocs = function(crawlType, callback){
+ElasticSearcher.prototype.fileStats = function(doctype, callback){
+
+
   var self = this;
+  self.labelsForDoctype(doctype, function(error, result){
+    if(error){
+      callback(error);
+    }else{
+      callback(null,{ labels: result.labels });
+    }
 
-  var crawlIndices;
-  var crawlQuery;
-  var docIndices;
-  var docQuery;
+  })
 
+  //var crawlIndices;
+  //var crawlQuery;
+  //var docIndices;
+  //var docQuery;
+
+  /*
   switch(crawlType){
     case 'ep_files':
       crawlIndices = 'lc_app_idx';
       crawlQuery = 'doctype:ep_files_crawl';
       docIndices = 'las_idx,shp_idx,sgy_idx,img_idx'
       docQuery = 'doctype:las OR doctype:shp OR doctype:sgy OR doctype:img';
+
+      var qryObj = {
+	"query" : { "match_all" : { } },
+	"facets" : { "doctypes" : { "terms" : {"field":"doctype", "all_terms":true} } },
+      };
+
       break;
     case 'petra':
       query = 'pet_project';
@@ -184,28 +247,19 @@ ElasticSearcher.prototype.priorCrawlsAndDocs = function(crawlType, callback){
       util.debug('Sorry, did not recognize type: '+type);
       return;
   }
+  */
 
-
-  self.doSearch(crawlIndices, 0, 10, crawlQuery, function(error, result){
+  /*
+  self.doSearch(docIndices, 0, 20, docQuery, function(error, result){
     if(error){
-      util.debug(error);
       callback(error);
     }else{
-      ////
-      var previousCrawls = result.docs;
-
-      self.doSearch(docIndices, 0, 20, docQuery, function(error, result){
-	if(error){
-	  callback(error);
-	}else{
-	  ////
-	  callback(null,{ searchResults: result.docs, previousCrawls: previousCrawls });
-	}
-      });
-
-
+      callback(null,{ searchResults: result.docs, previousCrawls: previousCrawls });
     }
   });
+  */
+
+
 }
 
 
@@ -213,35 +267,26 @@ ElasticSearcher.prototype.priorCrawlsAndDocs = function(crawlType, callback){
 
 
 
-
-
-
-
-
-
-
-
-ElasticSearcher.prototype.doctypes = function(callback){
+ElasticSearcher.prototype.labelsForDoctype = function(doctype, callback){
   var qryObj = {
     "query" : { "match_all" : { } },
-    "facets" : { "doctypes" : { "terms" : {"field":"doctype", "all_terms":true} } },
+    "facets" : { "labels" : { "terms" : {"field":"label", "all_terms":true} } },
   };
-  var cmd = ESClient.search('las_idx,shp_idx,img_idx,sgy_idx', qryObj);
+  var idx = doctype+'_idx';
+  var cmd = ESClient.search(idx, qryObj);
   cmd.exec(function(err, data){
     if(err){
       callback(error);
     }else{
-
       data = JSON.parse(data);
       if (data.error){
 	util.debug(data.error);
         callback(data.error,[]);
       }else{
-	var doctypes = [];
-	
-	console.log(data.facets.doctypes.terms);
-
-	callback(null, { doctypes: doctypes });
+	var labels = nimble.map(data.facets.labels.terms, function(x){
+	  return x.term;
+	});
+	callback(null, { labels: labels });
       }
     }
   });

@@ -7,7 +7,7 @@ var server = app.listen(3000, function(){
 var io = require('socket.io').listen(server);
 //io.set('transports', [ 'jsonp-polling' ]);
 //var expressValidator = require('express-validator');
-var dateUtils = require('date-utils');
+//var humanize = require('humanize');
 
 
 // Configuration
@@ -26,14 +26,16 @@ app.configure(function(){
   app.use(express.static(__dirname + '/public'));
 })
 
-//collect all available search filters, make them available globally
-var fields = require('lc_file_crawlers/fields.js');
-var ep_files_filters = require('lc_file_crawlers/fields.js').navSearchFilters;
+
+//merge stuff together later after we get more crawlers
+//
+var docTemplates = require('lc_file_crawlers/docTemplates.js');
+var ep_files_filters = require('lc_file_crawlers/docTemplates.js').navSearchFilters;
 var sf = [];
 var searchFilters = sf.concat(ep_files_filters);
 app.locals({
   searchFilters: searchFilters,
-  fields: fields
+  docTemplates: docTemplates,
 });
 
 
@@ -46,11 +48,13 @@ AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 var home = require('./home');
 app.get('/', home.index);
+app.post('/ajaxPreviousCrawls', home.ajaxPreviousCrawls);
 
 
 var ep_files = require('./ep_files');
-app.get('/ep_files', ep_files.stats);
+app.get('/ep_files', ep_files.index);
 app.post('/ep_files_crawl', ep_files.crawl);
+app.post('/stats', ep_files.stats);
 
 var petra = require('./petra');
 app.get('/petra', petra.stats);
@@ -106,3 +110,4 @@ app.on('walkerDone', function(data){
 
 
 module.exports.app = app;
+module.exports.docTemplates = docTemplates;

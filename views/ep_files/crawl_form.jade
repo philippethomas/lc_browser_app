@@ -3,10 +3,6 @@ form validators. After testing jqBootStrapValidation I ended up using this one:
 http://alittlecode.com/files/jQuery-Validate-Demo/index.html
 It uses the older jQuery validate plugin even though it does odd things with labels. -->
 
-script 
-  var prevCrawls = !{JSON.stringify(previousCrawls)}
-
-
 
 .row-fluid
   .span2
@@ -19,8 +15,7 @@ script
           each o in previousCrawls
             li
               a(href='#', guid=o.guid) 
-                - var crd = new Date(o.crawled).toFormat('YYYY-MMM-DD HH:MI:SS PP')
-                span.badge.badge-warning= crd
+                span.badge.badge-warning= o.crawled
                 span=' ... '
                 code= o.label
                 span=' ... '
