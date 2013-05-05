@@ -56,23 +56,17 @@ jQuery(function($){
 
 
 
-  /** populate the previous crawls array */
-  var prevCrawls = [];
-  $('#crawlSetup').click(function(d){
-    var arg = { crawlType: "ep_files" };
-    $.post('/ajaxPreviousCrawls', arg, function(data){
-      prevCrawls = data.prevCrawls;
+  
+  /** click a prior crawl to auto-populate the form */
+  $('#previousCrawlList li a').click(function(e){
+    var guid = $(this).attr('guid')
+    $.post('/getCrawlDoc', {guid: guid}, function(data){
+      populateForm('#ep_crawl_form',data.crawl);
     });
-  })
-
-  /** click a prior crawl and auto-populate the form */
-  $('#previousCrawlList li').click(function(){
-    var i = $(this).index();
-    var c = prevCrawls[i];
-    if (c !== undefined){
-      populateForm('#ep_crawl_form',c);
-    }
   });
+
+
+
 
   /*
   $('#prevCrawlToggle').dblclick(function(){
@@ -80,6 +74,7 @@ jQuery(function($){
     $('#crawlSetup').click()
   });
   */
+
 
 
 
@@ -110,7 +105,7 @@ function placeholderCrawl(a){
     '<span class="mono">' + a[1].value +'</span>'+
     '</a></li>';
   
-  $('#previousCrawlList').append(li);
+  $('#previousCrawlList').prepend(li);
 };
 
 

@@ -181,11 +181,7 @@ ElasticSearcher.prototype.previousCrawls = function(crawlType, callback){
       util.debug(error);
       callback(error);
     }else{
-      result.docs.forEach(function(doc){
-        doc['crawled'] = humanize.date('Y-M-d h:i:s A', new Date(doc['crawled'])); 
-      });
-      
-      callback(null,{ previousCrawls: result.docs });
+      callback(null,{ previous: result.docs });
     }
   });
 }
@@ -199,7 +195,10 @@ ElasticSearcher.prototype.statsPerLabel = function(doctype, label, callback){
       "query" : 'doctype:' + doctype + ' AND label:' + label },
     },
     "facets" : { 
-      "crawledStats" : { "statistical" : {"field":"crawled"} } ,
+      "ctimeStats" : { "statistical" : {"field":"ctime"} } ,
+      "mtimeStats" : { "statistical" : {"field":"mtime"} } ,
+      "atimeStats" : { "statistical" : {"field":"atime"} } ,
+      "sizeStats" : { "statistical" : {"field":"size"} } ,
       "dupChecksums" : { "terms" : {"field":"checksum"} } 
     }
   };
@@ -223,19 +222,35 @@ ElasticSearcher.prototype.statsPerLabel = function(doctype, label, callback){
 	      if (x.count > 1){ return x.term }
 	    }), function(y){ return y });
 
-	var minDate = new Date(data.facets.crawledStats.min);
-	var maxDate = new Date(data.facets.crawledStats.max);
+        var ctimeMin = humanize.date('Y-M-d h:i:s A',
+	  new Date(data.facets.ctimeStats.min)); 
+        var ctimeMax = humanize.date('Y-M-d h:i:s A', 
+	  new Date(data.facets.ctimeStats.max)); 
+        var mtimeMin = humanize.date('Y-M-d h:i:s A',
+	  new Date(data.facets.mtimeStats.min)); 
+        var mtimeMax = humanize.date('Y-M-d h:i:s A', 
+	  new Date(data.facets.mtimeStats.max)); 
+        var atimeMin = humanize.date('Y-M-d h:i:s A',
+	  new Date(data.facets.atimeStats.min)); 
+        var atimeMax = humanize.date('Y-M-d h:i:s A', 
+	  new Date(data.facets.atimeStats.max)); 
 
-	/*
-	console.log('..................');
-	console.log(total);
-	console.log(dups);
-	console.log(minDate);
-	console.log(maxDate);
-	console.log('..................');
-	*/
 
-	callback(null, { minDate: minDate, doctype: doctype });
+	console.log(data.facets.sizeStats)
+
+	var o = {
+	  label: label,
+	  total: total,
+	  dups: dups,
+	  ctimeMin: ctimeMin,
+	  ctimeMax: ctimeMax,
+	  mtimeMin: mtimeMin,
+	  mtimeMax: mtimeMax,
+	  atimeMin: atimeMin,
+	  atimeMax: atimeMax
+	}
+
+	callback(null, o);
 
       }
     }

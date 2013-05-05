@@ -13,6 +13,14 @@
   text-align: right;
 }
 
+.center{
+  text-align: center;
+}
+
+.white{
+  background: white;
+}
+
 .rather-long{
   width:500px;
 }

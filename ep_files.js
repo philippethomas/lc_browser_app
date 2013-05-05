@@ -2,6 +2,7 @@ var createHash = require('crypto').createHash;
 var scanner = require('lc_file_crawlers/scanner.js');
 var util = require('util');
 var nimble = require('nimble');
+var humanize = require('humanize');
 
 exports.index = function(req, res){
 
@@ -9,9 +10,12 @@ exports.index = function(req, res){
     if(error){
       console.log(error);
     }else{
+      result.previous.forEach(function(x){
+	x['crawled'] = humanize.date('Y-M-d h:i:s A', new Date(x['crawled'])); 
+      });
       res.render('ep_files', { 
 	title: 'E&P Files',
-	previousCrawls: result.previousCrawls
+	previousCrawls: result.previous
       });
     }
   });
@@ -50,7 +54,6 @@ exports.stats = function(req, res){
 	      if(error){
 		console.log(error);
 	      }else{
-		console.log('-----'+label+'--------'+result.minDate);
 		master.push(result);
 		callback();
 	      }
@@ -67,13 +70,11 @@ exports.stats = function(req, res){
       //run all the funcs in parallel
       function(callback){
 	nimble.parallel(funcs, function(){
-	  console.log('++++++++++++++++++');
-	  console.log(master);
-	  console.log('++++++++++++++++++');
+	  //console.log('++++++++++++++++++');
+	  //console.log(master);
+	  //console.log('++++++++++++++++++');
 
-	  res.send( { 
-	    master: master
-	  } );
+	  res.send( { master: master } );
 
 	  callback();
 	});

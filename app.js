@@ -48,7 +48,7 @@ AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 var home = require('./home');
 app.get('/', home.index);
-app.post('/ajaxPreviousCrawls', home.ajaxPreviousCrawls);
+app.post('/getCrawlDoc', home.getCrawlDoc);
 
 
 var ep_files = require('./ep_files');
