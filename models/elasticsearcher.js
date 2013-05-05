@@ -191,76 +191,57 @@ ElasticSearcher.prototype.previousCrawls = function(crawlType, callback){
 }
 
 
-
-/**
- * Get previousCrawls and some stats for this particular doctype
- * Previous crawls are displayed on the (hidden) crawl setup form
- * Doctype-specific stats are displayed on the index
- *
- * http://localhost:9200/lc_app_idx/_search?doctype:ep_files_crawl
- *
- * @param {String} crawlType [ep_files, petra, discovery, kingdom]
- * @return {String} 
- */
-ElasticSearcher.prototype.fileStats = function(doctype, callback){
-
-
+ElasticSearcher.prototype.statsPerLabel = function(doctype, label, callback){
   var self = this;
-  self.labelsForDoctype(doctype, function(error, result){
-    if(error){
-      callback(error);
-    }else{
-      callback(null,{ labels: result.labels });
+
+  var qryObj = {
+    "query" : { "query_string" : { 
+      "query" : 'doctype:' + doctype + ' AND label:' + label },
+    },
+    "facets" : { 
+      "crawledStats" : { "statistical" : {"field":"crawled"} } ,
+      "dupChecksums" : { "terms" : {"field":"checksum"} } 
     }
+  };
 
-  })
 
-  //var crawlIndices;
-  //var crawlQuery;
-  //var docIndices;
-  //var docQuery;
-
-  /*
-  switch(crawlType){
-    case 'ep_files':
-      crawlIndices = 'lc_app_idx';
-      crawlQuery = 'doctype:ep_files_crawl';
-      docIndices = 'las_idx,shp_idx,sgy_idx,img_idx'
-      docQuery = 'doctype:las OR doctype:shp OR doctype:sgy OR doctype:img';
-
-      var qryObj = {
-	"query" : { "match_all" : { } },
-	"facets" : { "doctypes" : { "terms" : {"field":"doctype", "all_terms":true} } },
-      };
-
-      break;
-    case 'petra':
-      query = 'pet_project';
-      break;
-    case 'discovery':
-      query = 'ggx_project';
-      break;
-    case 'kingdom':
-      query = 'tks_project';
-      break;
-    default:
-      util.debug('Sorry, did not recognize type: '+type);
-      return;
-  }
-  */
-
-  /*
-  self.doSearch(docIndices, 0, 20, docQuery, function(error, result){
-    if(error){
+  var cmd = ESClient.search(doctype+'_idx', qryObj);
+  cmd.exec(function(err, data){
+    if(err){
       callback(error);
     }else{
-      callback(null,{ searchResults: result.docs, previousCrawls: previousCrawls });
+
+      data = JSON.parse(data);
+      if (data.error){
+	util.debug(data.error);
+	return callback(data.error,[]);
+      }else{
+	var total = data.hits.total;
+
+	var dups = nimble.filter(nimble.map(data.facets.dupChecksums.terms, 
+	    function(x){
+	      if (x.count > 1){ return x.term }
+	    }), function(y){ return y });
+
+	var minDate = new Date(data.facets.crawledStats.min);
+	var maxDate = new Date(data.facets.crawledStats.max);
+
+	/*
+	console.log('..................');
+	console.log(total);
+	console.log(dups);
+	console.log(minDate);
+	console.log(maxDate);
+	console.log('..................');
+	*/
+
+	callback(null, { minDate: minDate, doctype: doctype });
+
+      }
     }
   });
-  */
-
-
 }
+
 
 
 

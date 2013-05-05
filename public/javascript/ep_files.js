@@ -84,13 +84,12 @@ jQuery(function($){
 
 
 
-  /*
-  $.post('/fileStats', {doctype: 'las'}, function(data){
+  $.post('/stats', {doctype: 'las'}, function(data){
     console.log('============');
     console.log(data);
+    //$('#lasStats .title').text(data.stats.labels);
     console.log('============');
   });
-  */
 
 
 

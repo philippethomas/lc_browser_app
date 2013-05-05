@@ -1,5 +1,4 @@
 var ep_filesScanner = require('lc_file_crawlers/scanner.js');
-var nimble = require('nimble');
 var path = require('path');
 var fs = require('fs');
 var S = require('string');

@@ -1,6 +1,7 @@
 var createHash = require('crypto').createHash;
 var scanner = require('lc_file_crawlers/scanner.js');
 var util = require('util');
+var nimble = require('nimble');
 
 exports.index = function(req, res){
 
@@ -21,13 +22,77 @@ exports.index = function(req, res){
 /** called via ajax to populate file stats stuff */
 exports.stats = function(req, res){
   var doctype = req.body.doctype; 
-  AppES.fileStats(doctype, function(error, result){
-    if(error){
-      console.log(error);
-    }else{
-      console.log(result);
-    }
-  });
+  var labels = [];
+  var funcs = [];
+  var master = [];
+
+  nimble.series([
+
+      //define the labels
+      function(callback){
+	AppES.labelsForDoctype('las', function(error, result){
+	  if(error){
+	    console.log(error);
+	  }else{
+	    labels = result.labels;
+	    callback();
+	  }
+	});
+      },
+
+      //define functions to get stats per each label
+      function(callback){
+
+	labels.forEach(function(label){
+
+	  var func = function(callback){
+	    AppES.statsPerLabel(doctype, label, function(error, result){
+	      if(error){
+		console.log(error);
+	      }else{
+		console.log('-----'+label+'--------'+result.minDate);
+		master.push(result);
+		callback();
+	      }
+	    });
+	  }
+
+	  funcs.push(func)
+	});
+
+	callback();
+
+      },
+
+      //run all the funcs in parallel
+      function(callback){
+	nimble.parallel(funcs, function(){
+	  console.log('++++++++++++++++++');
+	  console.log(master);
+	  console.log('++++++++++++++++++');
+
+	  res.send( { 
+	    master: master
+	  } );
+
+	  callback();
+	});
+      }//,
+
+      /*
+      function(callback){
+	console.log('nuthin');
+	console.log('====================');
+	console.log(master);
+	console.log('=================');
+	callback();
+      }
+      */
+
+  ]);
+
+
+
 }
 
 
