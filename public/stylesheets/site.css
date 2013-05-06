@@ -66,12 +66,18 @@ label.error {
   color: blue;
 }
 
-#summaryBox{
+.labelSummary{
+  background-color: #fbfbfb;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#searchSummaryBox{
   padding: 5px 0px 0px 0px;
   background: #fbfbfb;
 }
 
-#summaryBox .lead{
+#searchSummaryBox .lead{
   margin-left: 20px;
   margin-bottom: 0px;
 }

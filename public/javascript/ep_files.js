@@ -79,11 +79,56 @@ jQuery(function($){
 
 
 
+  /** DRY THIS UP DRY THIS UP DRY THIS CRAP UP */
   $.post('/stats', {doctype: 'las'}, function(data){
-    console.log('============');
-    console.log(data);
-    //$('#lasStats .title').text(data.stats.labels);
-    console.log('============');
+
+    var s = ''
+    data.stats.forEach(function(x,i){
+
+
+      var dupsLink = '(none)'
+      if (x['dups'].length > 0){
+	dupsLink = x['dups'].length+ '<a id="dup_"'+i+' href="#"> (click)</a>';
+	/*
+	var args = {
+	  from: 0,
+          size: 10,
+          idx: doctype+'_idx',
+	  query: x['dups'].join(' OR ')
+	}
+	*/
+
+
+      }
+
+	
+      console.log(x.dups)
+      
+
+
+      s += '<div class="well white">';
+      s += '<pre class="center labelSummary">'+x.label+'</pre>';
+      s += '<br>'
+      s += '<b>total count:</b>'
+      s += '<span class="pull-right">'+x['totalCount']+' files</span><br>'
+      s += '<b>total size:</b>'
+      s += '<span class="pull-right">'+x['totalSize']+'</span><br>'
+      s += '<b>duplicates:</b>'
+      s += '<span class="pull-right">'+dupsLink+'</span><br>'
+      s += '<dl>';
+      s += '<dt>create MIN</dt><dd class="mono">'+x['ctimeMin']+'</dd>'
+      s += '<dt>create MAX</dt><dd class="mono">'+x['ctimeMax']+'</dd>'
+      s += '<dt>modify MIN</dt><dd class="mono">'+x['mtimeMin']+'</dd>'
+      s += '<dt>modify MAX</dt><dd class="mono">'+x['mtimeMax']+'</dd>'
+      s += '<dt>access MIN</dt><dd class="mono">'+x['atimeMin']+'</dd>'
+      s += '<dt>access MAX</dt><dd class="mono">'+x['atimeMax']+'</dd>'
+      s += '</dl>';
+      s += '</div>';
+    });
+
+    $('#lasStats .content').html(s);
+
+
   });
 
 

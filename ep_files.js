@@ -8,7 +8,7 @@ exports.index = function(req, res){
 
   AppES.previousCrawls('ep_files', function(error, result){
     if(error){
-      console.log(error);
+      util.debug(error);
     }else{
       result.previous.forEach(function(x){
 	x['crawled'] = humanize.date('Y-M-d h:i:s A', new Date(x['crawled'])); 
@@ -28,7 +28,7 @@ exports.stats = function(req, res){
   var doctype = req.body.doctype; 
   var labels = [];
   var funcs = [];
-  var master = [];
+  var stats = [];
 
   nimble.series([
 
@@ -36,7 +36,7 @@ exports.stats = function(req, res){
       function(callback){
 	AppES.labelsForDoctype('las', function(error, result){
 	  if(error){
-	    console.log(error);
+	    util.debug(error);
 	  }else{
 	    labels = result.labels;
 	    callback();
@@ -52,9 +52,27 @@ exports.stats = function(req, res){
 	  var func = function(callback){
 	    AppES.statsPerLabel(doctype, label, function(error, result){
 	      if(error){
-		console.log(error);
+		util.debug(error);
 	      }else{
-		master.push(result);
+
+		result['ctimeMin'] = humanize.date('Y-M-d h:i:s A',
+		  new Date(result['ctimeMin']));
+		result['ctimeMax'] = humanize.date('Y-M-d h:i:s A',
+		  new Date(result['ctimeMax']));
+
+		result['mtimeMin'] = humanize.date('Y-M-d h:i:s A',
+		  new Date(result['mtimeMin']));
+		result['mtimeMax'] = humanize.date('Y-M-d h:i:s A',
+		  new Date(result['mtimeMax']));
+
+		result['atimeMin'] = humanize.date('Y-M-d h:i:s A',
+		  new Date(result['atimeMin']));
+		result['atimeMax'] = humanize.date('Y-M-d h:i:s A',
+		  new Date(result['atimeMax']));
+
+		result['totalSize'] = humanize.filesize(result['totalSize']);
+
+		stats.push(result);
 		callback();
 	      }
 	    });
@@ -67,14 +85,14 @@ exports.stats = function(req, res){
 
       },
 
-      //run all the funcs in parallel
+      //run all the funcs in parallel, send compilation
       function(callback){
 	nimble.parallel(funcs, function(){
 	  //console.log('++++++++++++++++++');
 	  //console.log(master);
 	  //console.log('++++++++++++++++++');
 
-	  res.send( { master: master } );
+	  res.send( { stats: stats } );
 
 	  callback();
 	});

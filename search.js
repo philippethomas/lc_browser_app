@@ -101,10 +101,14 @@ exports.ajaxSearch = function(req, res){
  
   var docTemplates = require('./app').docTemplates;
 
-  var idx = req.session.idx;
-  var query = req.session.query; 
-  var from = req.body.from; // from the pager
-  var size = req.session.size;
+  console.log('---------------------');
+  console.log(req.body);
+  console.log('---------------------');
+
+  var idx = req.body.idx || req.session.idx;
+  var query = req.body.query || req.session.query; 
+  var from = req.body.from || req.session.from; // usually from the pager
+  var size = req.body.size || req.session.size;
 
   AppES.doSearch(idx, from, size, query, function(error, result){
     if(error){

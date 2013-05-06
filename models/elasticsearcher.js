@@ -1,7 +1,6 @@
 var nimble = require('nimble');
 var ElasticSearchClient = require('elasticsearchclient');
 var util = require('util');
-var humanize = require('humanize');
 
 
 ElasticSearcher = function(opts){
@@ -215,32 +214,26 @@ ElasticSearcher.prototype.statsPerLabel = function(doctype, label, callback){
 	util.debug(data.error);
 	return callback(data.error,[]);
       }else{
-	var total = data.hits.total;
+	var totalCount = data.hits.total;
 
 	var dups = nimble.filter(nimble.map(data.facets.dupChecksums.terms, 
 	    function(x){
 	      if (x.count > 1){ return x.term }
 	    }), function(y){ return y });
 
-        var ctimeMin = humanize.date('Y-M-d h:i:s A',
-	  new Date(data.facets.ctimeStats.min)); 
-        var ctimeMax = humanize.date('Y-M-d h:i:s A', 
-	  new Date(data.facets.ctimeStats.max)); 
-        var mtimeMin = humanize.date('Y-M-d h:i:s A',
-	  new Date(data.facets.mtimeStats.min)); 
-        var mtimeMax = humanize.date('Y-M-d h:i:s A', 
-	  new Date(data.facets.mtimeStats.max)); 
-        var atimeMin = humanize.date('Y-M-d h:i:s A',
-	  new Date(data.facets.atimeStats.min)); 
-        var atimeMax = humanize.date('Y-M-d h:i:s A', 
-	  new Date(data.facets.atimeStats.max)); 
+        var ctimeMin = data.facets.ctimeStats.min; 
+        var ctimeMax = data.facets.ctimeStats.max; 
+        var mtimeMin = data.facets.mtimeStats.min; 
+        var mtimeMax = data.facets.mtimeStats.max; 
+        var atimeMin = data.facets.atimeStats.min; 
+        var atimeMax = data.facets.atimeStats.max; 
 
-
-	console.log(data.facets.sizeStats)
+	var totalSize = data.facets.sizeStats.total;
 
 	var o = {
 	  label: label,
-	  total: total,
+	  totalCount: totalCount,
+	  totalSize: totalSize,
 	  dups: dups,
 	  ctimeMin: ctimeMin,
 	  ctimeMax: ctimeMax,
@@ -263,10 +256,13 @@ ElasticSearcher.prototype.statsPerLabel = function(doctype, label, callback){
 
 
 
+/** this script_field syntax accounts for labels that might have spaces */
 ElasticSearcher.prototype.labelsForDoctype = function(doctype, callback){
   var qryObj = {
     "query" : { "match_all" : { } },
-    "facets" : { "labels" : { "terms" : {"field":"label", "all_terms":true} } },
+    "facets" : { "labels" : { "terms" : {
+      "script_field": "_source[\'label\']"
+    } } },
   };
   var idx = doctype+'_idx';
   var cmd = ESClient.search(idx, qryObj);
@@ -279,6 +275,7 @@ ElasticSearcher.prototype.labelsForDoctype = function(doctype, callback){
 	util.debug(data.error);
         callback(data.error,[]);
       }else{
+	console.log(data.facets.labels);
 	var labels = nimble.map(data.facets.labels.terms, function(x){
 	  return x.term;
 	});
