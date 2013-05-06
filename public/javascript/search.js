@@ -68,8 +68,16 @@ jQuery(function($){
       if (data.docs.length === 1){
         $('#summary').text('Showing '+ showEnd + ' of ' + data.total);
       } else if (data.docs.length < perPage) {
+
+	//show all if on the last page has fewer than perPage...
+        var end = data.docs.length;
+        if (( data.total - showFrom) < perPage){
+	  end = data.total;
+	}
+
         $('#summary').text('Showing '+ showFrom + ' through ' + 
-	  data.docs.length + ' of ' + data.total);
+	  end + ' of ' + data.total);
+
       } else {
         $('#summary').text('Showing '+ showFrom + ' through ' + 
 	  showEnd + ' of ' + data.total);

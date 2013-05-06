@@ -26,7 +26,7 @@ exports.index = function(req, res){
 /** called via ajax to populate file stats stuff */
 exports.stats = function(req, res){
   var doctype = req.body.doctype; 
-  var labels = [];
+  var labels = ['(global)']; // <-- inject fake label to get global stats
   var funcs = [];
   var stats = [];
 
@@ -34,11 +34,11 @@ exports.stats = function(req, res){
 
       //define the labels
       function(callback){
-	AppES.labelsForDoctype('las', function(error, result){
+	AppES.labelsForDoctype(doctype, function(error, result){
 	  if(error){
 	    util.debug(error);
 	  }else{
-	    labels = result.labels;
+	    labels = labels.concat(result.labels);
 	    callback();
 	  }
 	});
@@ -50,10 +50,11 @@ exports.stats = function(req, res){
 	labels.forEach(function(label){
 
 	  var func = function(callback){
-	    AppES.statsPerLabel(doctype, label, function(error, result){
+	    AppES.fileStats(doctype, label, function(error, result){
 	      if(error){
 		util.debug(error);
 	      }else{
+		if (result.totalCount === 0){ return }; //short circuit if blank
 
 		result['ctimeMin'] = humanize.date('Y-M-d h:i:s A',
 		  new Date(result['ctimeMin']));
@@ -88,25 +89,11 @@ exports.stats = function(req, res){
       //run all the funcs in parallel, send compilation
       function(callback){
 	nimble.parallel(funcs, function(){
-	  //console.log('++++++++++++++++++');
-	  //console.log(master);
-	  //console.log('++++++++++++++++++');
-
 	  res.send( { stats: stats } );
-
 	  callback();
 	});
-      }//,
-
-      /*
-      function(callback){
-	console.log('nuthin');
-	console.log('====================');
-	console.log(master);
-	console.log('=================');
-	callback();
       }
-      */
+
 
   ]);
 

@@ -17,6 +17,7 @@ exports.search = function(req, res){
   var from = req.body.from || 0;
   var size = req.body.size || 10; // this should match the perPage var in $
 
+
   req.session.idx = idx;
   req.session.query = query;
   req.session.from = from;
@@ -101,9 +102,6 @@ exports.ajaxSearch = function(req, res){
  
   var docTemplates = require('./app').docTemplates;
 
-  console.log('---------------------');
-  console.log(req.body);
-  console.log('---------------------');
 
   var idx = req.body.idx || req.session.idx;
   var query = req.body.query || req.session.query; 

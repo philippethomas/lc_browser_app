@@ -186,12 +186,17 @@ ElasticSearcher.prototype.previousCrawls = function(crawlType, callback){
 }
 
 
-ElasticSearcher.prototype.statsPerLabel = function(doctype, label, callback){
+
+/** use label '(global)'  to collect all stats--that set gets displayed first */
+ElasticSearcher.prototype.fileStats = function(doctype, label, callback){
   var self = this;
+
+  var qs = (label === '(global)') ? 'doctype:'+doctype : 
+    'doctype:'+doctype+' AND label:'+ label;
 
   var qryObj = {
     "query" : { "query_string" : { 
-      "query" : 'doctype:' + doctype + ' AND label:' + label },
+      "query" : qs },
     },
     "facets" : { 
       "ctimeStats" : { "statistical" : {"field":"ctime"} } ,
@@ -254,8 +259,6 @@ ElasticSearcher.prototype.statsPerLabel = function(doctype, label, callback){
 
 
 
-
-
 /** this script_field syntax accounts for labels that might have spaces */
 ElasticSearcher.prototype.labelsForDoctype = function(doctype, callback){
   var qryObj = {
@@ -275,7 +278,6 @@ ElasticSearcher.prototype.labelsForDoctype = function(doctype, callback){
 	util.debug(data.error);
         callback(data.error,[]);
       }else{
-	console.log(data.facets.labels);
 	var labels = nimble.map(data.facets.labels.terms, function(x){
 	  return x.term;
 	});
@@ -305,10 +307,6 @@ ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callba
     "query" : { "query_string" : { "query" : query, "default_operator": "AND" } },
     "sort" : [ { "crawled" : {"order" : "desc"} } ]
   };
-
-  //===
-  //console.log(qryObj);
-  //===
 
   var cmd = ESClient.search(indices, qryObj);
   cmd.exec(function(err, data){

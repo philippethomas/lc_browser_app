@@ -100,7 +100,15 @@ label.error {
   margin: 0px 50px 2px 50px;
 }
 
+.stats{
+  //font-size: 90%;
+  padding: 10px 10px 10px 10px;
+}
+.stats .globalStats .well{
+  background: #ffecd1;
+  background: #fff6e8;
 
+}
 
 
 
