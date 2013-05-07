@@ -19,12 +19,8 @@ jQuery(function($){
   );
 
   $('#modalDocDetail .modal-body').css(
-      { 
-	'height': modalBodyHeight, 
-	'max-height': modalBodyHeight
-      }
-  );
-
+    { 'height': modalBodyHeight, 'max-height': modalBodyHeight }
+    );
 
 
   // click a search result table row, get a modal popup
@@ -40,14 +36,20 @@ jQuery(function($){
   });
 
 
-  // hijack event just to show spinner while searching
+  // hijack event to show spinner, etc.
   $('#search').submit( function(e){
-    $('#spinner').show(); // gets hidden on rendering the index page
+    $('#spinner').show(); // gets hidden on rendering the search index page
     $('#crawlSetup').hide();
     e.preventDefault();
     this.submit();
   });
 
+  // remember last query
+  $.post('/previousQuery', function(data){
+    $('#search select option[value="'+data.idx+'"]').attr('selected',true);
+    $('#search input').val(data.query);
+
+  })
 
 
   // reload table via ajax pagination

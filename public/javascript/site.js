@@ -21,6 +21,7 @@ jQuery(function($){
 
 
 
+
   var socket = io.connect('http://localhost');
 
   socket.on('lasdoc', function(doc){

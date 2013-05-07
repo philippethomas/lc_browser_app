@@ -75,6 +75,7 @@ app.post('/ajaxSearch', search.ajaxSearch);
 app.post('/ajaxGetDoc', search.ajaxGetDoc);
 app.post('/search', search.search);
 app.post('/csvExport', search.csvExport);
+app.post('/previousQuery', search.previousQuery);
 
 
 var maintenance = require('./maintenance');

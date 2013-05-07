@@ -43,6 +43,7 @@ jQuery(function($){
     e.preventDefault();
     $('#ep_list').empty();
     if( $('#ep_crawl_form').valid() ){
+      $('#ep_files_stats').fadeOut('slow');
       $('#crawlSetup').click()
       var $this = $(this);
       placeholderCrawl($this.serializeArray());

@@ -17,7 +17,6 @@ exports.search = function(req, res){
   var from = req.body.from || 0;
   var size = req.body.size || 10; // this should match the perPage var in $
 
-
   req.session.idx = idx;
   req.session.query = query;
   req.session.from = from;
@@ -42,6 +41,15 @@ exports.search = function(req, res){
 
   });
 }
+
+
+
+/** remember the previously used search filter */
+exports.previousQuery = function(req, res){
+  var idx = req.session.idx; //generally set in search
+  var query = req.session.query; //generally set in search
+  res.send({ idx: idx, query: query });
+};
 
 
 /**
@@ -145,7 +153,7 @@ exports.csvExport = function(req, res){
   var idx = req.session.idx;
   var query = req.session.query; 
   var from = 0;
-  var size = 100;
+  var size = 10000;
 
 
   AppES.doSearch(idx, from, size, query, function(error, result){
