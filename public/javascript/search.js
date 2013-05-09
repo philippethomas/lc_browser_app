@@ -24,16 +24,19 @@ jQuery(function($){
 
 
   // click a search result table row, get a modal popup
-  $('table tr').click(function(a){
-    var guid = $(this).attr('id');
-    if (guid === undefined) { return };
-    var arg = { guid: guid };
-    $.post('/ajaxGetDoc', arg, function(data){
-      $('#modalDocDetail .modal-body').html(data.body);
-      $('#modalDocTitle').text(data.title);
+  var modalRowTrigger = function(){
+    $('table tr').click(function(a){
+      var guid = $(this).attr('id');
+      if (guid === undefined) { return };
+      var arg = { guid: guid };
+      $.post('/ajaxGetDoc', arg, function(data){
+	$('#modalDocDetail .modal-body').html(data.body);
+	$('#modalDocTitle').text(data.title);
+      });
+      $('#modalDocDetail').modal('toggle')
     });
-    $('#modalDocDetail').modal('toggle')
-  });
+  }
+  modalRowTrigger();
 
 
   // hijack event to show spinner, etc.
@@ -97,13 +100,15 @@ jQuery(function($){
 
       // table rows
       data.docs.forEach(function(doc){
-	var r = '<tr id="'+doc.id+'" class='+doc.doctype+'>';
+	var r = '<tr id="'+doc.guid+'" class='+doc.doctype+'>';
 	data.realFields.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
 	r += '</tr>'
 	$('#results tbody').append(r);
       });
+      modalRowTrigger();
 
     });
+
 
     $('#spinner').hide();
 

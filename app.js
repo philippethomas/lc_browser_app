@@ -74,6 +74,7 @@ var search = require('./search');
 app.post('/ajaxSearch', search.ajaxSearch);
 app.post('/ajaxGetDoc', search.ajaxGetDoc);
 app.post('/search', search.search);
+app.get('/search', home.index);
 app.post('/csvExport', search.csvExport);
 app.post('/previousQuery', search.previousQuery);
 
