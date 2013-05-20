@@ -1,10 +1,21 @@
 var humanize = require('humanize');
 
 exports.index = function(req, res){
-  res.render('index', { 
+  res.render('home/index', { 
     title: 'LogicalCat Home'
   });
 };
+
+
+exports.setWorkStatus = function(req, res){
+  working = req.body.working; //global var set in app
+  res.send ({ working: working });
+};
+
+exports.getWorkStatus = function(req, res){
+  res.send ({ working: working });
+};
+
 
 
 /** returns a single crawl object to populate the crawl form */

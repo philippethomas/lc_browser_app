@@ -1,5 +1,7 @@
 jQuery(function($){
 
+  setWalkSpin();
+
   // adjustments for dynamically sized modal dialog
   var modalWidth = $(window).width() * 0.70 + 'px';
   var modalHeight = $(window).height() * 0.70 + 'px';
@@ -30,6 +32,7 @@ jQuery(function($){
       if (guid === undefined) { return };
       var arg = { guid: guid };
       $.post('/ajaxGetDoc', arg, function(data){
+	//console.log(data)
 	$('#modalDocDetail .modal-body').html(data.body);
 	$('#modalDocTitle').text(data.title);
       });
@@ -41,8 +44,8 @@ jQuery(function($){
 
   // hijack event to show spinner, etc.
   $('#search').submit( function(e){
-    $('#spinner').show(); // gets hidden on rendering the search index page
-    $('#crawlSetup').hide();
+    $('#querySpinner').show(); // gets hidden on rendering the search index page
+    //$('#crawlSetup').hide();
     e.preventDefault();
     this.submit();
   });
@@ -57,7 +60,7 @@ jQuery(function($){
 
   // reload table via ajax pagination
   $('#pager').on("page", function(event, num){
-    $('#spinner').show();
+    $('#querySpinner').show();
 
     var perPage = 10; //should match what's in controller
 
@@ -110,7 +113,7 @@ jQuery(function($){
     });
 
 
-    $('#spinner').hide();
+    $('#querySpinner').hide();
 
   });
 

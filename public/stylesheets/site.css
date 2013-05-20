@@ -44,16 +44,16 @@ label.error {
 
 .small-orange{
   font-size: 12px;
-  color: #ff9900;
+  color: #eb8a33;
   font-style: oblique;
 }
 
 .modal-title{
   text-align: center;
-  color: #ff9900;
+  color: #eb8a33;
 }
 
-#spinner{
+.spinner{
   margin-left: 10px;
   margin-top: 3px;
 }

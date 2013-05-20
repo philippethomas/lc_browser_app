@@ -20,11 +20,11 @@ ElasticSearcher = function(opts){
       "write_es": {"type":"string"},
       "zip_las":  {"type":"string"},
       "shp_feat": {"type":"string"},
-      "sgy_deep": {"type":"string"},
+      "ras_clip": {"type":"string"},
       "find_LAS": {"type":"string"},
       "find_SHP": {"type":"string"},
       "find_SGY": {"type":"string"},
-      "find_IMG": {"type":"string"},
+      "find_RAS": {"type":"string"},
       "crawled":  {"type":"date"}
   } } }
   
@@ -90,16 +90,16 @@ ElasticSearcher.prototype.indexInit = function(callback){
   msg += '(check the server\'s log if the page hangs.)\r\n';
   nimble.series([
 
-      function(callback){
+      function(cb){
 	self.indexDrop('lc_app_idx');
 	msg += 'Deleted lc_app_idx...';
-	callback();
+	cb();
       },
 
-      function(callback){
+      function(cb){
 	self.indexCreate('lc_app_idx', LC_APP_MAP);
 	msg += 'Created lc_app_idx.\r\n';
-	callback();
+	cb();
       }
 
       ]);

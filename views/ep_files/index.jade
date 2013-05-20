@@ -3,18 +3,11 @@ extends ../layout
 
 block content
 
-  #ep_files_accordion.accordion
+  .well#ep_form_box
+    include crawl_form
 
-    .accordion-group
-      .accordion-heading
-      #ep_files_collapse.accordion-body.collapse
-        .accordion-inner
-          include crawl_form
-
-  #ep_files_stats
-    include stats
-
-  include scroller
+  .well#ep_scroll_box.hide
+    include scroller
 
   
 

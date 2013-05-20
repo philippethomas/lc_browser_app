@@ -59,7 +59,7 @@ exports.ajaxGetDoc = function(req, res){
 
   var docTemplates = require('./app').docTemplates;
 
-  var idx = 'las_idx,shp_idx,sgy_idx,img_idx';
+  var idx = 'las_idx,shp_idx,sgy_idx,ras_idx';
   var query = 'guid:'+req.body.guid;
   var from = 0;
   var size = 1;
@@ -82,7 +82,13 @@ exports.ajaxGetDoc = function(req, res){
 	if (k === 'cloud') {
 	  body += '<dt>'+k+'</dt>'
 	  body += '<dd>...</dd>'
-	  body += '<pre>'+doc[k]+'</pre>'
+	  if (doc['doctype'] === 'ras') {
+	    body += '<div class="well center">';
+	    body += '<img src="data:image/png;base64,'+doc[k]+'"/>';
+	    body += '</div>';
+	  } else {
+	    body += '<pre>'+doc[k]+'</pre>'
+	  }
 	} else {
 	  var val = (doc[k] === undefined) ? '' : doc[k];
 	  body += '<dt>'+k+'</dt>'
@@ -91,7 +97,7 @@ exports.ajaxGetDoc = function(req, res){
       });
       body += '</dl>';
       
-      var title = 'Document Details for '+doc.basename;
+      var title = doc.basename;
 
       res.send( { 
 	body: body, 

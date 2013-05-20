@@ -39,6 +39,7 @@ app.locals({
 });
 
 
+global.working = 'no';
 
 //TODO maybe store config stuff for the Express app elsewhere: 
 //check out https://github.com/flatiron/nconf
@@ -49,6 +50,8 @@ AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 var home = require('./home');
 app.get('/', home.index);
 app.post('/getCrawlDoc', home.getCrawlDoc);
+app.post('/setWorkStatus', home.setWorkStatus);
+app.post('/getWorkStatus', home.getWorkStatus);
 
 
 var ep_files = require('./ep_files');
@@ -83,7 +86,6 @@ var maintenance = require('./maintenance');
 app.get('/maintenance/indexInit', maintenance.indexInit);
 app.get('/maintenance/indexStatus', maintenance.indexStatus);
 app.get('/maintenance/indexMapping', maintenance.indexMapping);
-//app.get('/maintenance/purge/:idx', maintenance.purge
 
 
 app.configure('development', function(){
@@ -95,6 +97,8 @@ app.configure('production', function(){
 });
 
 
+/********** socket stuff **********/
+
 app.on('lasdoc', function(data){
   io.sockets.emit('lasdoc', data);
 });
@@ -103,8 +107,19 @@ app.on('sgydoc', function(data){
   io.sockets.emit('sgydoc', data);
 });
 
-app.on('walkerDone', function(data){
-  io.sockets.emit('walkerDone', data);
+app.on('rasdoc', function(data){
+  io.sockets.emit('rasdoc', data);
+});
+
+app.on('shpdoc', function(data){
+  io.sockets.emit('shpdoc', data);
+});
+
+app.on('walkerStart', function(data){
+  io.sockets.emit('walkerStart', data);
+});
+app.on('walkerStop', function(data){
+  io.sockets.emit('walkerStop', data);
 });
 
 

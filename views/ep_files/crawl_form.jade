@@ -62,14 +62,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               input.input-small(type='text', name='es_port', value='9200', placeholder='9200')
         
         p
-        //hr
-        //.row-fluid 
-        //  .control-group
-        //    .span6.offset2
-        //      label.checkbox
-                input(type='checkbox', name='write_es', checked=(true===false ? "checked" : undefined))
-        //      | Write results to ElasticSearch
-
+          
         .row-fluid 
           .control-group
             .span6.offset2
@@ -98,21 +91,17 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               input(type='checkbox', name='find_SGY', checked=(true===false ? "checked" : undefined))
               |  SEGY
           .span3
-            label.checkbox
-              input(type='checkbox', name='sgy_deep', checked=(true===false ? "checked" : undefined))
-              |  Deep SEGY Scan
-
 
         hr
         .row-fluid 
           .span2.offset2
             label.checkbox
-              input(type='checkbox', name='find_IMG', checked=(true===false ? "checked" : undefined))
-              |  Imagery
+              input(type='checkbox', name='find_RAS', checked=(true===false ? "checked" : undefined))
+              |  Raster Logs
           .span6
             label
-              input.input-mini(type='text', name='img_size', value='300') 
-              |  Minimum Size Threshold (MB)
+              input(type='checkbox', name='ras_clip', checked=(true===false ? "checked" : undefined))
+              |  Collect clip of log header.
 
 
         hr
@@ -123,7 +112,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               |  Shapefiles
           .span5
             label
-              input.input-mini(type='text', name='shp_feat', value='50') 
+              input.input-mini(type='text', name='shp_feat', value='20') 
               |  Shapefile Feature Count
 
           .span3

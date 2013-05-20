@@ -33,13 +33,13 @@ exports.stats = function(req, res){
   nimble.series([
 
       //define the labels
-      function(callback){
+      function(cb){
 	AppES.labelsForDoctype(doctype, function(error, result){
 	  if(error){
 	    util.debug(error);
 	  }else{
 	    labels = labels.concat(result.labels);
-	    callback();
+	    cb();
 	  }
 	});
       },
@@ -49,7 +49,7 @@ exports.stats = function(req, res){
 
 	labels.forEach(function(label){
 
-	  var func = function(callback){
+	  var func = function(cb){
 	    AppES.fileStats(doctype, label, function(error, result){
 	      if(error){
 		util.debug(error);
@@ -74,7 +74,7 @@ exports.stats = function(req, res){
 		result['totalSize'] = humanize.filesize(result['totalSize']);
 
 		stats.push(result);
-		callback();
+		cb();
 	      }
 	    });
 	  }
@@ -87,10 +87,10 @@ exports.stats = function(req, res){
       },
 
       //run all the funcs in parallel, send compilation
-      function(callback){
+      function(cb){
 	nimble.parallel(funcs, function(){
 	  res.send( { stats: stats } );
-	  callback();
+	  cb();
 	});
       }
 
@@ -131,13 +131,14 @@ exports.crawl = function(req, res){
   var write_es = true; //see below
   var zip_las = req.body.zip_las;
   var shp_feat = Math.round(req.body.shp_feat);
-  var img_size = Math.round(req.body.img_size);
-  var sgy_deep = req.body.sgy_deep; 
+  var ras_clip = req.body.ras_clip;
   var find_LAS = req.body.find_LAS;
   var find_SHP = req.body.find_SHP;
   var find_SGY = req.body.find_SGY;
-  var find_IMG = req.body.find_IMG;
+  var find_RAS = req.body.find_RAS;
   var cs_max = 26214400;
+  var ras_max_size = 10485760;
+  var ras_max_ar = 0.1;
 
   var opts = { 
     label: label,
@@ -149,13 +150,14 @@ exports.crawl = function(req, res){
     write_es: write_es,
     zip_las: zip_las,
     shp_feat: shp_feat,
-    img_size: img_size,
-    sgy_deep: sgy_deep,
+    ras_clip: ras_clip,
     find_LAS: find_LAS,
     find_SHP: find_SHP,
     find_SGY: find_SGY,
-    find_IMG: find_IMG,
+    find_RAS: find_RAS,
     cs_max: cs_max,
+    ras_max_size: ras_max_size,
+    ras_max_ar: ras_max_ar
   }
 
   opts.doctype = 'ep_files_crawl';

@@ -20,12 +20,12 @@
 
         li.divider-vertical
 
-        li#spinner
-          img(src='images/spinner.gif')
+        li.spinner#walkerSpinner.hide
+          img(src='images/gray_boxes.gif')
+
+        li.spinner#querySpinner.hide
+          img(src='images/orange_boxes.gif')
         
-        a#crawlSetup.accordion-toggle(data-toggle='collapse', data-parent='#ep_files_accordion', href='#ep_files_collapse')
-          .btn
-            | Crawl Setup
 
       form#search.navbar-search.form-search.pull-right(action='/search', method='POST')
         .input-prepend.input-append
