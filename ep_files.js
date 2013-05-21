@@ -1,8 +1,9 @@
 var createHash = require('crypto').createHash;
-var scanner = require('lc_file_crawlers/scanner.js');
 var util = require('util');
 var nimble = require('nimble');
 var humanize = require('humanize');
+  
+//var scanner = require('lc_file_crawlers/scanner.js');
 
 exports.index = function(req, res){
 
@@ -164,13 +165,22 @@ exports.crawl = function(req, res){
   opts.guid = guidify(JSON.stringify(opts));
   opts.crawled = new Date().toISOString();
 
+  //////
+  var fork = require('child_process').fork;
+  var child = fork('./node_modules/lc_file_crawlers/scanner.js');
+
   AppES.saveCrawl(opts, function(error,result){
     if (error) {
       util.debug(error);
     } else {
       if (result.ok) {
 	opts.app = app; 
-	scanner.scan(opts);
+	//scanner.scan(opts);
+	child.on('message', function(m){
+	  console.log('the message from child is:');
+	  console.log(m);
+	});
+	child.send( {message: opts} );
       }
     }
   });

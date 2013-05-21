@@ -126,4 +126,5 @@ app.on('walkerStop', function(data){
 
 
 module.exports.app = app;
+module.exports.io = io;
 module.exports.docTemplates = docTemplates;
