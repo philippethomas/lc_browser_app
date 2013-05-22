@@ -43,9 +43,8 @@ jQuery(function($){
     e.preventDefault();
     $('#ep_list').empty();
     if( $('#ep_crawl_form').valid() ){
-      $('#ep_form_box').slideUp();
-      //$('#querySpinner').show();
-      $('#ep_scroll_box').show();
+      $('#ep_form_box').fadeOut();
+      $('#ep_work_box').fadeIn();
       var $this = $(this);
       placeholderCrawl($this.serializeArray());
       $.post('/ep_files_crawl', $this.serialize() , function(data, status, jqXHR){

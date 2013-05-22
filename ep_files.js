@@ -2,6 +2,7 @@ var createHash = require('crypto').createHash;
 var util = require('util');
 var nimble = require('nimble');
 var humanize = require('humanize');
+var fork = require('child_process').fork;
   
 //var scanner = require('lc_file_crawlers/scanner.js');
 
@@ -116,8 +117,8 @@ exports.flash = function(req, res){
 
 /**
  * Invoke the scanner of the ep_files crawler cli with supplied args.
- * We hijack "app" to use its EventEmitter behavior to send real-time
- * results and a "work done" message.
+ * The real-time message path from crawler to webpage is...complicated.
+ * scan.publish --> parrot.emit --> process.send --> app.emit --> socket.io
  */
 exports.crawl = function(req, res){
   var app = require('./app').app;
@@ -165,8 +166,6 @@ exports.crawl = function(req, res){
   opts.guid = guidify(JSON.stringify(opts));
   opts.crawled = new Date().toISOString();
 
-  //////
-  var fork = require('child_process').fork;
   var child = fork('./node_modules/lc_file_crawlers/scanner.js');
 
   AppES.saveCrawl(opts, function(error,result){
@@ -174,12 +173,9 @@ exports.crawl = function(req, res){
       util.debug(error);
     } else {
       if (result.ok) {
-	opts.app = app; 
-	//scanner.scan(opts);
-	child.on('message', function(m){
-	  console.log('the message from child is:');
-	  console.log(m);
-	});
+	opts.in_browser = true; 
+	app.emit('workStart', 'scanning '+opts.fw_root);
+	child.on('message', function(m){ app.emit(m.type, m.doc); });
 	child.send( {message: opts} );
       }
     }

@@ -1,5 +1,7 @@
 jQuery(function($){
 
+  $('#clickForStats').hide();
+
 
   var dupLookup = {};
   /** populate doctype-specific file stat summaries */

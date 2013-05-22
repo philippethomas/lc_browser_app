@@ -115,11 +115,11 @@ app.on('shpdoc', function(data){
   io.sockets.emit('shpdoc', data);
 });
 
-app.on('walkerStart', function(data){
-  io.sockets.emit('walkerStart', data);
+app.on('workStart', function(data){
+  io.sockets.emit('workStart', data);
 });
-app.on('walkerStop', function(data){
-  io.sockets.emit('walkerStop', data);
+app.on('workStop', function(data){
+  io.sockets.emit('workStop', data);
 });
 
 

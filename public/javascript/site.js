@@ -25,20 +25,21 @@ jQuery(function($){
   });
 
 
-  socket.on('walkerStart', function(n){
-    console.log('received a walkerStart event!');
+  socket.on('workStart', function(n){
+    console.log('received a workStart event!');
     $.post('/setWorkStatus', {working: "yes"},  function(data){
       if (data.working != "yes") { console.log('problem setting work status'); }
-      setWalkSpin();
+      workStatus();
     });
   });
  
-  socket.on('walkerStop', function(n){
-    console.log('received a walkerStop event!');
+  socket.on('workStop', function(n){
+    console.log('received a workStop event!');
     //window.location.replace('/');
     $.post('/setWorkStatus', {working: "no"},  function(data){
       if (data.working != "no") { console.log('problem setting work status'); }
-      setWalkSpin();
+      $('#clickForStats').show();
+      workStatus();
     });
   });
 
@@ -49,16 +50,18 @@ jQuery(function($){
 });
 
 
-/** walkerSpinner depends on the global 'working' variable, which setWalkSpin 
+/** workSpinner depends on the global 'working' variable, which workStatus
  * checks any time a new page loads to see if it should still be visible. 
  * This is unlike querySpinner which uses more traditional local vars.
  */
-function setWalkSpin(){
+function workStatus(){
   $.post('/getWorkStatus', function(data){
     if (data.working === "yes") {
-      $('#walkerSpinner').show();
+      $('#workSpinner').show();
+      $('#ep_work_box').show();
     } else if (data.working === "no") {
-      $('#walkerSpinner').hide();
+      $('#workSpinner').hide();
+      //$('#ep_work_box').hide();
     }
   });
 

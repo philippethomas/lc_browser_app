@@ -1,6 +1,6 @@
 jQuery(function($){
 
-  setWalkSpin();
+  workStatus();
 
   // adjustments for dynamically sized modal dialog
   var modalWidth = $(window).width() * 0.70 + 'px';
