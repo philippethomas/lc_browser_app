@@ -22,7 +22,7 @@ block content
     .row-fluid#results
       table.table.table-condensed.table-bordered.table-hover
 
-        - var t = docTemplates.template(docs[0].doctype).tableFields
+        - var t = epDocTemplates.template(docs[0].doctype).tableFields
         for f in t.showFields
           th= f
 
@@ -30,8 +30,6 @@ block content
           tr(class=doc.doctype, id=doc.guid)
             for f in t.realFields
               td= doc[f]
-
-
 
 
     .well#searchSummaryBox

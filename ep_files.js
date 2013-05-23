@@ -1,6 +1,5 @@
 var createHash = require('crypto').createHash;
 var util = require('util');
-var nimble = require('nimble');
 var humanize = require('humanize');
 var fork = require('child_process').fork;
   
@@ -25,83 +24,6 @@ exports.index = function(req, res){
 };
 
 
-/** called via ajax to populate file stats stuff */
-exports.stats = function(req, res){
-  var doctype = req.body.doctype; 
-  var labels = ['(global)']; // <-- inject fake label to get global stats
-  var funcs = [];
-  var stats = [];
-
-  nimble.series([
-
-      //define the labels
-      function(cb){
-	AppES.labelsForDoctype(doctype, function(error, result){
-	  if(error){
-	    util.debug(error);
-	  }else{
-	    labels = labels.concat(result.labels);
-	    cb();
-	  }
-	});
-      },
-
-      //define functions to get stats per each label
-      function(callback){
-
-	labels.forEach(function(label){
-
-	  var func = function(cb){
-	    AppES.fileStats(doctype, label, function(error, result){
-	      if(error){
-		util.debug(error);
-	      }else{
-		if (result.totalCount === 0){ return }; //short circuit if blank
-
-		result['ctimeMin'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['ctimeMin']));
-		result['ctimeMax'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['ctimeMax']));
-
-		result['mtimeMin'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['mtimeMin']));
-		result['mtimeMax'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['mtimeMax']));
-
-		result['atimeMin'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['atimeMin']));
-		result['atimeMax'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['atimeMax']));
-
-		result['totalSize'] = humanize.filesize(result['totalSize']);
-
-		stats.push(result);
-		cb();
-	      }
-	    });
-	  }
-
-	  funcs.push(func)
-	});
-
-	callback();
-
-      },
-
-      //run all the funcs in parallel, send compilation
-      function(cb){
-	nimble.parallel(funcs, function(){
-	  res.send( { stats: stats } );
-	  cb();
-	});
-      }
-
-
-  ]);
-
-
-
-}
 
 
 /*

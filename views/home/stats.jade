@@ -1,21 +1,13 @@
-.row-fluid
+.row-fluid#statsBox.hide
 
-  .span3.well.stats#lasStats 
-    p.center.lead LAS Summary
-    .globalStats
-    .labelStats
+  p.lead E&P File Stats
 
-  .span3.well.stats#sgyStats 
-    p.center.lead SEGY Summary
-    .globalStats
-    .labelStats
+  table#statsTable.table.table-condensed.table-bordered
+    th Type
+    th Label
+    th Count
+    th Total Size
+    th Oldest Modified
+    th Latest Modified
+    th Duplicates
 
-  .span3.well.stats#rasStats 
-    p.center.lead RAS Summary
-    .globalStats
-    .labelStats
-
-  .span3.well.stats#shpStats 
-    p.center.lead SHP Summary
-    .globalStats
-    .labelStats

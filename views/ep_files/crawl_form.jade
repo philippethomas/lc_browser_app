@@ -69,7 +69,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               label.checkbox
                 input(type='checkbox', name='write_csv', checked=(true===false ? "checked" : undefined))
                 | Write results to CSV 
-                i (saved as time-stamped files in Work Directory)
+                i (time-stamped files in Work Directory)
 
         p
 
@@ -81,7 +81,31 @@ It uses the older jQuery validate plugin even though it does odd things with lab
           .span3
             label.checkbox
               input(type='checkbox', name='zip_las', checked=(true===false ? "checked" : undefined))
-              | Include ZIP Archives
+              |  Include ZIP Archives
+
+
+        hr
+        .row-fluid 
+          .span2.offset2
+            label.checkbox
+              input(type='checkbox', name='find_RAS', checked=(true===false ? "checked" : undefined))
+              | Raster Logs
+          .span6
+            label
+              input(type='checkbox', name='ras_clip', checked=(true===false ? "checked" : undefined))  
+              |  Collect image clip from .tif/.jpg file
+
+
+        hr
+        .row-fluid 
+          .span2.offset2
+            label.checkbox
+              input(type='checkbox', name='find_SHP', checked=(true===false ? "checked" : undefined))
+              | Shapefiles
+          .span5
+            label
+              input.input-mini(type='text', name='shp_feat', value='20') 
+              |  Shapefile Feature Count
 
 
         hr
@@ -90,31 +114,6 @@ It uses the older jQuery validate plugin even though it does odd things with lab
             label.checkbox
               input(type='checkbox', name='find_SGY', checked=(true===false ? "checked" : undefined))
               |  SEGY
-          .span3
 
-        hr
-        .row-fluid 
-          .span2.offset2
-            label.checkbox
-              input(type='checkbox', name='find_RAS', checked=(true===false ? "checked" : undefined))
-              |  Raster Logs
-          .span6
-            label
-              input(type='checkbox', name='ras_clip', checked=(true===false ? "checked" : undefined))
-              |  Collect clip of log header.
-
-
-        hr
-        .row-fluid 
-          .span2.offset2
-            label.checkbox
-              input(type='checkbox', name='find_SHP', checked=(true===false ? "checked" : undefined))
-              |  Shapefiles
-          .span5
-            label
-              input.input-mini(type='text', name='shp_feat', value='20') 
-              |  Shapefile Feature Count
-
-          .span3
-            button#ep_crawl_btn.btn.btn-warning(type='submit') Save & Run Crawl
-
+          .span3.offset5
+            button#ep_crawl_btn.btn.btn-warning.btn-large(type='submit') Save & Run Crawl

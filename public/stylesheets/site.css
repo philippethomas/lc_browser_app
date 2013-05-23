@@ -58,13 +58,42 @@ label.error {
   margin-top: 3px;
 }
 
+#ep_work_box{
+  overflow: auto
+}
 
-.las{
-  color: red;
+/** colors for doctypes **/
+
+.progress-box{
+  float: left;
+  width:40px;
+  height:40px;
+  margin: 2px;
 }
-.sgy{
-  color: blue;
+.las{ color: #1f77b4; }
+.lasbg{
+  background-color: #aec7e8;
 }
+
+.shp{ color: #ff7f0e; }
+.shpbg{ background: #ffbb78; }
+
+.sgy{ color: #2ca02c; }
+.sgybg{ background: #98df8a; }
+
+
+.ras{ color: #d62728; }
+.rasbg{ background: #ff9896; }
+
+
+
+.global{
+  background: #fbfbfb;
+}
+
+
+
+
 
 .labelSummary{
   background-color: #fbfbfb;
@@ -100,8 +129,15 @@ label.error {
   margin: 0px 50px 2px 50px;
 }
 
+
+#statsTable{
+  font-size: 85%;
+}
+
+
+/*
 .stats{
-  //font-size: 90%;
+  font-size: 90%;
   padding: 10px 10px 10px 10px;
 }
 .stats .globalStats .well{
@@ -109,7 +145,7 @@ label.error {
   background: #fff6e8;
 
 }
-
+*/
 
 
 

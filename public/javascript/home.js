@@ -2,55 +2,51 @@ jQuery(function($){
 
   $('#clickForStats').hide();
 
-
   var dupLookup = {};
-  /** populate doctype-specific file stat summaries */
-  ['las','sgy','ras','shp'].forEach(function(doctype){
 
+  //var doctypes = ['las', 'sgy', 'shp', 'ras'];
+  $.post('/ep_doc_types', function(data){
+    console.log(data.typeList);
+    epTypeList = data.typeList;
+  });
+  console.log(epTypeList);
+
+  //TODO: rename stats to differentiate EP vs projects
+  epTypeList.forEach(function(doctype){
     $.post('/stats', {doctype: doctype}, function(data){
+      
+      if (data.globalStats.length > 0) { $('#statsBox').show(); }
 
-      data.stats.forEach(function(x,i){
+      data.globalStats.forEach(function(x){
+	var s = '<tr class="'+doctype+' global">'
+	s += '<td>'+doctype.toUpperCase()+'</td>';
+	s += '<td>'+x['label']+'</td>';
+	s += '<td>'+x['totalCount']+' files</td>';
+	s += '<td>'+x['totalSize']+'</td>';
+	s += '<td>'+x['mtimeMin']+'</td>';
+	s += '<td>'+x['mtimeMax']+'</td>';
 
-	s = '<div class="well white">';
-	s += '<pre class="center labelSummary">'+x.label+'</pre>';
-	s += '<br>';
-	s += '<b>total count:</b>';
-	s += '<span class="pull-right">'+x['totalCount']+' files</span><br>';
-	s += '<b>total size:</b>';
-	s += '<span class="pull-right">'+x['totalSize']+'</span><br>';
-	s += '<dl>';
-	s += '<dt>create MIN</dt><dd class="mono">'+x['ctimeMin']+'</dd>';
-	s += '<dt>create MAX</dt><dd class="mono">'+x['ctimeMax']+'</dd>';
-	s += '<dt>modify MIN</dt><dd class="mono">'+x['mtimeMin']+'</dd>';
-	s += '<dt>modify MAX</dt><dd class="mono">'+x['mtimeMax']+'</dd>';
-	s += '<dt>access MIN</dt><dd class="mono">'+x['atimeMin']+'</dd>';
-	s += '<dt>access MAX</dt><dd class="mono">'+x['atimeMax']+'</dd>';
-	s += '</dl>';
-	s += '</div>';
-
-	var dupButton;
-
-	if (x['label'] === '(global)' && x['dups'].length > 0){
+	if (x['dups'].length > 0) {
 	  var plur = (x['dups'].length > 1) ? 'duplications' : 'duplication';
-	  dupButton = '<br><br><a id="dupz_'+doctype+
-	    '" class="btn btn-small btn-danger" href="#">'+
-	    x['dups'].length+' file '+plur+'!</a>';
+	  dupButton = '<a id="dupz_'+doctype+
+	  '" class="btn btn-mini btn-danger" href="#">'+
+	    x['dups'].length+' file '+plur+'</a>';
 
-	  dupLookup[doctype] = {
-	    query: x['dups'].join(' OR '), 
-	    idx: doctype+'_idx'
-	  }
+	dupLookup[doctype] = {
+	  query: x['dups'].join(' OR '), 
+	  idx: doctype+'_idx'
+	}
+	s += '<td>'+dupButton+'</td>'; 
+
+	} else {
+	  s += '<td>(none)</td>';
 	}
 
-	if (x['label'] === '(global)'){
-	  $('#'+doctype+'Stats .globalStats').html(s);
-	  $('#'+doctype+'Stats .globalStats .labelSummary').append(dupButton)
-	}else{
-	  $('#'+doctype+'Stats .labelStats').append(s);
-	}
+	$('#statsTable tbody').append(s);
+
+
 
       });
-
 
       //slightly janky! send duplicate reports to search table
       $('#dupz_'+doctype).click(function(){
@@ -60,9 +56,26 @@ jQuery(function($){
 	$('#search').submit();
       });
 
+
+      data.labeledStats.forEach(function(x){
+	var s = '<tr class="'+doctype+'">'
+	s += '<td>'+doctype.toUpperCase()+'</td>';
+      s += '<td>'+x['label']+'</td>';
+      s += '<td>'+x['totalCount']+' files</td>';
+      s += '<td>'+x['totalSize']+'</td>';
+      s += '<td>'+x['mtimeMin']+'</td>';
+      s += '<td>'+x['mtimeMax']+'</td>';
+      s += '<td></td>';
+      $('#statsTable tbody').append(s);
+
+      });
+
     });
 
+
   });
+
+
 
 
 

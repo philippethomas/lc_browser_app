@@ -12,23 +12,27 @@ jQuery(function($){
   var socket = io.connect('http://localhost');
 
   socket.on('lasdoc', function(doc){
-    $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    var s = '<div class="'+doc.doctype+'bg progress-box" title="'+doc.basename+'"></div>'
+    $('#ep_work_box').prepend(s);
   });
   socket.on('sgydoc', function(doc){
-    $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    var s = '<div class="'+doc.doctype+'bg progress-box" title="'+doc.basename+'"></div>'
+    $('#ep_work_box').prepend(s);
   });
   socket.on('shpdoc', function(doc){
-    $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    var s = '<div class="'+doc.doctype+'bg progress-box" title="'+doc.basename+'"></div>'
+    $('#ep_work_box').prepend(s);
   });
   socket.on('rasdoc', function(doc){
-    $('#ep_list').prepend('<li class="thing">'+doc.crawled+' --- '+doc.fullpath+'</li>');
+    var s = '<div class="'+doc.doctype+'bg progress-box" title="'+doc.basename+'"></div>'
+    $('#ep_work_box').prepend(s);
   });
 
 
   socket.on('workStart', function(n){
     console.log('received a workStart event!');
-    $.post('/setWorkStatus', {working: "yes"},  function(data){
-      if (data.working != "yes") { console.log('problem setting work status'); }
+    $.post('/setWorkStatus', {working: 'yes'},  function(data){
+      if (data.working != 'yes') { console.log('problem setting work status'); }
       workStatus();
     });
   });
@@ -36,8 +40,8 @@ jQuery(function($){
   socket.on('workStop', function(n){
     console.log('received a workStop event!');
     //window.location.replace('/');
-    $.post('/setWorkStatus', {working: "no"},  function(data){
-      if (data.working != "no") { console.log('problem setting work status'); }
+    $.post('/setWorkStatus', {working: 'no'},  function(data){
+      if (data.working != 'no') { console.log('problem setting work status'); }
       $('#clickForStats').show();
       workStatus();
     });
@@ -56,10 +60,11 @@ jQuery(function($){
  */
 function workStatus(){
   $.post('/getWorkStatus', function(data){
-    if (data.working === "yes") {
+    if (data.working === 'yes') {
       $('#workSpinner').show();
       $('#ep_work_box').show();
-    } else if (data.working === "no") {
+      $('#ep_form_box').hide();
+    } else if (data.working === 'no') {
       $('#workSpinner').hide();
       //$('#ep_work_box').hide();
     }

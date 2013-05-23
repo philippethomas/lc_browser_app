@@ -5,7 +5,7 @@ var S = require('string');
 var util = require('util');
 var scanner = require('lc_file_crawlers/scanner.js');
 var humanize = require('humanize');
-
+var nimble = require('nimble');
 
 /**
  *
@@ -57,14 +57,16 @@ exports.previousQuery = function(req, res){
  */
 exports.ajaxGetDoc = function(req, res){
 
-  var docTemplates = require('./app').docTemplates;
+  var epDocTemplates = require('./app').epDocTemplates;
+  var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
 
-  var idx = 'las_idx,shp_idx,sgy_idx,ras_idx';
+  var ep_idx_list = nimble.map(ep_type_list, function(x){ 
+    return x+'_idx' }).join(',')
   var query = 'guid:'+req.body.guid;
   var from = 0;
   var size = 1;
 
-  AppES.doSearch(idx, from, size, query, function(error, result){
+  AppES.doSearch(ep_idx_list, from, size, query, function(error, result){
     if(error){
       util.debug(error);
       res.end();
@@ -76,7 +78,7 @@ exports.ajaxGetDoc = function(req, res){
 
       var body = '<dl class="dl-horizontal">';
       var doc = result.docs[0];
-      var keys = docTemplates.template(doc.doctype).allFields;
+      var keys = epDocTemplates.template(doc.doctype).allFields;
 
       keys.forEach(function(k){
 	if (k === 'cloud') {
@@ -114,7 +116,7 @@ exports.ajaxGetDoc = function(req, res){
  */
 exports.ajaxSearch = function(req, res){
  
-  var docTemplates = require('./app').docTemplates;
+  var epDocTemplates = require('./app').epDocTemplates;
 
 
   var idx = req.body.idx || req.session.idx;
@@ -128,7 +130,7 @@ exports.ajaxSearch = function(req, res){
       res.end();
     }else{
 
-      var t = docTemplates.template(result.docs[0].doctype).tableFields
+      var t = epDocTemplates.template(result.docs[0].doctype).tableFields
 
       result.docs.forEach(function(doc){
 	humanizeFields(doc);

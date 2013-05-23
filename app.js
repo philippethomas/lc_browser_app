@@ -29,13 +29,14 @@ app.configure(function(){
 
 //merge stuff together later after we get more crawlers
 //
-var docTemplates = require('lc_file_crawlers/docTemplates.js');
-var ep_files_filters = require('lc_file_crawlers/docTemplates.js').navSearchFilters;
+var epDocTemplates = require('lc_file_crawlers/epDocTemplates.js');
+var ep_files_filters = require('lc_file_crawlers/epDocTemplates.js').navSearchFilters;
+var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
 var sf = [];
 var searchFilters = sf.concat(ep_files_filters);
 app.locals({
   searchFilters: searchFilters,
-  docTemplates: docTemplates,
+  epDocTemplates: epDocTemplates,
 });
 
 
@@ -52,12 +53,12 @@ app.get('/', home.index);
 app.post('/getCrawlDoc', home.getCrawlDoc);
 app.post('/setWorkStatus', home.setWorkStatus);
 app.post('/getWorkStatus', home.getWorkStatus);
+app.post('/stats', home.stats);
 
 
 var ep_files = require('./ep_files');
 app.get('/ep_files', ep_files.index);
 app.post('/ep_files_crawl', ep_files.crawl);
-app.post('/stats', ep_files.stats);
 
 var petra = require('./petra');
 app.get('/petra', petra.stats);
@@ -99,6 +100,13 @@ app.configure('production', function(){
 
 /********** socket stuff **********/
 
+ep_type_list.forEach(function(d){
+  app.on(d+'doc', function(data){
+    io.sockets.emit(d+'doc', data);
+  });
+});
+
+/*
 app.on('lasdoc', function(data){
   io.sockets.emit('lasdoc', data);
 });
@@ -114,6 +122,7 @@ app.on('rasdoc', function(data){
 app.on('shpdoc', function(data){
   io.sockets.emit('shpdoc', data);
 });
+*/
 
 app.on('workStart', function(data){
   io.sockets.emit('workStart', data);
@@ -127,4 +136,4 @@ app.on('workStop', function(data){
 
 module.exports.app = app;
 module.exports.io = io;
-module.exports.docTemplates = docTemplates;
+module.exports.epDocTemplates = epDocTemplates;
