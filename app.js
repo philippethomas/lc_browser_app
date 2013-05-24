@@ -53,7 +53,8 @@ app.get('/', home.index);
 app.post('/getCrawlDoc', home.getCrawlDoc);
 app.post('/setWorkStatus', home.setWorkStatus);
 app.post('/getWorkStatus', home.getWorkStatus);
-app.post('/stats', home.stats);
+app.post('/epStats', home.epStats);
+app.post('/epDoctypes', home.epDoctypes);
 
 
 var ep_files = require('./ep_files');

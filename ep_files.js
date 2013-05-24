@@ -45,43 +45,43 @@ exports.flash = function(req, res){
 exports.crawl = function(req, res){
   var app = require('./app').app;
 
-  var label = req.body.label || 'unlabeled';
-  var es_host = req.body.es_host || 'localhost';
-  var es_port = req.body.es_port || '9200';
-  var fw_root = req.body.fw_root || 'c:/temp';
-  var work_dir = req.body.work_dir || process.env.TMP;
+  var ep_label = req.body.ep_label || 'unlabeled';
+  var ep_es_host = req.body.ep_es_host || 'localhost';
+  var ep_es_port = req.body.ep_es_port || '9200';
+  var ep_fw_root = req.body.ep_fw_root || 'c:/temp';
+  var ep_work_dir = req.body.ep_work_dir || process.env.TMP;
 
-  var write_csv = req.body.write_csv;
-  var write_es = true; //see below
-  var zip_las = req.body.zip_las;
-  var shp_feat = Math.round(req.body.shp_feat);
-  var ras_clip = req.body.ras_clip;
-  var find_LAS = req.body.find_LAS;
-  var find_SHP = req.body.find_SHP;
-  var find_SGY = req.body.find_SGY;
-  var find_RAS = req.body.find_RAS;
-  var cs_max = 26214400;
-  var ras_max_size = 10485760;
-  var ras_max_ar = 0.1;
+  var ep_write_csv = req.body.ep_write_csv;
+  var ep_write_es = true; //see below
+  var ep_zip_las = req.body.ep_zip_las;
+  var ep-shp_feat = Math.round(req.body.ep_shp_feat);
+  var ep_ras_clip = req.body.ep_ras_clip;
+  var ep_find_LAS = req.body.ep_find_LAS;
+  var ep_find_SHP = req.body.ep_find_SHP;
+  var ep_find_SGY = req.body.ep_find_SGY;
+  var ep_find_RAS = req.body.ep_find_RAS;
+  var ep_cs_max = 26214400;
+  var ep_ras_max_size = 10485760;
+  var ep_ras_max_ar = 0.1;
 
   var opts = { 
-    label: label,
-    es_host: es_host,
-    es_port: es_port,
-    fw_root: fw_root,
-    work_dir: work_dir,
-    write_csv: write_csv,
-    write_es: write_es,
-    zip_las: zip_las,
-    shp_feat: shp_feat,
-    ras_clip: ras_clip,
-    find_LAS: find_LAS,
-    find_SHP: find_SHP,
-    find_SGY: find_SGY,
-    find_RAS: find_RAS,
-    cs_max: cs_max,
-    ras_max_size: ras_max_size,
-    ras_max_ar: ras_max_ar
+    ep_label: ep_label,
+    ep_es_host: ep_es_host,
+    ep_es_port: ep_es_port,
+    ep_fw_root: ep_fw_root,
+    ep_work_dir: ep_work_dir,
+    ep_write_csv: ep_write_csv,
+    ep_write_es: ep_write_es,
+    ep_zip_las: ep_zip_las,
+    ep_shp_feat: ep_shp_feat,
+    ep_ras_clip: ep_ras_clip,
+    ep_find_LAS: ep_find_LAS,
+    ep_find_SHP: ep_find_SHP,
+    ep_find_SGY: ep_find_SGY,
+    ep_find_RAS: ep_find_RAS,
+    ep_cs_max: ep_cs_max,
+    ep_ras_max_size: ep_ras_max_size,
+    ep_ras_max_ar: ep_ras_max_ar
   }
 
   opts.doctype = 'ep_files_crawl';
@@ -96,7 +96,7 @@ exports.crawl = function(req, res){
     } else {
       if (result.ok) {
 	opts.in_browser = true; 
-	app.emit('workStart', 'scanning '+opts.fw_root);
+	app.emit('workStart', 'scanning '+opts.ep_fw_root);
 	child.on('message', function(m){ app.emit(m.type, m.doc); });
 	child.send( {message: opts} );
       }

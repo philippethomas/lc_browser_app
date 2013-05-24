@@ -11,20 +11,20 @@ ElasticSearcher = function(opts){
   LC_APP_MAP = { "lc_app":{ "properties":{
     "guid":       {"type":"string", "index":"not_analyzed"},
       "doctype":  {"type":"string"},
-      "label":    {"type":"string"},
-      "es_host":  {"type":"string"},
-      "es_port":  {"type":"string"},
-      "fw_root":  {"type":"string"},
-      "work_dir": {"type":"string"},
-      "write_csv":{"type":"string"},
-      "write_es": {"type":"string"},
-      "zip_las":  {"type":"string"},
-      "shp_feat": {"type":"string"},
-      "ras_clip": {"type":"string"},
-      "find_LAS": {"type":"string"},
-      "find_SHP": {"type":"string"},
-      "find_SGY": {"type":"string"},
-      "find_RAS": {"type":"string"},
+      "ep_label":    {"type":"string"},
+      "ep_es_host":  {"type":"string"},
+      "ep_es_port":  {"type":"string"},
+      "ep_fw_root":  {"type":"string"},
+      "ep_work_dir": {"type":"string"},
+      "ep_write_csv":{"type":"string"},
+      "ep_write_es": {"type":"string"},
+      "ep_zip_las":  {"type":"string"},
+      "ep_shp_feat": {"type":"string"},
+      "ep_ras_clip": {"type":"string"},
+      "ep_find_LAS": {"type":"string"},
+      "ep_find_SHP": {"type":"string"},
+      "ep_find_SGY": {"type":"string"},
+      "ep_find_RAS": {"type":"string"},
       "crawled":  {"type":"date"}
   } } }
   
@@ -199,9 +199,7 @@ ElasticSearcher.prototype.fileStats = function(doctype, label, callback){
       "query" : qs },
     },
     "facets" : { 
-      "ctimeStats" : { "statistical" : {"field":"ctime"} } ,
       "mtimeStats" : { "statistical" : {"field":"mtime"} } ,
-      "atimeStats" : { "statistical" : {"field":"atime"} } ,
       "sizeStats" : { "statistical" : {"field":"size"} } ,
       "dupChecksums" : { "terms" : {"field":"checksum"} } 
     }
@@ -226,12 +224,8 @@ ElasticSearcher.prototype.fileStats = function(doctype, label, callback){
 	      if (x.count > 1){ return x.term }
 	    }), function(y){ return y });
 
-        var ctimeMin = data.facets.ctimeStats.min; 
-        var ctimeMax = data.facets.ctimeStats.max; 
         var mtimeMin = data.facets.mtimeStats.min; 
         var mtimeMax = data.facets.mtimeStats.max; 
-        var atimeMin = data.facets.atimeStats.min; 
-        var atimeMax = data.facets.atimeStats.max; 
 
 	var totalSize = data.facets.sizeStats.total;
 
@@ -240,12 +234,8 @@ ElasticSearcher.prototype.fileStats = function(doctype, label, callback){
 	  totalCount: totalCount,
 	  totalSize: totalSize,
 	  dups: dups,
-	  ctimeMin: ctimeMin,
-	  ctimeMax: ctimeMax,
 	  mtimeMin: mtimeMin,
 	  mtimeMax: mtimeMax,
-	  atimeMin: atimeMin,
-	  atimeMax: atimeMax
 	}
 
 	callback(null, o);

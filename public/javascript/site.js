@@ -11,22 +11,16 @@ jQuery(function($){
 
   var socket = io.connect('http://localhost');
 
-  socket.on('lasdoc', function(doc){
-    var s = '<div class="'+doc.doctype+'bg progress-box" title="'+doc.basename+'"></div>'
-    $('#ep_work_box').prepend(s);
+  $.post('/epDoctypes', function(data){
+    data.doctypes.forEach(function(t){
+      socket.on(t+'doc', function(doc){
+	var s = '<div class="'+doc.doctype+'bg progress-box" title="'+
+	  doc.basename+'"></div>'
+	$('#ep_work_box').prepend(s);
+      });
+    });
   });
-  socket.on('sgydoc', function(doc){
-    var s = '<div class="'+doc.doctype+'bg progress-box" title="'+doc.basename+'"></div>'
-    $('#ep_work_box').prepend(s);
-  });
-  socket.on('shpdoc', function(doc){
-    var s = '<div class="'+doc.doctype+'bg progress-box" title="'+doc.basename+'"></div>'
-    $('#ep_work_box').prepend(s);
-  });
-  socket.on('rasdoc', function(doc){
-    var s = '<div class="'+doc.doctype+'bg progress-box" title="'+doc.basename+'"></div>'
-    $('#ep_work_box').prepend(s);
-  });
+
 
 
   socket.on('workStart', function(n){
@@ -39,7 +33,6 @@ jQuery(function($){
  
   socket.on('workStop', function(n){
     console.log('received a workStop event!');
-    //window.location.replace('/');
     $.post('/setWorkStatus', {working: 'no'},  function(data){
       if (data.working != 'no') { console.log('problem setting work status'); }
       $('#clickForStats').show();
@@ -93,7 +86,7 @@ function populateForm(frm, data) {
 	  $(this).attr("checked",value); 
 	}
       });   
-      break;  
+    break;  
   }  
   });  
 }

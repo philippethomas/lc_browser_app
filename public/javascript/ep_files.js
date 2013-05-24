@@ -15,13 +15,13 @@ jQuery(function($){
   $('#ep_crawl_form').validate(
     {
       rules: {
-	label:    { minlength: 1, required: true },
-	fw_root:  { isWindowsPath: 2, required: true },
-	es_host:  { required: true },
-	es_port:  { required: true },
-	work_dir: { isWindowsPath: true, required: true },
-        img_size: { min: 1, number: true, required: true },
-        shp_feat: { min: 1, number: true, required: true }
+	ep_label:    { minlength: 1, required: true },
+	ep_fw_root:  { isWindowsPath: 2, required: true },
+	ep_es_host:  { required: true },
+	ep_es_port:  { required: true },
+	ep_work_dir: { isWindowsPath: true, required: true },
+        ep_img_size: { min: 1, number: true, required: true },
+        ep_shp_feat: { min: 1, number: true, required: true }
       },
       highlight: function(element) {
 	$(element).closest('.control-group').removeClass('success').addClass('error');

@@ -41,19 +41,26 @@ exports.getCrawlDoc = function(req, res){
 };
 
 
+/** called via ajax to get doctypes from template */
+exports.epDoctypes = function(req, res){
+  var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
+  res.send( { doctypes: ep_type_list } );
+}
+
 
 /** called via ajax to populate file stats stuff */
-exports.stats = function(req, res){
+exports.epStats = function(req, res){
   var doctype = req.body.doctype; 
   var labels = ['(global)']; // <-- inject fake label to get global stats
   var funcs = [];
   var globalStats = [];
   var labeledStats = [];
 
+  function collectStats(){
 
   nimble.series([
 
-      //define the labels
+      //get the labels
       function(cb){
 	AppES.labelsForDoctype(doctype, function(error, result){
 	  if(error){
@@ -77,20 +84,11 @@ exports.stats = function(req, res){
 	      }else{
 		if (result.totalCount === 0){ return }; //short circuit if blank
 
-		result['ctimeMin'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['ctimeMin']));
-		result['ctimeMax'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['ctimeMax']));
-
 		result['mtimeMin'] = humanize.date('Y-M-d h:i:s A',
 		  new Date(result['mtimeMin']));
 		result['mtimeMax'] = humanize.date('Y-M-d h:i:s A',
 		  new Date(result['mtimeMax']));
 
-		result['atimeMin'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['atimeMin']));
-		result['atimeMax'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['atimeMax']));
 
 		result['totalSize'] = humanize.filesize(result['totalSize']);
 
@@ -121,7 +119,9 @@ exports.stats = function(req, res){
 
 
   ]);
+  }
 
+  collectStats()
 
 
 }

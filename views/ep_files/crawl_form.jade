@@ -17,9 +17,9 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               a(href='#', guid=o.guid) 
                 span.badge.badge-warning= o.crawled
                 span=' ... '
-                code= o.label
+                code= o.ep_label
                 span=' ... '
-                span.mono= o.fw_root
+                span.mono= o.ep_fw_root
               
 
   .span10
@@ -33,7 +33,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               label
                 | Label:
             .span10.bumper
-              input.rather-long(type='text', name='label', value='unlabeled')
+              input.rather-long(type='text', name='ep_label', value='unlabeled')
 
         .row-fluid 
           .control-group
@@ -41,7 +41,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               label
                 | Start Directory:
             .span10.bumper
-              input.rather-long(type='text', name='fw_root', placeholder='(directory path)')
+              input.rather-long(type='text', name='ep_fw_root', placeholder='(directory path)')
 
         .row-fluid 
           .control-group
@@ -49,7 +49,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               label
                 | Work Directory:
             .span10.bumper
-              input.rather-long(type='text', name='work_dir', value='#{process.env.TMP}')
+              input.rather-long(type='text', name='ep_work_dir', value='#{process.env.TMP}')
 
         .row-fluid 
           .control-group
@@ -57,9 +57,9 @@ It uses the older jQuery validate plugin even though it does odd things with lab
               label
                 | ElasticSearch:
             .span10.bumper
-              input.input-xlarge(type='text', name='es_host', value='localhost', placeholder='localhost')
+              input.input-xlarge(type='text', name='ep_es_host', value='localhost', placeholder='localhost')
               &nbsp &nbsp &nbsp
-              input.input-small(type='text', name='es_port', value='9200', placeholder='9200')
+              input.input-small(type='text', name='ep_es_port', value='9200', placeholder='9200')
         
         p
           
@@ -67,7 +67,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
           .control-group
             .span6.offset2
               label.checkbox
-                input(type='checkbox', name='write_csv', checked=(true===false ? "checked" : undefined))
+                input(type='checkbox', name='ep_write_csv', checked=(true===false ? "checked" : undefined))
                 | Write results to CSV 
                 i (time-stamped files in Work Directory)
 
@@ -76,11 +76,11 @@ It uses the older jQuery validate plugin even though it does odd things with lab
         .row-fluid
           .span2.offset2.bumper
             label.checkbox
-              input(type='checkbox', name='find_LAS', checked=true)
+              input(type='checkbox', name='ep_find_LAS', checked=true)
               | LAS
           .span3
             label.checkbox
-              input(type='checkbox', name='zip_las', checked=(true===false ? "checked" : undefined))
+              input(type='checkbox', name='ep_zip_las', checked=(true===false ? "checked" : undefined))
               |  Include ZIP Archives
 
 
@@ -88,11 +88,11 @@ It uses the older jQuery validate plugin even though it does odd things with lab
         .row-fluid 
           .span2.offset2
             label.checkbox
-              input(type='checkbox', name='find_RAS', checked=(true===false ? "checked" : undefined))
+              input(type='checkbox', name='ep_find_RAS', checked=(true===false ? "checked" : undefined))
               | Raster Logs
           .span6
             label
-              input(type='checkbox', name='ras_clip', checked=(true===false ? "checked" : undefined))  
+              input(type='checkbox', name='ep_ras_clip', checked=(true===false ? "checked" : undefined))  
               |  Collect image clip from .tif/.jpg file
 
 
@@ -100,11 +100,11 @@ It uses the older jQuery validate plugin even though it does odd things with lab
         .row-fluid 
           .span2.offset2
             label.checkbox
-              input(type='checkbox', name='find_SHP', checked=(true===false ? "checked" : undefined))
+              input(type='checkbox', name='ep_find_SHP', checked=(true===false ? "checked" : undefined))
               | Shapefiles
           .span5
             label
-              input.input-mini(type='text', name='shp_feat', value='20') 
+              input.input-mini(type='text', name='ep_shp_feat', value='20') 
               |  Shapefile Feature Count
 
 
@@ -112,7 +112,7 @@ It uses the older jQuery validate plugin even though it does odd things with lab
         .row-fluid
           .span2.offset2.bumper
             label.checkbox
-              input(type='checkbox', name='find_SGY', checked=(true===false ? "checked" : undefined))
+              input(type='checkbox', name='ep_find_SGY', checked=(true===false ? "checked" : undefined))
               |  SEGY
 
           .span3.offset5
