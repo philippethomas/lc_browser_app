@@ -25,7 +25,8 @@ jQuery(function($){
     );
 
 
-  // click a search result table row, get a modal popup
+  // click a search result table row, get a modal popup. (also called after
+  // pagination so that popups still work
   var modalRowTrigger = function(){
     $('table tr').click(function(a){
       var guid = $(this).attr('id');
@@ -49,13 +50,6 @@ jQuery(function($){
     e.preventDefault();
     this.submit();
   });
-
-  // remember last query
-  $.post('/previousQuery', function(data){
-    $('#search select option[value="'+data.idx+'"]').attr('selected',true);
-    $('#search input').val(data.query);
-
-  })
 
 
   // reload table via ajax pagination

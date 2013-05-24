@@ -54,7 +54,7 @@ exports.crawl = function(req, res){
   var ep_write_csv = req.body.ep_write_csv;
   var ep_write_es = true; //see below
   var ep_zip_las = req.body.ep_zip_las;
-  var ep-shp_feat = Math.round(req.body.ep_shp_feat);
+  var ep_shp_feat = Math.round(req.body.ep_shp_feat);
   var ep_ras_clip = req.body.ep_ras_clip;
   var ep_find_LAS = req.body.ep_find_LAS;
   var ep_find_SHP = req.body.ep_find_SHP;
@@ -87,6 +87,10 @@ exports.crawl = function(req, res){
   opts.doctype = 'ep_files_crawl';
   opts.guid = guidify(JSON.stringify(opts));
   opts.crawled = new Date().toISOString();
+
+  console.log('\r\n\r\n')
+  console.log(opts);
+  console.log('\r\n\r\n')
 
   var child = fork('./node_modules/lc_file_crawlers/scanner.js');
 

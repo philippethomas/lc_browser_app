@@ -1,11 +1,9 @@
 jQuery(function($){
 
-  $('#clickForStats').hide();
 
   var dupLookup = {};
 
-
-  // this seems a bit nuts, but these stats may take a long time to gather on 
+  // seems a bit nuts, but these stats may take a long time to gather on 
   // very large systems. It's better to call via ajax.
   $.post('/epDoctypes', function(data){
     data.doctypes.forEach(function(doctype){
@@ -49,20 +47,25 @@ jQuery(function($){
 	  var d = dupLookup[doctype];
 	  $('#search :selected').val(d.idx);
 	  $('#search input').val(d.query)
+
 	  $('#search').submit();
+
+	  //set search form after submit (maybe the guids are useful?)
+	  $('#search :selected').val(d.idx);
+	  $('#search input').val(d.query)
 	});
 
 
 	data.labeledStats.forEach(function(x){
 	  var s = '<tr class="'+doctype+'">'
 	  s += '<td>'+doctype.toUpperCase()+'</td>';
-	s += '<td>'+x['label']+'</td>';
-	s += '<td>'+x['totalCount']+' files</td>';
-	s += '<td>'+x['totalSize']+'</td>';
-	s += '<td>'+x['mtimeMin']+'</td>';
-	s += '<td>'+x['mtimeMax']+'</td>';
-	s += '<td></td>';
-	$('#statsTable tbody').append(s);
+	  s += '<td>'+x['label']+'</td>';
+	  s += '<td>'+x['totalCount']+' files</td>';
+	  s += '<td>'+x['totalSize']+'</td>';
+	  s += '<td>'+x['mtimeMin']+'</td>';
+	  s += '<td>'+x['mtimeMax']+'</td>';
+	  s += '<td></td>';
+	  $('#statsTable tbody').append(s);
 
 	});
 
@@ -71,9 +74,6 @@ jQuery(function($){
     });
 
   });
-
-
-
 
 
 });

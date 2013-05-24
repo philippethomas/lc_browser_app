@@ -48,7 +48,7 @@ jQuery(function($){
       var $this = $(this);
       placeholderCrawl($this.serializeArray());
       $.post('/ep_files_crawl', $this.serialize() , function(data, status, jqXHR){
-
+	//do some logging here?
       });
     }
   });
@@ -64,17 +64,6 @@ jQuery(function($){
       populateForm('#ep_crawl_form',data.crawl);
     });
   });
-
-
-
-
-  /*
-  $('#prevCrawlToggle').dblclick(function(){
-    location.reload(true);
-    $('#crawlSetup').click()
-  });
-  */
-
 
 
 

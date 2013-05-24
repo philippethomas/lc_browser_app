@@ -11,7 +11,7 @@ var nimble = require('nimble');
  *
  */
 exports.search = function(req, res){
-  var docTemplates = require('./app').docTemplates;
+  //var docTemplates = require('./app').docTemplates;
   var idx = req.body.idx;
   var query = req.body.query; 
   var from = req.body.from || 0;
@@ -81,18 +81,21 @@ exports.ajaxGetDoc = function(req, res){
       var keys = epDocTemplates.template(doc.doctype).allFields;
 
       keys.forEach(function(k){
+	var val = (doc[k] === undefined) ? '' : doc[k];
 	if (k === 'cloud') {
 	  body += '<dt>'+k+'</dt>'
 	  body += '<dd>...</dd>'
+	
 	  if (doc['doctype'] === 'ras') {
 	    body += '<div class="well center">';
-	    body += '<img src="data:image/png;base64,'+doc[k]+'"/>';
+	    body += '<img src="data:image/png;base64,'+val+'"/>';
 	    body += '</div>';
 	  } else {
-	    body += '<pre>'+doc[k]+'</pre>'
+	    
+	    body += '<pre>'+val+'</pre>'
 	  }
+
 	} else {
-	  var val = (doc[k] === undefined) ? '' : doc[k];
 	  body += '<dt>'+k+'</dt>'
 	  body += '<dd>'+val+'</dd>'
 	}
@@ -156,7 +159,7 @@ exports.ajaxSearch = function(req, res){
  */
 exports.csvExport = function(req, res){
 
-  var docTemplates = require('./app').docTemplates;
+  var epDocTemplates = require('./app').epDocTemplates;
   
   var idx = req.session.idx;
   var query = req.session.query; 
@@ -170,7 +173,7 @@ exports.csvExport = function(req, res){
       res.end();
     }else{
 
-      var header = docTemplates.template(result.docs[0].doctype).allFields;
+      var header = epDocTemplates.template(result.docs[0].doctype).allFields;
       var csvString = header.join(',')+'\r\n';
 
       result.docs.forEach(function(doc){
