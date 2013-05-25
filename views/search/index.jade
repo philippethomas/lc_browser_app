@@ -1,7 +1,10 @@
 extends ../layout
 
 block content
-  script(src="/javascript/search.js")
+  script(src="/javascript/search.js");
+  script
+    $('#search select option[value="'+'#{idx}'+'"]').attr('selected',true);
+    $('#search input').val('#{query}');
 
   #modalDocDetail.modal.hide.fade
     .modal-header

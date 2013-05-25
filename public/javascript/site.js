@@ -1,4 +1,3 @@
-
 jQuery(function($){
   
   // current page
@@ -8,12 +7,6 @@ jQuery(function($){
   // navbar link selection
   $('ul.nav > li > a[href="/' + loc + '"]').parent().addClass('active');
 
-  // auto-set the search form to whatever it was before
-  $.post('/previousQuery', function(data){
-    console.log('previous query set');
-    $('#search select option[value="'+data.idx+'"]').attr('selected',true);
-    $('#search input').val(data.query);
-  })
 
   var socket = io.connect('http://localhost');
 

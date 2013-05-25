@@ -46,7 +46,6 @@ jQuery(function($){
   // hijack event to show spinner, etc.
   $('#search').submit( function(e){
     $('#querySpinner').show(); // gets hidden on rendering the search index page
-    //$('#crawlSetup').hide();
     e.preventDefault();
     this.submit();
   });
@@ -111,6 +110,7 @@ jQuery(function($){
 
   });
 
+  window.onbeforeunload = function(){ console.log('did anything happen')};
 
 });
 

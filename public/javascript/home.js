@@ -1,5 +1,6 @@
 jQuery(function($){
 
+  
 
   var dupLookup = {};
 
@@ -47,12 +48,7 @@ jQuery(function($){
 	  var d = dupLookup[doctype];
 	  $('#search :selected').val(d.idx);
 	  $('#search input').val(d.query)
-
 	  $('#search').submit();
-
-	  //set search form after submit (maybe the guids are useful?)
-	  $('#search :selected').val(d.idx);
-	  $('#search input').val(d.query)
 	});
 
 
