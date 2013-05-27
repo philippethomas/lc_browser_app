@@ -60,8 +60,8 @@ exports.crawl = function(req, res){
   var ep_find_SHP = req.body.ep_find_SHP;
   var ep_find_SGY = req.body.ep_find_SGY;
   var ep_find_RAS = req.body.ep_find_RAS;
-  var ep_cs_max = 26214400;
-  var ep_ras_max_size = 10485760;
+  var ep_cs_max = 25 * Math.pow(1024,2);
+  var ep_ras_max_size = 8 * Math.pow(1024,2);
   var ep_ras_max_ar = 0.1;
 
   var opts = { 
