@@ -13,27 +13,39 @@ jQuery(function($){
   $.post('/epDoctypes', function(data){
     data.doctypes.forEach(function(t){
       socket.on(t+'doc', function(doc){
-	var s = '<div class="'+doc.doctype+'bg progress-box" title="'+
-	  doc.basename+'"></div>'
-	$('#ep_work_box').prepend(s);
+        var s = '<div class="'+doc.doctype+'bg progress-box" title="'+
+        doc.basename+'"></div>'
+        $('#ep_work_box').prepend(s);
       });
     });
   });
 
 
 
-  socket.on('workStart', function(n){
-    console.log('received a workStart event!');
+  socket.on('crawlStart', function(n){
+    console.log('received a crawlStart event!');
     $.post('/setWorkStatus', {working: 'yes'},  function(data){
-      if (data.working != 'yes') { console.log('problem setting work status'); }
+      if (data.working != 'yes') { console.error('problem setting work status'); }
       workStatus();
     });
   });
+
+  socket.on('showHit', function(path){
+    console.log('received a showHit event!');
+    var s = '<li>'+path+'</li>';
+    $('#ep_work_box').prepend(s);
+  });
+
+  socket.on('clearHits', function(){
+    console.log('received an clearHits event!');
+    $('#ep_work_box').empty();
+  })
+
  
-  socket.on('workStop', function(n){
-    console.log('received a workStop event!');
+  socket.on('crawlStop', function(n){
+    console.log('received a crawlStop event!');
     $.post('/setWorkStatus', {working: 'no'},  function(data){
-      if (data.working != 'no') { console.log('problem setting work status'); }
+      if (data.working != 'no') { console.error('problem setting work status'); }
       $('#clickForStats').show();
       workStatus();
     });
@@ -69,24 +81,24 @@ function populateForm(frm, data) {
 
   $(frm).find('input[type=checkbox]:checked').removeAttr('checked')
 
-  $.each(data, function(key, value){  
-    var $ctrl = $('[name='+key+']', frm);  
-    switch($ctrl.attr("type"))  
-  {  
-    case "text" :   
-    case "hidden":  
-    case "textarea":  
-      $ctrl.val(value);   
-      break;   
-    case "radio" : 
-    case "checkbox":   
-      $ctrl.each(function(){
-	if($(this).attr('value') == value) {  
-	  $(this).attr("checked",value); 
-	}
-      });   
-    break;  
-  }  
-  });  
+    $.each(data, function(key, value){  
+      var $ctrl = $('[name='+key+']', frm);  
+      switch($ctrl.attr("type"))  
+    {  
+      case "text" :   
+      case "hidden":  
+      case "textarea":  
+        $ctrl.val(value);   
+        break;   
+      case "radio" : 
+      case "checkbox":   
+        $ctrl.each(function(){
+          if($(this).attr('value') == value) {  
+            $(this).attr("checked",value); 
+          }
+        });   
+        break;  
+    }  
+    });  
 }
 

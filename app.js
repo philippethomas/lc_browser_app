@@ -124,11 +124,20 @@ app.on('shpdoc', function(data){
 });
 */
 
-app.on('workStart', function(data){
-  io.sockets.emit('workStart', data);
+app.on('crawlStart', function(data){
+  io.sockets.emit('crawlStart', data);
 });
-app.on('workStop', function(data){
-  io.sockets.emit('workStop', data);
+
+app.on('showHit', function(data){
+  io.sockets.emit('showHit', data);
+});
+
+app.on('clearHits', function(){
+  io.sockets.emit('clearHits', null);
+});
+
+app.on('crawlStop', function(data){
+  io.sockets.emit('crawlStop', data);
 });
 
 

@@ -3,8 +3,6 @@ var util = require('util');
 var humanize = require('humanize');
 var fork = require('child_process').fork;
   
-//var scanner = require('lc_file_crawlers/scanner.js');
-
 exports.index = function(req, res){
 
   AppES.previousCrawls('ep_files', function(error, result){
@@ -12,11 +10,11 @@ exports.index = function(req, res){
       util.debug(error);
     }else{
       result.previous.forEach(function(x){
-	x['crawled'] = humanize.date('Y-M-d h:i:s A', new Date(x['crawled'])); 
+        x['crawled'] = humanize.date('Y-M-d h:i:s A', new Date(x['crawled'])); 
       });
       res.render('ep_files', { 
-	title: 'E&P Files',
-	previousCrawls: result.previous
+        title: 'E&P Files',
+        previousCrawls: result.previous
       });
     }
   });
@@ -39,8 +37,6 @@ exports.flash = function(req, res){
 
 /**
  * Invoke the scanner of the ep_files crawler cli with supplied args.
- * The real-time message path from crawler to webpage is...complicated.
- * scan.publish --> parrot.emit --> process.send --> app.emit --> socket.io
  */
 exports.crawl = function(req, res){
   var app = require('./app').app;
@@ -88,10 +84,6 @@ exports.crawl = function(req, res){
   opts.guid = guidify(JSON.stringify(opts));
   opts.crawled = new Date().toISOString();
 
-  console.log('\r\n\r\n')
-  console.log(opts);
-  console.log('\r\n\r\n')
-
   var child = fork('./node_modules/lc_file_crawlers/scanner.js');
 
   AppES.saveCrawl(opts, function(error,result){
@@ -99,10 +91,11 @@ exports.crawl = function(req, res){
       util.debug(error);
     } else {
       if (result.ok) {
-	opts.in_browser = true; 
-	app.emit('workStart', 'scanning '+opts.ep_fw_root);
-	child.on('message', function(m){ app.emit(m.type, m.doc); });
-	child.send( {message: opts} );
+
+        opts.in_browser = true; 
+        app.emit('crawlStart', 'scanning '+opts.ep_fw_root);
+        child.on('message', function(m){ app.emit(m.type, m.msg); });
+        child.send( {message: opts} );
       }
     }
   });

@@ -33,12 +33,12 @@ exports.search = function(req, res){
       });
 
       res.render('search', { 
-	title: 'Search',
-	docs: result.docs,
-	total: result.total,
-	size: size,
-	idx: idx,
-	query: query
+        title: 'Search',
+        docs: result.docs,
+        total: result.total,
+        size: size,
+        idx: idx,
+        query: query
       });
     }
 
