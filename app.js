@@ -27,7 +27,6 @@ app.configure(function(){
 })
 
 
-//merge stuff together later after we get more crawlers
 //
 var epDocTemplates = require('lc_file_crawlers/epDocTemplates.js');
 var ep_files_filters = require('lc_file_crawlers/epDocTemplates.js').navSearchFilters;
@@ -47,6 +46,19 @@ global.working = 'no';
 var es = require('./models/elasticsearcher.js');
 AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
+/******************* modularization attempt here **************/
+
+var epf_app = require('lc_file_crawlers/epf_app');
+app.use('/epf', epf_app);
+app.use(express.static(__dirname + '/node_modules/lc_file_crawlers/pub'));
+
+ep_type_list.forEach(function(d){
+  app.on(d+'doc', function(data){
+    io.sockets.emit(d+'doc', data);
+  });
+});
+
+/**************************************************************/
 
 var home = require('./home');
 app.get('/', home.index);
@@ -57,9 +69,9 @@ app.post('/epStats', home.epStats);
 app.post('/epDoctypes', home.epDoctypes);
 
 
-var ep_files = require('./ep_files');
-app.get('/ep_files', ep_files.index);
-app.post('/ep_files_crawl', ep_files.crawl);
+//var ep_files = require('./ep_files');
+//app.get('/ep_files', ep_files.index);
+//app.post('/ep_files_crawl', ep_files.crawl);
 
 var petra = require('./petra');
 app.get('/petra', petra.stats);
@@ -100,11 +112,6 @@ app.configure('production', function(){
 
 /********** socket stuff **********/
 
-ep_type_list.forEach(function(d){
-  app.on(d+'doc', function(data){
-    io.sockets.emit(d+'doc', data);
-  });
-});
 
 /*
 app.on('lasdoc', function(data){
