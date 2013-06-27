@@ -27,15 +27,16 @@ app.configure(function(){
 })
 
 
-//
+////////////////////////////////////////////////////////////////////////////////
+
 var epDocTemplates = require('lc_file_crawlers/epDocTemplates.js');
-var ep_files_filters = require('lc_file_crawlers/epDocTemplates.js').navSearchFilters;
-var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
-var sf = [];
-var searchFilters = sf.concat(ep_files_filters);
+//var ep_files_filters = require('lc_file_crawlers/epDocTemplates.js').navSearchFilters;
+//var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
+//var sf = [];
+//var searchFilters = sf.concat(ep_files_filters);
 app.locals({
-  searchFilters: searchFilters,
-  epDocTemplates: epDocTemplates,
+  //searchFilters: searchFilters,
+  epDocTemplates: epDocTemplates
 });
 
 
@@ -46,11 +47,14 @@ global.working = 'no';
 var es = require('./models/elasticsearcher.js');
 AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
-/******************* modularization attempt here **************/
+
+
+////////////////////////// MODULARIZATION STUFF BELOW //////////////////////////
 
 var epf_app = require('lc_file_crawlers/epf_app');
 app.use('/epf', epf_app);
 app.use(express.static(__dirname + '/node_modules/lc_file_crawlers/pub'));
+var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
 
 ep_type_list.forEach(function(d){
   app.on(d+'doc', function(data){
@@ -58,24 +62,21 @@ ep_type_list.forEach(function(d){
   });
 });
 
-/**************************************************************/
+////////////////////////////////////////////////////////////////////////////////
 
 var home = require('./home');
-app.get('/', home.index);
-app.post('/getCrawlDoc', home.getCrawlDoc);
+app.get('/',               home.index);
+app.post('/getCrawlDoc',   home.getCrawlDoc);
 app.post('/setWorkStatus', home.setWorkStatus);
 app.post('/getWorkStatus', home.getWorkStatus);
-app.post('/epStats', home.epStats);
-app.post('/epDoctypes', home.epDoctypes);
+app.post('/epStats',       home.epStats);
+app.post('/epDoctypes',    home.epDoctypes);
 
 
-//var ep_files = require('./ep_files');
-//app.get('/ep_files', ep_files.index);
-//app.post('/ep_files_crawl', ep_files.crawl);
 
-var petra = require('./petra');
-app.get('/petra', petra.stats);
-app.post('/petra_crawl', petra.crawl);
+//var petra = require('./petra');
+//app.get('/petra', petra.stats);
+//app.post('/petra_crawl', petra.crawl);
 
 /*
 var discovery = require('./discovery');
@@ -87,6 +88,8 @@ app.get('/kingdom', kingdom.stats);
 app.post('/kingdom_crawl', kingdom.crawl);
 */
 
+////////////////////////////////////////////////////////////////////////////////
+
 var search = require('./search');
 app.post('/ajaxSearch', search.ajaxSearch);
 app.post('/ajaxGetDoc', search.ajaxGetDoc);
@@ -94,12 +97,14 @@ app.post('/search', search.search);
 app.get('/search', home.index);
 app.post('/csvExport', search.csvExport);
 
+////////////////////////////////////////////////////////////////////////////////
 
 var maintenance = require('./maintenance');
 app.get('/maintenance/indexInit', maintenance.indexInit);
 app.get('/maintenance/indexStatus', maintenance.indexStatus);
 app.get('/maintenance/indexMapping', maintenance.indexMapping);
 
+////////////////////////////////////////////////////////////////////////////////
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -110,26 +115,7 @@ app.configure('production', function(){
 });
 
 
-/********** socket stuff **********/
-
-
-/*
-app.on('lasdoc', function(data){
-  io.sockets.emit('lasdoc', data);
-});
-
-app.on('sgydoc', function(data){
-  io.sockets.emit('sgydoc', data);
-});
-
-app.on('rasdoc', function(data){
-  io.sockets.emit('rasdoc', data);
-});
-
-app.on('shpdoc', function(data){
-  io.sockets.emit('shpdoc', data);
-});
-*/
+////////////////////////////////////////////////////////////////////////////////
 
 app.on('crawlStart', function(data){
   io.sockets.emit('crawlStart', data);
@@ -148,8 +134,10 @@ app.on('crawlStop', function(data){
 });
 
 
+////////////////////////////////////////////////////////////////////////////////
 
 
 module.exports.app = app;
 module.exports.io = io;
+var epDocTemplates = require('lc_file_crawlers/epDocTemplates.js');
 module.exports.epDocTemplates = epDocTemplates;

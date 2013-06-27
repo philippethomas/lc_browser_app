@@ -58,67 +58,67 @@ exports.epStats = function(req, res){
 
   function collectStats(){
 
-  nimble.series([
+    nimble.series([
 
-      //get the labels
-      function(cb){
-	AppES.labelsForDoctype(doctype, function(error, result){
-	  if(error){
-	    util.debug(error);
-	  }else{
-	    labels = labels.concat(result.labels);
-	    cb();
-	  }
-	});
-      },
+        //get the labels
+        function(cb){
+          AppES.labelsForDoctype(doctype, function(error, result){
+            if(error){
+              util.debug(error);
+            }else{
+              labels = labels.concat(result.labels);
+              cb();
+            }
+          });
+        },
 
-      //define functions to get stats per each label
-      function(callback){
+        //define functions to get stats per each label
+        function(callback){
 
-	labels.forEach(function(label){
+          labels.forEach(function(label){
 
-	  var func = function(cb){
-	    AppES.fileStats(doctype, label, function(error, result){
-	      if(error){
-		util.debug(error);
-	      }else{
-		if (result.totalCount === 0){ return }; //short circuit if blank
+            var func = function(cb){
+              AppES.fileStats(doctype, label, function(error, result){
+                if(error){
+                  util.debug(error);
+                }else{
+                  if (result.totalCount === 0){ return }; //short circuit if blank
 
-		result['mtimeMin'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['mtimeMin']));
-		result['mtimeMax'] = humanize.date('Y-M-d h:i:s A',
-		  new Date(result['mtimeMax']));
-
-
-		result['totalSize'] = humanize.filesize(result['totalSize']);
-
-		if (result['label'] === '(global)') {
-		  globalStats.push(result);
-		} else {
-		  labeledStats.push(result);
-		}
-		cb();
-	      }
-	    });
-	  }
-
-	  funcs.push(func)
-	});
-
-	callback();
-
-      },
-
-      //run all the funcs in parallel, send compilation
-      function(cb){
-	nimble.parallel(funcs, function(){
-	  res.send( { labeledStats: labeledStats, globalStats: globalStats } );
-	  cb();
-	});
-      }
+                  result['mtimeMin'] = humanize.date('Y-M-d h:i:s A',
+                    new Date(result['mtimeMin']));
+                  result['mtimeMax'] = humanize.date('Y-M-d h:i:s A',
+                    new Date(result['mtimeMax']));
 
 
-  ]);
+                  result['totalSize'] = humanize.filesize(result['totalSize']);
+
+                  if (result['label'] === '(global)') {
+                    globalStats.push(result);
+                  } else {
+                    labeledStats.push(result);
+                  }
+                  cb();
+                }
+              });
+            }
+
+            funcs.push(func)
+          });
+
+          callback();
+
+        },
+
+        //run all the funcs in parallel, send compilation
+        function(cb){
+          nimble.parallel(funcs, function(){
+            res.send( { labeledStats: labeledStats, globalStats: globalStats } );
+            cb();
+          });
+        }
+
+
+    ]);
   }
 
   collectStats()

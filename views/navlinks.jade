@@ -10,7 +10,7 @@
         li.divider-vertical
 
         li 
-          a(href='/ep_files') E&P Files
+          a(href='/epf') E&P Files
         li
           a(href='/petra') Petra
         li
@@ -30,16 +30,17 @@
         li.spinner#querySpinner.hide
           img(src='images/orange_boxes.gif')
         
+      - if (typeof searchFilters !== "undefined")
 
-      form#search.navbar-search.form-search.pull-right(action='/search', method='POST')
-        .input-prepend.input-append
-          span.add-on
-            i.icon-filter
-          select(name='idx').span2
-            for f in searchFilters
-              option(value= f.value)= f.show
-          input(name='query', type='search', placeholder='Search')
-          span.add-on
-            i.icon-search
+        form#search.navbar-search.form-search.pull-right(action='/search', method='POST')
+          .input-prepend.input-append
+            span.add-on
+              i.icon-filter
+            select(name='idx').span2
+              for f in searchFilters
+                option(value= f.value)= f.show
+            input(name='query', type='search', placeholder='Search')
+            span.add-on
+              i.icon-search
 
 

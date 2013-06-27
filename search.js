@@ -29,7 +29,7 @@ exports.search = function(req, res){
     }else{
 
       result.docs.forEach(function(doc){
-	humanizeFields(doc);
+        humanizeFields(doc);
       });
 
       res.render('search', { 
@@ -55,8 +55,8 @@ exports.ajaxGetDoc = function(req, res){
   var epDocTemplates = require('./app').epDocTemplates;
   var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
 
-  var ep_idx_list = nimble.map(ep_type_list, function(x){ 
-    return x+'_idx' }).join(',')
+  var ep_idx_list = nimble.map(ep_type_list, 
+      function(x){ return x+'_idx' }).join(',');
   var query = 'guid:'+req.body.guid;
   var from = 0;
   var size = 1;
@@ -68,7 +68,7 @@ exports.ajaxGetDoc = function(req, res){
     }else{
 
       result.docs.forEach(function(doc){
-	humanizeFields(doc);
+        humanizeFields(doc);
       });
 
       var body = '<dl class="dl-horizontal">';
@@ -76,32 +76,32 @@ exports.ajaxGetDoc = function(req, res){
       var keys = epDocTemplates.template(doc.doctype).allFields;
 
       keys.forEach(function(k){
-	var val = (doc[k] === undefined) ? '' : doc[k];
-	if (k === 'cloud') {
-	  body += '<dt>'+k+'</dt>'
-	  body += '<dd>...</dd>'
-	
-	  if (doc['doctype'] === 'ras') {
-	    body += '<div class="well center">';
-	    body += '<img src="data:image/png;base64,'+val+'"/>';
-	    body += '</div>';
-	  } else {
-	    
-	    body += '<pre>'+val+'</pre>'
-	  }
+        var val = (doc[k] === undefined) ? '' : doc[k];
+        if (k === 'cloud') {
+          body += '<dt>'+k+'</dt>'
+        body += '<dd>...</dd>'
 
-	} else {
-	  body += '<dt>'+k+'</dt>'
-	  body += '<dd>'+val+'</dd>'
-	}
+        if (doc['doctype'] === 'ras') {
+          body += '<div class="well center">';
+          body += '<img src="data:image/png;base64,'+val+'"/>';
+          body += '</div>';
+        } else {
+
+          body += '<pre>'+val+'</pre>'
+        }
+
+        } else {
+          body += '<dt>'+k+'</dt>'
+        body += '<dd>'+val+'</dd>'
+        }
       });
       body += '</dl>';
-      
+
       var title = doc.basename;
 
       res.send( { 
-	body: body, 
-	title: title 
+        body: body, 
+        title: title 
       } );
     }
   });
@@ -113,7 +113,7 @@ exports.ajaxGetDoc = function(req, res){
  *
  */
 exports.ajaxSearch = function(req, res){
- 
+
   var epDocTemplates = require('./app').epDocTemplates;
 
   var idx = req.body.idx || req.session.idx;
@@ -129,16 +129,16 @@ exports.ajaxSearch = function(req, res){
 
       var t = epDocTemplates.template(result.docs[0].doctype).tableFields
 
-      result.docs.forEach(function(doc){
-	humanizeFields(doc);
-      });
+    result.docs.forEach(function(doc){
+      humanizeFields(doc);
+    });
 
-      res.send( { 
-	docs: result.docs, 
-	total: result.total, 
-	realFields: t.realFields,
-	showFields: t.showFields
-      } );
+  res.send( { 
+    docs: result.docs, 
+    total: result.total, 
+    realFields: t.realFields,
+    showFields: t.showFields
+  } );
     }
   });
 
@@ -154,7 +154,7 @@ exports.ajaxSearch = function(req, res){
 exports.csvExport = function(req, res){
 
   var epDocTemplates = require('./app').epDocTemplates;
-  
+
   var idx = req.session.idx;
   var query = req.session.query; 
   var from = 0;
@@ -173,7 +173,7 @@ exports.csvExport = function(req, res){
       result.docs.forEach(function(doc){
         csvString += scanner.csvRowString(doc);
       });
-      
+
       res.attachment('export.csv');
       res.send(csvString);
 
