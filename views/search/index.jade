@@ -22,11 +22,9 @@ block content
 
   - else
 
-
     .row-fluid#results
       table.table.table-condensed.table-bordered.table-hover
-
-        - var t = epDocTemplates.template(docs[0].doctype).tableFields
+        - var t = docTemplates.templateFor[docs[0].doctype].tableFields
         for f in t.showFields
           th= f
 

@@ -9,14 +9,21 @@
 
         li.divider-vertical
 
-        li 
-          a(href='/epf') E&P Files
-        li
-          a(href='/petra') Petra
-        li
-          a(href='/discovery') Discovery
-        li
-          a(href='/kingdom') Kingdom 
+        - if (hasEPF)
+          li 
+            a(href='/epf') E&P Files
+
+        - if (hasPET)
+          li
+            a(href='/pet') Petra
+
+        - if (hasGGX) 
+          li
+            a(href='/ggx') Discovery
+
+        - if (hasTKS)
+          li
+            a(href='/tks') Kingdom 
 
         li.divider-vertical
 

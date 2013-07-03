@@ -1,4 +1,4 @@
-var nimble = require('nimble');
+var async = require('async');
 var ElasticSearchClient = require('elasticsearchclient');
 var util = require('util');
 
@@ -88,7 +88,7 @@ ElasticSearcher.prototype.indexInit = function(callback){
 
   var msg = '<pre>(Re)initializing index: lc_app_idx\r\n';
   msg += '(check the server\'s log if the page hangs.)\r\n';
-  nimble.series([
+  async.series([
 
       function(cb){
 	self.indexDrop('lc_app_idx');
@@ -219,14 +219,15 @@ ElasticSearcher.prototype.fileStats = function(doctype, label, callback){
       }else{
 	var totalCount = data.hits.total;
 
-	var dups = nimble.filter(nimble.map(data.facets.dupChecksums.terms, 
-	    function(x){
-	      if (x.count > 1){ return x.term }
-	    }), function(y){ return y });
+  dups = [];
+  data.facets.dupChecksums.terms.forEach(function(x){
+    if (x.count > 1) { dups.push(x.term) }
+  });
 
-        var mtimeMin = data.facets.mtimeStats.min; 
-        var mtimeMax = data.facets.mtimeStats.max; 
+  var mtimeMin = data.facets.mtimeStats.min; 
+  var mtimeMax = data.facets.mtimeStats.max; 
 
+        
 	var totalSize = data.facets.sizeStats.total;
 
 	var o = {
@@ -265,13 +266,16 @@ ElasticSearcher.prototype.labelsForDoctype = function(doctype, callback){
     }else{
       data = JSON.parse(data);
       if (data.error){
-	util.debug(data.error);
-        callback(data.error,[]);
+        util.debug(data.error);
+        return callback(data.error,[]);
       }else{
-	var labels = nimble.map(data.facets.labels.terms, function(x){
-	  return x.term;
-	});
-	callback(null, { labels: labels });
+
+        var labels = [];
+        data.facets.labels.terms.forEach(function(x){
+          labels.push(x.term)
+        })
+
+        return callback(null, { labels: labels });
       }
     }
   });
@@ -287,9 +291,6 @@ ElasticSearcher.prototype.labelsForDoctype = function(doctype, callback){
 //
 ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callback){
   
-  //var indices = nimble.map(idxTypes.split(','), function(x){
-  //  return (x+'_idx').trim()
-  //}).join(',');
 
   var qryObj = {
     "from":from,
@@ -306,15 +307,15 @@ ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callba
 
       data = JSON.parse(data);
       if (data.error){
-	util.debug(data.error);
+        util.debug(data.error);
         return callback(data.error,[]);
       }else{
-	var docs = [];
-	var total = data.hits.total;
-	data.hits.hits.forEach(function(hit){
-	  docs.push(hit._source);
-	});
-	callback(null, { total: total, docs: docs });
+        var docs = [];
+        var total = data.hits.total;
+        data.hits.hits.forEach(function(hit){
+          docs.push(hit._source);
+        });
+        callback(null, { total: total, docs: docs });
       }
     }
   });

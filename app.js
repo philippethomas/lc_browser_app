@@ -1,3 +1,4 @@
+var fs = require('graceful-fs');
 var express = require('express');
 //var flash = require('connect-flash');
 var app = express();
@@ -12,32 +13,82 @@ var io = require('socket.io').listen(server);
 
 // Configuration
 var store  = new express.session.MemoryStore;
-app.configure(function(){
-  app.use(express.bodyParser());
-  //app.use(expressValidator);
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.set('view options', {layout: false});
-  app.use(express.methodOverride());
-  app.use(express.cookieParser('logicalcat'));
-  app.use(express.session({ secret: 'lOgIcAlCaT', store: store }));
-  //app.use(express.session({cookie:{maxAge:60000}}));
-  //app.use(flash());
-  app.use(express.static(__dirname + '/public'));
-})
+app.use(express.bodyParser());
+//app.use(expressValidator);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.set('view options', {layout: false});
+app.use(express.methodOverride());
+app.use(express.cookieParser('logicalcat'));
+app.use(express.session({ secret: 'lOgIcAlCaT', store: store }));
+//app.use(express.session({cookie:{maxAge:60000}}));
+//app.use(flash());
+app.use(express.static(__dirname + '/public'));
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var epDocTemplates = require('lc_file_crawlers/epDocTemplates.js');
+var searchFilters = [];
+var docTemplates = [];
+
+////////////////////////// MODULARIZATION STUFF BELOW //////////////////////////
+//
+// aside from app.js, other files that need tweaking for lc_xxx modules:
+// views/navlinks.jade
+
+var hasEPF = false;
+var hasPET = false;
+var hasGGX = false;
+var hasTKS = false;
+
+if (fs.existsSync('./node_modules/lc_file_crawlers')) { hasEPF = true; }
+if (fs.existsSync('./node_modules/lc_pet_crawlers'))  { hasPET = true; }
+if (fs.existsSync('./node_modules/lc_ggx_crawlers'))  { hasGGX = true; }
+if (fs.existsSync('./node_modules/lc_tks_crawlers'))  { hasTKS = true; }
+
+if (hasEPF) {
+
+  var epf_app = require('lc_file_crawlers/epf_app');
+  app.use('/epf', epf_app);
+  app.use(express.static(__dirname + '/node_modules/lc_file_crawlers/pub'));
+
+  var epf_filters = require('lc_file_crawlers/epfDocTemplates.js').searchFilters;
+  var epf_templates = require('lc_file_crawlers/epfDocTemplates.js');
+
+  searchFilters = searchFilters.concat(epf_filters);
+  docTemplates = epf_templates;
+
+  //app.post('/epf/epfDoctypes', epf_app.epfDoctypes);
+  //var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
+}
+
+if (hasPET) {
+}
+
+if (hasGGX) {
+}
+
+if (hasTKS) {
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+global.searchFilters = searchFilters;
+global.docTemplates = docTemplates;
+global.hasEPF = hasEPF;
+global.hasPET = hasPET;
+global.hasGGX = hasGGX;
+global.hasTKS = hasTKS;
+
+////////////////////////////////////////////////////////////////////////////////
+
+//var epDocTemplates = require('lc_file_crawlers/epDocTemplates.js');
 //var ep_files_filters = require('lc_file_crawlers/epDocTemplates.js').navSearchFilters;
 //var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
 //var sf = [];
 //var searchFilters = sf.concat(ep_files_filters);
-app.locals({
-  //searchFilters: searchFilters,
-  epDocTemplates: epDocTemplates
-});
 
 
 global.working = 'no';
@@ -49,18 +100,6 @@ AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 
 
-////////////////////////// MODULARIZATION STUFF BELOW //////////////////////////
-
-var epf_app = require('lc_file_crawlers/epf_app');
-app.use('/epf', epf_app);
-app.use(express.static(__dirname + '/node_modules/lc_file_crawlers/pub'));
-var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
-
-ep_type_list.forEach(function(d){
-  app.on(d+'doc', function(data){
-    io.sockets.emit(d+'doc', data);
-  });
-});
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -69,24 +108,7 @@ app.get('/',               home.index);
 app.post('/getCrawlDoc',   home.getCrawlDoc);
 app.post('/setWorkStatus', home.setWorkStatus);
 app.post('/getWorkStatus', home.getWorkStatus);
-app.post('/epStats',       home.epStats);
-app.post('/epDoctypes',    home.epDoctypes);
 
-
-
-//var petra = require('./petra');
-//app.get('/petra', petra.stats);
-//app.post('/petra_crawl', petra.crawl);
-
-/*
-var discovery = require('./discovery');
-app.get('/discovery', discovery.stats);
-app.post('/discovery_crawl', discovery.crawl);
-
-var kingdom = require('./kingdom');
-app.get('/kingdom', kingdom.stats);
-app.post('/kingdom_crawl', kingdom.crawl);
-*/
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -94,8 +116,8 @@ var search = require('./search');
 app.post('/ajaxSearch', search.ajaxSearch);
 app.post('/ajaxGetDoc', search.ajaxGetDoc);
 app.post('/search', search.search);
-app.get('/search', home.index);
 app.post('/csvExport', search.csvExport);
+app.get('/search', home.index);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -117,17 +139,21 @@ app.configure('production', function(){
 
 ////////////////////////////////////////////////////////////////////////////////
 
+app.on('parsedDoc', function(data){
+  io.sockets.emit('parsedDoc', data);
+});
+
 app.on('crawlStart', function(data){
   io.sockets.emit('crawlStart', data);
 });
 
-app.on('showHit', function(data){
-  io.sockets.emit('showHit', data);
-});
+//app.on('showHit', function(data){
+//  io.sockets.emit('showHit', data);
+//});
 
-app.on('clearHits', function(){
-  io.sockets.emit('clearHits', null);
-});
+//app.on('clearHits', function(){
+//  io.sockets.emit('clearHits', null);
+//});
 
 app.on('crawlStop', function(data){
   io.sockets.emit('crawlStop', data);
@@ -139,5 +165,5 @@ app.on('crawlStop', function(data){
 
 module.exports.app = app;
 module.exports.io = io;
-var epDocTemplates = require('lc_file_crawlers/epDocTemplates.js');
-module.exports.epDocTemplates = epDocTemplates;
+//var epfDocTemplates = require('lc_file_crawlers/epfDocTemplates.js');
+//module.exports.epfDocTemplates = epfDocTemplates;

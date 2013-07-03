@@ -135,6 +135,14 @@ label.error {
 }
 
 
+
+
+#previousCrawlList{
+  
+  float:right;
+}
+
+
 /*
 .stats{
   font-size: 90%;

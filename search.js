@@ -5,7 +5,6 @@ var S = require('string');
 var util = require('util');
 var scanner = require('lc_file_crawlers/scanner.js');
 var humanize = require('humanize');
-var nimble = require('nimble');
 
 /**
  *
@@ -52,16 +51,18 @@ exports.search = function(req, res){
  */
 exports.ajaxGetDoc = function(req, res){
 
-  var epDocTemplates = require('./app').epDocTemplates;
-  var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
+  var epfDocTemplates = require('./app').epfDocTemplates;
+  var ep_type_list = require('lc_file_crawlers/epfDocTemplates.js').typeList;
 
-  var ep_idx_list = nimble.map(ep_type_list, 
-      function(x){ return x+'_idx' }).join(',');
+  var ep_idx_list = [] 
+  ep_type_list.forEach(function(x){
+    ep_idx_list.push(x+'_idx');
+  })
   var query = 'guid:'+req.body.guid;
   var from = 0;
   var size = 1;
 
-  AppES.doSearch(ep_idx_list, from, size, query, function(error, result){
+  AppES.doSearch(ep_idx_list.join(','), from, size, query, function(error, result){
     if(error){
       util.debug(error);
       res.end();
@@ -73,7 +74,7 @@ exports.ajaxGetDoc = function(req, res){
 
       var body = '<dl class="dl-horizontal">';
       var doc = result.docs[0];
-      var keys = epDocTemplates.template(doc.doctype).allFields;
+      var keys = epfDocTemplates.templateFor[doc.doctype].allFields;
 
       keys.forEach(function(k){
         var val = (doc[k] === undefined) ? '' : doc[k];
@@ -114,7 +115,7 @@ exports.ajaxGetDoc = function(req, res){
  */
 exports.ajaxSearch = function(req, res){
 
-  var epDocTemplates = require('./app').epDocTemplates;
+  var epfDocTemplates = require('./app').epfDocTemplates;
 
   var idx = req.body.idx || req.session.idx;
   var query = req.body.query || req.session.query; 
@@ -127,7 +128,7 @@ exports.ajaxSearch = function(req, res){
       res.end();
     }else{
 
-      var t = epDocTemplates.template(result.docs[0].doctype).tableFields
+      var t = epfDocTemplates.templateFor[result.docs[0].doctype].tableFields
 
     result.docs.forEach(function(doc){
       humanizeFields(doc);
@@ -153,7 +154,7 @@ exports.ajaxSearch = function(req, res){
  */
 exports.csvExport = function(req, res){
 
-  var epDocTemplates = require('./app').epDocTemplates;
+  var epfDocTemplates = require('./app').epfDocTemplates;
 
   var idx = req.session.idx;
   var query = req.session.query; 
@@ -167,7 +168,7 @@ exports.csvExport = function(req, res){
       res.end();
     }else{
 
-      var header = epDocTemplates.template(result.docs[0].doctype).allFields;
+      var header = epfDocTemplates.templateFor[result.docs[0].doctype].allFields;
       var csvString = header.join(',')+'\r\n';
 
       result.docs.forEach(function(doc){

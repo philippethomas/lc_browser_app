@@ -1,9 +1,8 @@
-var humanize = require('humanize');
-var nimble = require('nimble');
 var util = require('util');
 
+
 exports.index = function(req, res){
-  var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
+  var ep_type_list = require('lc_file_crawlers/epfDocTemplates.js').typeList;
   res.render('home/index', { 
     title: 'LogicalCat Home',
     ep_type_list: ep_type_list
@@ -11,8 +10,9 @@ exports.index = function(req, res){
 };
 
 
+
 exports.setWorkStatus = function(req, res){
-  working = req.body.working; //global var set in app
+  working = req.body.working; 
   res.send ({ working: working });
 };
 
@@ -41,87 +41,3 @@ exports.getCrawlDoc = function(req, res){
 };
 
 
-/** called via ajax to get doctypes from template */
-exports.epDoctypes = function(req, res){
-  var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
-  res.send( { doctypes: ep_type_list } );
-}
-
-
-/** called via ajax to populate file stats stuff */
-exports.epStats = function(req, res){
-  var doctype = req.body.doctype; 
-  var labels = ['(global)']; // <-- inject fake label to get global stats
-  var funcs = [];
-  var globalStats = [];
-  var labeledStats = [];
-
-  function collectStats(){
-
-    nimble.series([
-
-        //get the labels
-        function(cb){
-          AppES.labelsForDoctype(doctype, function(error, result){
-            if(error){
-              util.debug(error);
-            }else{
-              labels = labels.concat(result.labels);
-              cb();
-            }
-          });
-        },
-
-        //define functions to get stats per each label
-        function(callback){
-
-          labels.forEach(function(label){
-
-            var func = function(cb){
-              AppES.fileStats(doctype, label, function(error, result){
-                if(error){
-                  util.debug(error);
-                }else{
-                  if (result.totalCount === 0){ return }; //short circuit if blank
-
-                  result['mtimeMin'] = humanize.date('Y-M-d h:i:s A',
-                    new Date(result['mtimeMin']));
-                  result['mtimeMax'] = humanize.date('Y-M-d h:i:s A',
-                    new Date(result['mtimeMax']));
-
-
-                  result['totalSize'] = humanize.filesize(result['totalSize']);
-
-                  if (result['label'] === '(global)') {
-                    globalStats.push(result);
-                  } else {
-                    labeledStats.push(result);
-                  }
-                  cb();
-                }
-              });
-            }
-
-            funcs.push(func)
-          });
-
-          callback();
-
-        },
-
-        //run all the funcs in parallel, send compilation
-        function(cb){
-          nimble.parallel(funcs, function(){
-            res.send( { labeledStats: labeledStats, globalStats: globalStats } );
-            cb();
-          });
-        }
-
-
-    ]);
-  }
-
-  collectStats()
-
-
-}

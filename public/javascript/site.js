@@ -10,8 +10,10 @@ jQuery(function($){
 
   var socket = io.connect('http://localhost');
 
+  /*
   $.post('/epDoctypes', function(data){
     data.doctypes.forEach(function(t){
+      console.log('------------------------------------'+t);
       socket.on(t+'doc', function(doc){
         var s = '<div class="'+doc.doctype+'bg progress-box" title="'+
         doc.basename+'"></div>'
@@ -19,7 +21,14 @@ jQuery(function($){
       });
     });
   });
+  */
 
+
+  socket.on('parsedDoc', function(msg){
+    var s = '<div class="'+msg.doctype+'bg progress-box" title="'+
+    msg.basename+'"></div>'
+    $('#ep_work_box').prepend(s);
+  });
 
 
   socket.on('crawlStart', function(n){
@@ -30,18 +39,7 @@ jQuery(function($){
     });
   });
 
-  socket.on('showHit', function(path){
-    console.log('received a showHit event!');
-    var s = '<li>'+path+'</li>';
-    $('#ep_work_box').prepend(s);
-  });
 
-  socket.on('clearHits', function(){
-    console.log('received an clearHits event!');
-    $('#ep_work_box').empty();
-  })
-
- 
   socket.on('crawlStop', function(n){
     console.log('received a crawlStop event!');
     $.post('/setWorkStatus', {working: 'no'},  function(data){
@@ -50,6 +48,19 @@ jQuery(function($){
       workStatus();
     });
   });
+
+  //socket.on('showHit', function(path){
+  //  console.log('received a showHit event!');
+  //  var s = '<li>'+path+'</li>';
+  //  $('#ep_work_box').prepend(s);
+  //});
+
+  //socket.on('clearHits', function(){
+  //  console.log('received an clearHits event!');
+  //  $('#ep_work_box').empty();
+  //})
+
+ 
 
 
 
