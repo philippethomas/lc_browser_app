@@ -91,15 +91,15 @@ ElasticSearcher.prototype.indexInit = function(callback){
   async.series([
 
       function(cb){
-	self.indexDrop('lc_app_idx');
-	msg += 'Deleted lc_app_idx...';
-	cb();
+        self.indexDrop('lc_app_idx');
+        msg += 'Deleted lc_app_idx...';
+        cb();
       },
 
       function(cb){
-	self.indexCreate('lc_app_idx', LC_APP_MAP);
-	msg += 'Created lc_app_idx.\r\n';
-	cb();
+        self.indexCreate('lc_app_idx', LC_APP_MAP);
+        msg += 'Created lc_app_idx.\r\n';
+        cb();
       }
 
       ]);
@@ -134,15 +134,15 @@ ElasticSearcher.prototype.indexStatus = function(callback){
  * @return {String} Output from ElasticSearch
  */
 ElasticSearcher.prototype.indexMapping = function(callback){
-  var mapCall = ESClient.getMapping('lc_app_idx', 'lc_app');
-  mapCall.exec(function(error, data){
-    data = JSON.parse(data)
-    if (error) {
-      callback(error);
-    } else {
-      callback(null, data);
-    }
-  });
+  var data;
+  ESClient.getMapping('lc_app_idx', 'lc_app')
+    .on('error', function(error) {
+      return callback(error)
+    })
+    .on('data', function(data) {
+      data = JSON.parse(data)
+      return callback(null, data);
+    }).exec();
 }
 
 
@@ -177,71 +177,9 @@ ElasticSearcher.prototype.previousCrawls = function(crawlType, callback){
 
   self.doSearch('lc_app_idx', 0, 10, crawlQuery, function(error, result){
     if(error){
-      util.debug(error);
-      callback(error);
+      return callback(error);
     }else{
-      callback(null,{ previous: result.docs });
-    }
-  });
-}
-
-
-
-/** use label '(global)'  to collect all stats--that set gets displayed first */
-ElasticSearcher.prototype.fileStats = function(doctype, label, callback){
-  var self = this;
-
-  var qs = (label === '(global)') ? 'doctype:'+doctype : 
-    'doctype:'+doctype+' AND label:'+ label;
-
-  var qryObj = {
-    "query" : { "query_string" : { 
-      "query" : qs },
-    },
-    "facets" : { 
-      "mtimeStats" : { "statistical" : {"field":"mtime"} } ,
-      "sizeStats" : { "statistical" : {"field":"size"} } ,
-      "dupChecksums" : { "terms" : {"field":"checksum"} } 
-    }
-  };
-
-
-  var cmd = ESClient.search(doctype+'_idx', qryObj);
-  cmd.exec(function(err, data){
-    if(err){
-      callback(error);
-    }else{
-
-      data = JSON.parse(data);
-      if (data.error){
-	util.debug(data.error);
-	return callback(data.error,[]);
-      }else{
-	var totalCount = data.hits.total;
-
-  dups = [];
-  data.facets.dupChecksums.terms.forEach(function(x){
-    if (x.count > 1) { dups.push(x.term) }
-  });
-
-  var mtimeMin = data.facets.mtimeStats.min; 
-  var mtimeMax = data.facets.mtimeStats.max; 
-
-        
-	var totalSize = data.facets.sizeStats.total;
-
-	var o = {
-	  label: label,
-	  totalCount: totalCount,
-	  totalSize: totalSize,
-	  dups: dups,
-	  mtimeMin: mtimeMin,
-	  mtimeMax: mtimeMax,
-	}
-
-	callback(null, o);
-
-      }
+      return callback(null,{ previous: result.docs });
     }
   });
 }
@@ -249,125 +187,45 @@ ElasticSearcher.prototype.fileStats = function(doctype, label, callback){
 
 
 
-
-/** this script_field syntax accounts for labels that might have spaces */
-ElasticSearcher.prototype.labelsForDoctype = function(doctype, callback){
-  var qryObj = {
-    "query" : { "match_all" : { } },
-    "facets" : { "labels" : { "terms" : {
-      "script_field": "_source[\'label\']"
-    } } },
-  };
-  var idx = doctype+'_idx';
-  var cmd = ESClient.search(idx, qryObj);
-  cmd.exec(function(err, data){
-    if(err){
-      callback(error);
-    }else{
-      data = JSON.parse(data);
-      if (data.error){
-        util.debug(data.error);
-        return callback(data.error,[]);
-      }else{
-
-        var labels = [];
-        data.facets.labels.terms.forEach(function(x){
-          labels.push(x.term)
-        })
-
-        return callback(null, { labels: labels });
-      }
-    }
-  });
-
-}
-
-
-
-
-
-
-//----------
 //
 ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callback){
-  
 
   var qryObj = {
-    "from":from,
-    "size":size,
-    "query" : { "query_string" : { "query" : query, "default_operator": "AND" } },
-    "sort" : [ { "crawled" : {"order" : "desc"} } ]
+    "from": from,
+    "size": size,
+    "query": { "query_string": { "query": query, "default_operator": "AND" } },
+    "sort": [ { "crawled": {"order": "desc"} } ]
   };
 
-  var cmd = ESClient.search(indices, qryObj);
-  cmd.exec(function(err, data){
-    if(err){
-      callback(error);
-    }else{
+  var total = 0;
+  var docs = [];
+  ESClient.search(indices, qryObj)
 
+    .on('error', function(error) {
+      return callback(error);
+    })
+
+    .on('data', function(data) {
       data = JSON.parse(data);
       if (data.error){
-        util.debug(data.error);
-        return callback(data.error,[]);
+        return callback(data.error);
       }else{
-        var docs = [];
-        var total = data.hits.total;
+        total = data.hits.total;
         data.hits.hits.forEach(function(hit){
           docs.push(hit._source);
         });
-        callback(null, { total: total, docs: docs });
       }
-    }
-  });
+    })
+
+    .on('done', function(){
+      return callback(null, { total: total, docs: docs });
+    }).exec()
+
 }
 
 
 
 
-
-
-
-
-
-//----------
-/*
-ElasticSearcher.prototype.csvSearch = function(indices, from, size, query, callback){
-  
-  var qryObj = {
-    "from":from,
-    "size":size,
-    "query" : { "query_string" : { "query" : query, "default_operator": "AND" } },
-    "facets" : { "doctypes" : { "terms" : {"field":"doctype", "all_terms":true} } },
-    "sort" : [ { "crawled" : {"order" : "desc"} } ]
-  };
-
-  var cmd = ESClient.search(indices, qryObj);
-  cmd.exec(function(err, data){
-    if(err){
-      callback(error);
-    }else{
-
-      data = JSON.parse(data);
-      if (data.error){
-	util.debug(data.error);
-        return callback(data.error,[]);
-      }else{
-	var docs = [];
-
-	console.log('=========================');
-	console.log(data.facets.doctypes.terms);
-	console.log('=========================');
-
-	var total = data.hits.total;
-	data.hits.hits.forEach(function(hit){
-	  docs.push(hit._source);
-	});
-	callback(null, { total: total, docs: docs });
-      }
-    }
-  });
-}
-*/
 
 
 
@@ -393,9 +251,9 @@ ElasticSearcher.prototype.saveCrawl = function(crawl, callback){
     } else {
       data = JSON.parse(data);
       if (data.ok) {
-	callback(null, data);
+        callback(null, data);
       } else {
-	callback('ERROR: crawl not saved?!?!?');
+        callback('ERROR: crawl not saved?!?!?');
       }
     }
   });

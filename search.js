@@ -1,9 +1,9 @@
-var ep_filesScanner = require('lc_file_crawlers/scanner.js');
+var ep_filesScanner = require('lc_epf_crawlers/scanner.js');
 var path = require('path');
 var fs = require('fs');
 var S = require('string');
 var util = require('util');
-var scanner = require('lc_file_crawlers/scanner.js');
+var scanner = require('lc_epf_crawlers/scanner.js');
 var humanize = require('humanize');
 
 /**
@@ -52,7 +52,7 @@ exports.search = function(req, res){
 exports.ajaxGetDoc = function(req, res){
 
   var epfDocTemplates = require('./app').epfDocTemplates;
-  var ep_type_list = require('lc_file_crawlers/epfDocTemplates.js').typeList;
+  var ep_type_list = require('lc_epf_crawlers/epfDocTemplates.js').typeList;
 
   var ep_idx_list = [] 
   ep_type_list.forEach(function(x){
@@ -168,7 +168,7 @@ exports.csvExport = function(req, res){
       res.end();
     }else{
 
-      var header = epfDocTemplates.templateFor[result.docs[0].doctype].allFields;
+      var header = docTemplates.templateFor[result.docs[0].doctype].allFields;
       var csvString = header.join(',')+'\r\n';
 
       result.docs.forEach(function(doc){

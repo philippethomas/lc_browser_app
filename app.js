@@ -27,7 +27,6 @@ app.use(express.static(__dirname + '/public'));
 
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 
 var searchFilters = [];
@@ -38,30 +37,28 @@ var docTemplates = [];
 // aside from app.js, other files that need tweaking for lc_xxx modules:
 // views/navlinks.jade
 
-var hasEPF = false;
-var hasPET = false;
-var hasGGX = false;
-var hasTKS = false;
-
-if (fs.existsSync('./node_modules/lc_file_crawlers')) { hasEPF = true; }
-if (fs.existsSync('./node_modules/lc_pet_crawlers'))  { hasPET = true; }
-if (fs.existsSync('./node_modules/lc_ggx_crawlers'))  { hasGGX = true; }
-if (fs.existsSync('./node_modules/lc_tks_crawlers'))  { hasTKS = true; }
+var hasEPF = (fs.existsSync('./node_modules/lc_epf_crawlers')) ? true : false;
+var hasPET = (fs.existsSync('./node_modules/lc_pet_crawlers')) ? true : false;
+var hasGGX = (fs.existsSync('./node_modules/lc_ggx_crawlers')) ? true : false;
+var hasTKS = (fs.existsSync('./node_modules/lc_tks_crawlers')) ? true : false;
 
 if (hasEPF) {
 
-  var epf_app = require('lc_file_crawlers/epf_app');
+  var epf_app = require('lc_epf_crawlers/epf_app');
   app.use('/epf', epf_app);
-  app.use(express.static(__dirname + '/node_modules/lc_file_crawlers/pub'));
+  app.use(express.static(__dirname + '/node_modules/lc_epf_crawlers/pub'));
 
-  var epf_filters = require('lc_file_crawlers/epfDocTemplates.js').searchFilters;
-  var epf_templates = require('lc_file_crawlers/epfDocTemplates.js');
+  var epf_filters = require('lc_epf_crawlers/epfDocTemplates.js').searchFilters;
+  var epf_templates = require('lc_epf_crawlers/epfDocTemplates.js');
 
   searchFilters = searchFilters.concat(epf_filters);
   docTemplates = epf_templates;
 
   //app.post('/epf/epfDoctypes', epf_app.epfDoctypes);
   //var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
+
+  require('./node_modules/lc_epf_crawlers/elasticsearcher.js');
+  EPF_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 }
 
 if (hasPET) {
@@ -95,7 +92,7 @@ global.working = 'no';
 
 //TODO maybe store config stuff for the Express app elsewhere: 
 //check out https://github.com/flatiron/nconf
-var es = require('./models/elasticsearcher.js');
+require('./models/elasticsearcher.js');
 AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 
