@@ -26,6 +26,8 @@ app.use(express.session({ secret: 'lOgIcAlCaT', store: store }));
 app.use(express.static(__dirname + '/public'));
 
 
+require('./models/elasticsearcher.js');
+AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +36,7 @@ var docTemplates = [];
 
 ////////////////////////// MODULARIZATION STUFF BELOW //////////////////////////
 //
-// aside from app.js, other files that need tweaking for lc_xxx modules:
+// also check: 
 // views/navlinks.jade
 
 var hasEPF = (fs.existsSync('./node_modules/lc_epf_crawlers')) ? true : false;
@@ -92,8 +94,6 @@ global.working = 'no';
 
 //TODO maybe store config stuff for the Express app elsewhere: 
 //check out https://github.com/flatiron/nconf
-require('./models/elasticsearcher.js');
-AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 
 
@@ -102,7 +102,6 @@ AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 
 var home = require('./home');
 app.get('/',               home.index);
-app.post('/getCrawlDoc',   home.getCrawlDoc);
 app.post('/setWorkStatus', home.setWorkStatus);
 app.post('/getWorkStatus', home.getWorkStatus);
 
@@ -118,10 +117,10 @@ app.get('/search', home.index);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var maintenance = require('./maintenance');
-app.get('/maintenance/indexInit', maintenance.indexInit);
-app.get('/maintenance/indexStatus', maintenance.indexStatus);
-app.get('/maintenance/indexMapping', maintenance.indexMapping);
+//var maintenance = require('./maintenance');
+//app.get('/maintenance/indexInit', maintenance.indexInit);
+//app.get('/maintenance/indexStatus', maintenance.indexStatus);
+//app.get('/maintenance/indexMapping', maintenance.indexMapping);
 
 ////////////////////////////////////////////////////////////////////////////////
 

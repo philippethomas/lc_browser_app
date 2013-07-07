@@ -8,7 +8,9 @@ ElasticSearcher = function(opts){
   ESClient = new ElasticSearchClient({ host: opts.host, port: opts.port });
 
   /** @constant {Array} */
+  /*
   LC_APP_MAP = { "lc_app":{ "properties":{
+
     "guid":       {"type":"string", "index":"not_analyzed"},
       "doctype":  {"type":"string"},
       "ep_label":    {"type":"string"},
@@ -27,6 +29,7 @@ ElasticSearcher = function(opts){
       "ep_find_RAS": {"type":"string"},
       "crawled":  {"type":"date"}
   } } }
+  */
   
 };
 
@@ -36,6 +39,7 @@ ElasticSearcher = function(opts){
  *
  * @param {String} idxName
  */
+/*
 ElasticSearcher.prototype.indexDrop = function(idxName){
   var deleteCall = ESClient.deleteIndex(idxName);
   deleteCall.exec(function(err, data){
@@ -53,14 +57,81 @@ ElasticSearcher.prototype.indexDrop = function(idxName){
     }
   });
 }
+*/
 
+/*
+ElasticSearcher.prototype.indexDrop = function(idxName, callback){
 
+  ESClient.deleteIndex(idxName)
+    .on('data', function(data) {
+      data = JSON.parse(data);
+      if(data.ok){
+        callback(null, 'Deleted index: '+idxName);
+      }else{
+        return callback(data);
+      }
+    }).exec()
+}
+*/
+/*
+ElasticSearcher.prototype.indexCreate = function(idxName, idxMapping, callback){
+
+  ESClient.createIndex(idxName,{"mappings":idxMapping})
+    .on('data', function(data) {
+      data = JSON.parse(data);
+      if(data.ok){
+        callback(null, 'Created index: '+idxName);
+      }else{
+        return callback(data);
+      }
+    }).exec()
+}
+
+ElasticSearcher.prototype.indexInit = function(idxName, callback){
+  //var idxMapping = fields.esMapping(idxName.substr(0,3))
+  var idxMapping = epfDocTemplates.templateFor[idxName.substr(0,3)].esMapping;
+  var self = this;
+
+  async.series([
+
+      function(cb){
+        self.indexDrop(idxName, function(err, result){
+          if (err) { 
+            cb(err);
+          } else {
+            cb(result); 
+          }
+        });
+      },
+
+      function(cb){
+        self.indexCreate(idxName, idxMapping, function(err, result){
+          if (err) { 
+            cb(err);
+          } else {
+            cb(result);
+          }
+        });
+      }
+
+  ], function(err, results){
+    if (err) {
+      return callback(err);
+    } else {
+      callback(results);
+    }
+
+  });
+
+}
+*/
 /**
  * Just a wrapper for createIndex
  *
  * @param {String} idxName
  * @param {Array} idxMapping
  */
+/*
 ElasticSearcher.prototype.indexCreate = function(idxName, idxMapping){
   var createCall = ESClient.createIndex(idxName,{"mappings":idxMapping});
   createCall.exec(function(err, data){
@@ -76,6 +147,7 @@ ElasticSearcher.prototype.indexCreate = function(idxName, idxMapping){
     }
   });
 }
+*/
 
 
 /**
@@ -83,6 +155,7 @@ ElasticSearcher.prototype.indexCreate = function(idxName, idxMapping){
  *
  * @param {String} idxName
  */
+/*
 ElasticSearcher.prototype.indexInit = function(callback){
   var self = this;
 
@@ -108,6 +181,7 @@ ElasticSearcher.prototype.indexInit = function(callback){
   callback(null, msg);
 
 }
+*/
 
 
 /**
@@ -115,17 +189,18 @@ ElasticSearcher.prototype.indexInit = function(callback){
  *
  * @return {String} Output from ElasticSearch
  */
+/*
 ElasticSearcher.prototype.indexStatus = function(callback){
-  var statCall = ESClient.status('lc_app_idx');
-  statCall.exec(function(error, data){
-    data = JSON.parse(data)
-    if (error){
-      callback(error);
-    } else {
-      callback(null, data);
-    }
-  });
+  ESClient.status('lc_app_idx')
+    .on('error', function(error) {
+      return callback(error);
+    })
+    .on('data', function(data) {
+      data = JSON.parse(data);
+      return callback(null, data);
+    }).exec();
 };
+*/
 
 
 /**
@@ -133,6 +208,7 @@ ElasticSearcher.prototype.indexStatus = function(callback){
  *
  * @return {String} Output from ElasticSearch
  */
+/*
 ElasticSearcher.prototype.indexMapping = function(callback){
   var data;
   ESClient.getMapping('lc_app_idx', 'lc_app')
@@ -144,6 +220,7 @@ ElasticSearcher.prototype.indexMapping = function(callback){
       return callback(null, data);
     }).exec();
 }
+*/
 
 
 /**
@@ -155,6 +232,7 @@ ElasticSearcher.prototype.indexMapping = function(callback){
  * @param {String} crawlType [ep_files, petra, discovery, kingdom]
  * @return {String} 
  */
+/*
 ElasticSearcher.prototype.previousCrawls = function(crawlType, callback){
   var self = this;
   switch(crawlType){
@@ -183,7 +261,7 @@ ElasticSearcher.prototype.previousCrawls = function(crawlType, callback){
     }
   });
 }
-
+*/
 
 
 
@@ -205,21 +283,21 @@ ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callba
       return callback(error);
     })
 
-    .on('data', function(data) {
-      data = JSON.parse(data);
-      if (data.error){
-        return callback(data.error);
-      }else{
-        total = data.hits.total;
-        data.hits.hits.forEach(function(hit){
-          docs.push(hit._source);
-        });
-      }
-    })
+  .on('data', function(data) {
+    data = JSON.parse(data);
+    if (data.error){
+      return callback(data.error);
+    }else{
+      total = data.hits.total;
+      data.hits.hits.forEach(function(hit){
+        docs.push(hit._source);
+      });
+    }
+  })
 
-    .on('done', function(){
-      return callback(null, { total: total, docs: docs });
-    }).exec()
+  .on('done', function(){
+    return callback(null, { total: total, docs: docs });
+  }).exec()
 
 }
 
@@ -243,6 +321,7 @@ ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callba
  *
  * @param {Object} crawl
  */
+/*
 ElasticSearcher.prototype.saveCrawl = function(crawl, callback){
   var cmd = ESClient.index('lc_app_idx', crawl.doctype, crawl, crawl.guid);
   cmd.exec(function(err, data){
@@ -258,7 +337,7 @@ ElasticSearcher.prototype.saveCrawl = function(crawl, callback){
     }
   });
 }
-
+*/
 
 
 

@@ -22,7 +22,7 @@ exports.indexStatus = function(req, res){
 
 
 exports.indexMapping = function(req, res){
-  AppES.indexMapping(function(error,result){
+  AppES.indexMapping('lc_app_idx', function(error,result){
     if(error){
       res.send(error);
     }else{

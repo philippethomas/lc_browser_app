@@ -17,7 +17,7 @@ jQuery(function($){
       socket.on(t+'doc', function(doc){
         var s = '<div class="'+doc.doctype+'bg progress-box" title="'+
         doc.basename+'"></div>'
-        $('#ep_work_box').prepend(s);
+        $('#epf_work_box').prepend(s);
       });
     });
   });
@@ -27,7 +27,7 @@ jQuery(function($){
   socket.on('parsedDoc', function(msg){
     var s = '<div class="'+msg.doctype+'bg progress-box" title="'+
     msg.basename+'"></div>'
-    $('#ep_work_box').prepend(s);
+    $('#epf_work_box').prepend(s);
   });
 
 
@@ -52,12 +52,12 @@ jQuery(function($){
   //socket.on('showHit', function(path){
   //  console.log('received a showHit event!');
   //  var s = '<li>'+path+'</li>';
-  //  $('#ep_work_box').prepend(s);
+  //  $('#epf_work_box').prepend(s);
   //});
 
   //socket.on('clearHits', function(){
   //  console.log('received an clearHits event!');
-  //  $('#ep_work_box').empty();
+  //  $('#epf_work_box').empty();
   //})
 
  
@@ -72,16 +72,17 @@ jQuery(function($){
 /** workSpinner depends on the global 'working' variable, which workStatus
  * checks any time a new page loads to see if it should still be visible. 
  * This is unlike querySpinner which uses more traditional local vars.
+ * TODO: change ids to make this work globally
  */
 function workStatus(){
   $.post('/getWorkStatus', function(data){
     if (data.working === 'yes') {
       $('#workSpinner').show();
-      $('#ep_work_box').show();
-      $('#ep_form_box').hide();
+      $('#epf_work_box').show();
+      $('#epf_form_box').hide();
     } else if (data.working === 'no') {
       $('#workSpinner').hide();
-      //$('#ep_work_box').hide();
+      //$('#epf_work_box').hide();
     }
   });
 
