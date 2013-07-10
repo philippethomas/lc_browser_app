@@ -94,6 +94,9 @@ label.error {
 .maint p{
   margin: 0px 0px 0px 0px;
 }
+.maint form{
+  margin: 0px 0px 0px 0px;
+}
 
 .maint{
   padding-top: 13px;
@@ -101,6 +104,10 @@ label.error {
   margin-top: 10px;
   margin-bottom: 10px;
   border: 2px solid red;
+}
+
+.maint .fixed_width{
+  width: 160px;
 }
 
 

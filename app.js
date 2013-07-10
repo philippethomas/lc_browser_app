@@ -139,8 +139,8 @@ app.on('parsedDoc', function(data){
   io.sockets.emit('parsedDoc', data);
 });
 
-app.on('crawlStart', function(data){
-  io.sockets.emit('crawlStart', data);
+app.on('workStart', function(data){
+  io.sockets.emit('workStart', data);
 });
 
 //app.on('showHit', function(data){
@@ -151,8 +151,8 @@ app.on('crawlStart', function(data){
 //  io.sockets.emit('clearHits', null);
 //});
 
-app.on('crawlStop', function(data){
-  io.sockets.emit('crawlStop', data);
+app.on('workStop', function(data){
+  io.sockets.emit('workStop', data);
 });
 
 

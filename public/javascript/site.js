@@ -31,8 +31,8 @@ jQuery(function($){
   });
 
 
-  socket.on('crawlStart', function(n){
-    console.log('received a crawlStart event!');
+  socket.on('workStart', function(n){
+    console.log('received a workStart event!');
     $.post('/setWorkStatus', {working: 'yes'},  function(data){
       if (data.working != 'yes') { console.error('problem setting work status'); }
       workStatus();
@@ -40,11 +40,10 @@ jQuery(function($){
   });
 
 
-  socket.on('crawlStop', function(n){
-    console.log('received a crawlStop event!');
+  socket.on('workStop', function(n){
+    console.log('received a workStop event!');
     $.post('/setWorkStatus', {working: 'no'},  function(data){
       if (data.working != 'no') { console.error('problem setting work status'); }
-      $('#clickForStats').show();
       workStatus();
     });
   });
@@ -79,7 +78,6 @@ function workStatus(){
     if (data.working === 'yes') {
       $('#workSpinner').show();
       $('#epf_work_box').show();
-      $('#epf_form_box').hide();
     } else if (data.working === 'no') {
       $('#workSpinner').hide();
       //$('#epf_work_box').hide();
