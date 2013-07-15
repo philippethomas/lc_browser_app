@@ -143,6 +143,10 @@ app.on('workStart', function(data){
   io.sockets.emit('workStart', data);
 });
 
+app.on('crawlError', function(data){
+  io.sockets.emit('crawlError', data);
+});
+
 //app.on('showHit', function(data){
 //  io.sockets.emit('showHit', data);
 //});
@@ -150,6 +154,7 @@ app.on('workStart', function(data){
 //app.on('clearHits', function(){
 //  io.sockets.emit('clearHits', null);
 //});
+
 
 app.on('workStop', function(data){
   io.sockets.emit('workStop', data);

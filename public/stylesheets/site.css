@@ -1,3 +1,30 @@
+* {
+  -webkit-border-radius: 1px !important;
+     -moz-border-radius: 1px !important;
+          border-radius: 1px !important;
+}
+
+*{
+  font-family: 'Lato';
+  font-size:16px;
+}
+
+input, select, button{
+  font-family: 'Lato';
+}
+
+.navbar-inner{
+  background-image: url('/images/grey.png');
+}
+
+.navbar li a{
+  font-family: 'Georgia';
+  font-size: 18px;
+  font-weight: 500;
+}
+
+
+
 #navPadding{
   height:60px;
 }
@@ -58,16 +85,40 @@ label.error {
   margin-top: 3px;
 }
 
+
+
+
+
 #epf_work_box{
-  overflow: auto
+  overflow: auto;
+  /*
+  position: absolute;
+  top: 40px;
+  opacity: 0.4;
+  */
 }
+
+#epfAlert{
+  /*position: absolute;
+  right: 20px;
+  top: 1px;
+  width: 50%;
+  */
+  /* http://charliepark.org/bootstrap_buttons/ */
+  z-index:9999;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+
 
 /** colors for doctypes **/
 
 .progress-box{
   float: left;
-  width:40px;
-  height:40px;
+  width:36px;
+  height:36px;
   margin: 2px;
 }
 .las{ color: #1f77b4; }
@@ -88,8 +139,19 @@ label.error {
 
 
 .total{
-  background: #fbfbfb;
+  /*background: #fbfbfb;*/
+  /*background: #000000;*/
+  background: #eeeeee;
 }
+
+.accordion-heading{
+  background-image: url('/images/whitey.png');
+}
+.accordion-heading a{
+  font-size:22px;
+}
+
+
 
 .maint p{
   margin: 0px 0px 0px 0px;
@@ -107,7 +169,7 @@ label.error {
 }
 
 .maint .fixed_width{
-  width: 160px;
+  width: 170px;
 }
 
 

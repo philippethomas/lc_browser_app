@@ -10,26 +10,6 @@ jQuery(function($){
 
   var socket = io.connect('http://localhost');
 
-  /*
-  $.post('/epDoctypes', function(data){
-    data.doctypes.forEach(function(t){
-      console.log('------------------------------------'+t);
-      socket.on(t+'doc', function(doc){
-        var s = '<div class="'+doc.doctype+'bg progress-box" title="'+
-        doc.basename+'"></div>'
-        $('#epf_work_box').prepend(s);
-      });
-    });
-  });
-  */
-
-
-  socket.on('parsedDoc', function(msg){
-    var s = '<div class="'+msg.doctype+'bg progress-box" title="'+
-    msg.basename+'"></div>'
-    $('#epf_work_box').prepend(s);
-  });
-
 
   socket.on('workStart', function(n){
     console.log('received a workStart event!');
