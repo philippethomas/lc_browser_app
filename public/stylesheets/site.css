@@ -1,12 +1,16 @@
 * {
-  -webkit-border-radius: 1px !important;
-     -moz-border-radius: 1px !important;
-          border-radius: 1px !important;
+  -webkit-border-radius: 0 !important;
+     -moz-border-radius: 0 !important;
+          border-radius: 0 !important;
 }
 
 *{
   font-family: 'Lato';
   font-size:16px;
+}
+
+body{
+  background-image: url('/images/paper.png');
 }
 
 input, select, button{
@@ -20,9 +24,8 @@ input, select, button{
 .navbar li a{
   font-family: 'Georgia';
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
 }
-
 
 
 #navPadding{
@@ -48,8 +51,8 @@ input, select, button{
   background: white;
 }
 
-.rather-long{
-  width:500px;
+.mono{
+  font-family: monospace;
 }
 
 .bumper{
@@ -62,17 +65,6 @@ label.error {
   color: red;
   padding: 2px 8px;
   margin-top: 2px;
-}
-
-
-.mono{
-  font-family: monospace;
-}
-
-.small-orange{
-  font-size: 12px;
-  color: #eb8a33;
-  font-style: oblique;
 }
 
 .modal-title{
@@ -89,66 +81,19 @@ label.error {
 
 
 
-#epf_work_box{
-  overflow: auto;
-  /*
-  position: absolute;
-  top: 40px;
-  opacity: 0.4;
-  */
-}
-
-#epfAlert{
-  /*position: absolute;
-  right: 20px;
-  top: 1px;
-  width: 50%;
-  */
-  /* http://charliepark.org/bootstrap_buttons/ */
-  z-index:9999;
-  font-weight: bold;
-  text-align: center;
-}
-
-
-
-
-/** colors for doctypes **/
-
-.progress-box{
-  float: left;
-  width:36px;
-  height:36px;
-  margin: 2px;
-}
-.las{ color: #1f77b4; }
-.lasbg{
-  background-color: #aec7e8;
-}
-
-.shp{ color: #ff7f0e; }
-.shpbg{ background: #ffbb78; }
-
-.sgy{ color: #2ca02c; }
-.sgybg{ background: #98df8a; }
-
-
-.ras{ color: #d62728; }
-.rasbg{ background: #ff9896; }
-
-
-
 .total{
-  /*background: #fbfbfb;*/
-  /*background: #000000;*/
-  background: #eeeeee;
+  /*background-image: url('/images/grey.png');*/
+  background-color: #eeeeee;
+  font-weight: bold;
 }
 
 .accordion-heading{
-  background-image: url('/images/whitey.png');
+  background: #e5e5e5;
+  border:1px solid #d4d4d4;
 }
 .accordion-heading a{
   font-size:22px;
+  text-decoration: none;
 }
 
 
@@ -165,7 +110,6 @@ label.error {
   padding-bottom: 13px;
   margin-top: 10px;
   margin-bottom: 10px;
-  border: 2px solid red;
 }
 
 .maint .fixed_width{
@@ -174,15 +118,9 @@ label.error {
 
 
 
-.labelSummary{
-  background-color: #fbfbfb;
-  font-size: 16px;
-  font-weight: bold;
-}
-
 #searchSummaryBox{
   padding: 5px 0px 0px 0px;
-  background: #fbfbfb;
+  background: #ffffff;
 }
 
 #searchSummaryBox .lead{
@@ -204,46 +142,9 @@ label.error {
   margin-bottom: 0px;
 }
 
-#epf_crawl_form hr{
-  margin: 0px 50px 2px 50px;
-}
-
-
-#statsTable{
-  font-size: 85%;
-}
-
-
 
 
 #previousCrawlList{
-  
   float:right;
 }
 
-
-/*
-.stats{
-  font-size: 90%;
-  padding: 10px 10px 10px 10px;
-}
-.stats .globalStats .well{
-  background: #ffecd1;
-  background: #fff6e8;
-
-}
-*/
-
-
-
-
-
-
-/*
-.doc{
-  padding: 0px 0px 0px 0px;
-  float: left;
-  width: 46%;
-  margin: 5px 1% 5px 1%;
-}
-*/

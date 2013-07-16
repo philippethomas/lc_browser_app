@@ -23,8 +23,8 @@ block content
   - else
 
     .row-fluid#results
-      table.table.table-condensed.table-bordered.table-hover
-        - var t = docTemplates.templateFor[docs[0].doctype].tableFields
+      table.table.table-condensed.table-bordered.table-hover.white
+        - var t = getTemplate(docs[0].doctype).tableFields
         for f in t.showFields
           th= f
 

@@ -10,7 +10,7 @@ var humanize = require('humanize');
  *
  */
 exports.search = function(req, res){
-  //var docTemplates = require('./app').docTemplates;
+
   var idx = req.body.idx;
   var query = req.body.query; 
   var from = req.body.from || 0;
@@ -74,7 +74,7 @@ exports.ajaxGetDoc = function(req, res){
 
       var body = '<dl class="dl-horizontal">';
       var doc = result.docs[0];
-      var keys = epfDocTemplates.templateFor[doc.doctype].allFields;
+      var keys = getTemplate(doc.doctype).allFields;
 
       keys.forEach(function(k){
         var val = (doc[k] === undefined) ? '' : doc[k];
@@ -115,8 +115,6 @@ exports.ajaxGetDoc = function(req, res){
  */
 exports.ajaxSearch = function(req, res){
 
-  var epfDocTemplates = require('./app').epfDocTemplates;
-
   var idx = req.body.idx || req.session.idx;
   var query = req.body.query || req.session.query; 
   var from = req.body.from || req.session.from; // usually from the pager
@@ -127,19 +125,18 @@ exports.ajaxSearch = function(req, res){
       util.debug(error);
       res.end();
     }else{
+      var t = getTemplate(result.docs[0].doctype).tableFields;
 
-      var t = epfDocTemplates.templateFor[result.docs[0].doctype].tableFields
+      result.docs.forEach(function(doc){
+        humanizeFields(doc);
+      });
 
-    result.docs.forEach(function(doc){
-      humanizeFields(doc);
-    });
-
-  res.send( { 
-    docs: result.docs, 
-    total: result.total, 
-    realFields: t.realFields,
-    showFields: t.showFields
-  } );
+      res.send( { 
+        docs: result.docs, 
+        total: result.total, 
+        realFields: t.realFields,
+        showFields: t.showFields
+      } );
     }
   });
 
@@ -154,7 +151,6 @@ exports.ajaxSearch = function(req, res){
  */
 exports.csvExport = function(req, res){
 
-  var epfDocTemplates = require('./app').epfDocTemplates;
 
   var idx = req.session.idx;
   var query = req.session.query; 
@@ -168,7 +164,7 @@ exports.csvExport = function(req, res){
       res.end();
     }else{
 
-      var header = docTemplates.templateFor[result.docs[0].doctype].allFields;
+      var header = getTemplate(result.docs[0].doctype).allFields;
       var csvString = header.join(',')+'\r\n';
 
       result.docs.forEach(function(doc){

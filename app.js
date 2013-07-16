@@ -35,9 +35,8 @@ var searchFilters = [];
 var docTemplates = [];
 
 ////////////////////////// MODULARIZATION STUFF BELOW //////////////////////////
-//
-// also check: 
-// views/navlinks.jade
+
+// IMPORTANT: modify view/navlinks if adding any new modules
 
 var hasEPF = (fs.existsSync('./node_modules/lc_epf_crawlers')) ? true : false;
 var hasPET = (fs.existsSync('./node_modules/lc_pet_crawlers')) ? true : false;
@@ -51,13 +50,10 @@ if (hasEPF) {
   app.use(express.static(__dirname + '/node_modules/lc_epf_crawlers/pub'));
 
   var epf_filters = require('lc_epf_crawlers/epfDocTemplates.js').searchFilters;
-  var epf_templates = require('lc_epf_crawlers/epfDocTemplates.js');
+  var epf_templates = require('lc_epf_crawlers/epfDocTemplates.js').templates;
 
   searchFilters = searchFilters.concat(epf_filters);
-  docTemplates = epf_templates;
-
-  //app.post('/epf/epfDoctypes', epf_app.epfDoctypes);
-  //var ep_type_list = require('lc_file_crawlers/epDocTemplates.js').typeList;
+  docTemplates = docTemplates.concat(epf_templates);
 
   require('./node_modules/lc_epf_crawlers/elasticsearcher.js');
   EPF_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
@@ -74,8 +70,15 @@ if (hasTKS) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+var getTemplate = function(doctype) {
+  return docTemplates.filter(function(t){ return t.doctype === doctype; })[0];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 global.searchFilters = searchFilters;
 global.docTemplates = docTemplates;
+global.getTemplate = getTemplate;
 global.hasEPF = hasEPF;
 global.hasPET = hasPET;
 global.hasGGX = hasGGX;
@@ -96,15 +99,12 @@ global.working = 'no';
 //check out https://github.com/flatiron/nconf
 
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
 var home = require('./home');
 app.get('/',               home.index);
 app.post('/setWorkStatus', home.setWorkStatus);
 app.post('/getWorkStatus', home.getWorkStatus);
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -161,10 +161,8 @@ app.on('workStop', function(data){
 });
 
 
-////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
 
 module.exports.app = app;
 module.exports.io = io;
-//var epfDocTemplates = require('lc_file_crawlers/epfDocTemplates.js');
-//module.exports.epfDocTemplates = epfDocTemplates;
