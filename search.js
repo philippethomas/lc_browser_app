@@ -1,9 +1,7 @@
-var ep_filesScanner = require('lc_epf_crawlers/scanner.js');
 var path = require('path');
 var fs = require('fs');
 var S = require('string');
 var util = require('util');
-var scanner = require('lc_epf_crawlers/scanner.js');
 var humanize = require('humanize');
 
 /**
@@ -47,22 +45,15 @@ exports.search = function(req, res){
 
 
 /**
- * TODO make a showFields-type list of keys if defaults are unloved
  */
 exports.ajaxGetDoc = function(req, res){
 
-  var epfDocTemplates = require('./app').epfDocTemplates;
-  var ep_type_list = require('lc_epf_crawlers/epfDocTemplates.js').typeList;
-
-  var ep_idx_list = [] 
-  ep_type_list.forEach(function(x){
-    ep_idx_list.push(x+'_idx');
-  })
+  var idx = req.body.idx;
   var query = 'guid:'+req.body.guid;
   var from = 0;
   var size = 1;
 
-  AppES.doSearch(ep_idx_list.join(','), from, size, query, function(error, result){
+  AppES.doSearch(idx, from, size, query, function(error, result){
     if(error){
       util.debug(error);
       res.end();
@@ -168,7 +159,7 @@ exports.csvExport = function(req, res){
       var csvString = header.join(',')+'\r\n';
 
       result.docs.forEach(function(doc){
-        csvString += scanner.csvRowString(doc);
+        csvString += csvRowString(doc); //in browser app.js, not scanner(s)
       });
 
       res.attachment('export.csv');

@@ -29,7 +29,7 @@ block content
           th= f
 
         for doc in docs
-          tr(class=doc.doctype, id=doc.guid)
+          tr(class=doc.doctype, id=doc.doctype+'.'+doc.guid)
             for f in t.realFields
               td= doc[f]
 

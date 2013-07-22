@@ -29,13 +29,16 @@ jQuery(function($){
   // pagination so that popups still work
   var modalRowTrigger = function(){
     $('table tr').click(function(a){
-      var guid = $(this).attr('id');
+      //the doctype and guid are stored in the row's id.
+      //id="las.76180c8bd920667a8a2229e060a127cf"
+      var idx_guid = $(this).attr('id').split('.');
+      var idx = idx_guid[0]+'_idx';
+      var guid = idx_guid[1];
       if (guid === undefined) { return };
-      var arg = { guid: guid };
+      var arg = { guid: guid, idx: idx };
       $.post('/ajaxGetDoc', arg, function(data){
-	//console.log(data)
-	$('#modalDocDetail .modal-body').html(data.body);
-	$('#modalDocTitle').text(data.title);
+	      $('#modalDocDetail .modal-body').html(data.body);
+	      $('#modalDocTitle').text(data.title);
       });
       $('#modalDocDetail').modal('toggle')
     });
@@ -96,7 +99,7 @@ jQuery(function($){
 
       // table rows
       data.docs.forEach(function(doc){
-	var r = '<tr id="'+doc.guid+'" class='+doc.doctype+'>';
+	var r = '<tr id="'+doc.doctype+'.'+doc.guid+'" class='+doc.doctype+'>';
 	data.realFields.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
 	r += '</tr>'
 	$('#results tbody').append(r);

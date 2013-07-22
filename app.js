@@ -1,5 +1,6 @@
 var fs = require('graceful-fs');
 var express = require('express');
+var S = require('string');
 //var flash = require('connect-flash');
 var app = express();
 var server = app.listen(3000, function(){
@@ -36,7 +37,7 @@ var docTemplates = [];
 
 ////////////////////////// MODULARIZATION STUFF BELOW //////////////////////////
 
-// IMPORTANT: modify view/navlinks if adding any new modules
+// IMPORTANT: modify navlinks.jade and layout.jade if adding any new modules
 
 var hasEPF = (fs.existsSync('./node_modules/lc_epf_crawlers')) ? true : false;
 var hasPET = (fs.existsSync('./node_modules/lc_pet_crawlers')) ? true : false;
@@ -44,7 +45,6 @@ var hasGGX = (fs.existsSync('./node_modules/lc_ggx_crawlers')) ? true : false;
 var hasTKS = (fs.existsSync('./node_modules/lc_tks_crawlers')) ? true : false;
 
 if (hasEPF) {
-
   var epf_app = require('lc_epf_crawlers/epf_app');
   app.use('/epf', epf_app);
   app.use(express.static(__dirname + '/node_modules/lc_epf_crawlers/pub'));
@@ -60,6 +60,18 @@ if (hasEPF) {
 }
 
 if (hasPET) {
+  var pet_app = require('lc_pet_crawlers/pet_app');
+  app.use('/pet', pet_app);
+  app.use(express.static(__dirname + '/node_modules/lc_pet_crawlers/pub'));
+
+  var pet_filters = require('lc_pet_crawlers/petDocTemplates.js').searchFilters;
+  var pet_templates = require('lc_pet_crawlers/petDocTemplates.js').templates;
+
+  searchFilters = searchFilters.concat(pet_filters);
+  docTemplates = docTemplates.concat(pet_templates);
+
+  require('./node_modules/lc_pet_crawlers/elasticsearcher.js');
+  PET_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 }
 
 if (hasGGX) {
@@ -74,11 +86,35 @@ var getTemplate = function(doctype) {
   return docTemplates.filter(function(t){ return t.doctype === doctype; })[0];
 }
 
+// NOTE: similar function also exists in each scanner for non-browser use
+function csvRowString(doc){
+  var keys = getTemplate(doc.doctype).allFields;
+  var a = [];
+  keys.forEach(function(key){
+    var val = doc[key];
+    if (val === undefined) {
+      //util.debug('Weird: undefined document key: '+key);
+      a.push(null);
+    } else if (val === null) {
+      a.push(null);
+    } else if (key === 'cloud') {
+      a.push('(excluded)');
+    } else {
+      val = S(val).trim().s;
+      val = S(val).replaceAll('"', '""').s;
+      val = '"'+val+'"';
+      a.push(val);
+    }
+  });
+  return a.join(',')+'\r\n';
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 global.searchFilters = searchFilters;
 global.docTemplates = docTemplates;
 global.getTemplate = getTemplate;
+global.csvRowString = csvRowString;
 global.hasEPF = hasEPF;
 global.hasPET = hasPET;
 global.hasGGX = hasGGX;
@@ -163,6 +199,7 @@ app.on('workStop', function(data){
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
 
 module.exports.app = app;
 module.exports.io = io;
