@@ -81,16 +81,19 @@ label.error {
 
 
 
-
-.total{
-  /*background-image: url('/images/grey.png');*/
-  background-color: #eeeeee;
-  font-weight: bold;
+.accordion-heading.active{
+  background: white;
 }
 
 .accordion-heading{
   background: #e5e5e5;
-  border:1px solid #d4d4d4;
+  /*border:1px solid #d4d4d4;*/
+  /*
+  background-image:url('/images/spinner.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  */
+
 }
 .accordion-heading a{
   font-size:22px;

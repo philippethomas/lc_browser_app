@@ -20,11 +20,12 @@ jQuery(function($){
   });
 
 
-  socket.on('workStop', function(n){
-    console.log('received a workStop event!');
+  socket.on('workStop', function(data){
+    console.log('received a workStop event!  '+data);
     $.post('/setWorkStatus', {working: 'no'},  function(data){
       if (data.working != 'no') { console.error('problem setting work status'); }
       workStatus();
+      location.reload(true);
     });
   });
 
@@ -51,19 +52,15 @@ jQuery(function($){
 /** workSpinner depends on the global 'working' variable, which workStatus
  * checks any time a new page loads to see if it should still be visible. 
  * This is unlike querySpinner which uses more traditional local vars.
- * TODO: change ids to make this work globally
  */
 function workStatus(){
-  $.post('/getWorkStatus', function(data){
+  $.get('/getWorkStatus', function(data){
     if (data.working === 'yes') {
       $('#workSpinner').show();
-      $('#epf_work_box').show();
     } else if (data.working === 'no') {
       $('#workSpinner').hide();
-      //$('#epf_work_box').hide();
     }
   });
-
 };
 
 

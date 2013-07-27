@@ -140,7 +140,7 @@ global.working = 'no';
 var home = require('./home');
 app.get('/',               home.index);
 app.post('/setWorkStatus', home.setWorkStatus);
-app.post('/getWorkStatus', home.getWorkStatus);
+app.get('/getWorkStatus', home.getWorkStatus);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -171,6 +171,7 @@ app.configure('production', function(){
 
 ////////////////////////////////////////////////////////////////////////////////
 
+
 app.on('parsedDoc', function(data){
   io.sockets.emit('parsedDoc', data);
 });
@@ -183,19 +184,9 @@ app.on('crawlError', function(data){
   io.sockets.emit('crawlError', data);
 });
 
-//app.on('showHit', function(data){
-//  io.sockets.emit('showHit', data);
-//});
-
-//app.on('clearHits', function(){
-//  io.sockets.emit('clearHits', null);
-//});
-
-
 app.on('workStop', function(data){
   io.sockets.emit('workStop', data);
 });
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
