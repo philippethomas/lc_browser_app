@@ -25,7 +25,8 @@ jQuery(function($){
     $.post('/setWorkStatus', {working: 'no'},  function(data){
       if (data.working != 'no') { console.error('problem setting work status'); }
       workStatus();
-      location.reload(true);
+      console.log('would have reloaded......');
+      //location.reload(true);
     });
   });
 

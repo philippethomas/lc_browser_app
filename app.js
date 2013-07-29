@@ -140,7 +140,7 @@ global.working = 'no';
 var home = require('./home');
 app.get('/',               home.index);
 app.post('/setWorkStatus', home.setWorkStatus);
-app.get('/getWorkStatus', home.getWorkStatus);
+app.get('/getWorkStatus',  home.getWorkStatus);
 
 ////////////////////////////////////////////////////////////////////////////////
 
