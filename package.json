@@ -27,7 +27,8 @@
     "string": "1.3.x",
     "humanize": "0.0.x",
     "lc_epf_crawlers": "git://github.com/rbhughes/lc_epf_crawlers#master",
-    "lc_pet_crawlers": "git://github.com/rbhughes/lc_pet_crawlers#master"
+    "lc_pet_crawlers": "git://github.com/rbhughes/lc_pet_crawlers#master",
+    "lc_ggx_crawlers": "git://github.com/rbhughes/lc_ggx_crawlers#master"
   },
   "devDependencies":{
     "mocha": "1.8.x"

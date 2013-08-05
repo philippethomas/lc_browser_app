@@ -68,7 +68,7 @@ exports.ajaxGetDoc = function(req, res){
       var keys = getTemplate(doc.doctype).allFields;
 
       keys.forEach(function(k){
-        var val = (doc[k] === undefined) ? '' : doc[k];
+        var val = (doc[k] === undefined) ? '*' : doc[k];
         if (k === 'cloud') {
           body += '<dt>'+k+'</dt>'
         body += '<dd>...</dd>'
@@ -136,9 +136,7 @@ exports.ajaxSearch = function(req, res){
 
 /**
  * Simplest possible CSV file download--it's just a string. This avoids
- * worrying about temp file clean up, but could eat memory. Also, this will
- * break if the search options allow more than one doctype at a time.
- * (would need to process one file per doctype and send zip like the Rails app)
+ * worrying about temp file clean up, but could eat memory.
  */
 exports.csvExport = function(req, res){
 

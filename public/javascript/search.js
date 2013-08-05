@@ -11,7 +11,7 @@ jQuery(function($){
 
   $('#modalDocDetail').css(
       { 
-	'width': modalWidth,
+	      'width': modalWidth,
         'height': modalHeight,
         'max-height': modalHeight,
         'left': modalLeft,
