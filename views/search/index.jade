@@ -3,8 +3,16 @@ extends ../layout
 block content
   script(src="/javascript/search.js");
   script
-    $('#search select option[value="'+'#{idx}'+'"]').attr('selected',true);
-    $('#search input').val('#{query}');
+    // make the last selected index and query string 'stick'
+    var selected = $('#search_filter_list li a[idx="'+'#{idx}'+'"]');
+    var v = selected.attr('value');
+    var i = selected.attr('idx');
+    var btn = $("#search_filter_button:first-child");
+    btn.attr('value', v);
+    btn.attr('idx', i);
+    $('#search_text').val('#{query}');
+
+    
 
   #modalDocDetail.modal.hide.fade
     .modal-header

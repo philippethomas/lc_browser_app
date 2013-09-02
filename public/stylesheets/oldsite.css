@@ -1,0 +1,166 @@
+#search_filter_button {
+  -webkit-border-radius: 0 !important;
+     -moz-border-radius: 0 !important;
+          border-radius: 0 !important;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+/*
+*{
+  font-family: 'Lato';
+  font-size:16px;
+}
+*/
+
+body{
+  padding-top: 70px;
+  /*background-image: url('/images/grey.png');*/
+  /*background-image: url('/images/paper.png');*/
+}
+
+/*
+input, select, button{
+  font-family: 'Lato';
+}
+*/
+
+
+/*
+.navbar li a{
+  font-family: 'Georgia';
+  font-size: 18px;
+  font-weight: 600;
+}
+*/
+
+
+/*
+#navPadding{
+  height:60px;
+}
+*/
+
+#filter{
+  width: 130px;
+}
+
+#logo{
+ /* float: left;*/
+  /*padding-top: 5px;*/
+  padding: 3px 0px 3px 0px;
+  margin-right: 50px;
+}
+
+.right{
+  text-align: right;
+}
+
+.center{
+  text-align: center;
+}
+
+.white{
+  background: white;
+}
+
+.mono{
+  font-family: monospace;
+}
+
+.bumper{
+  margin-bottom: 3px;
+}
+
+
+label.error {
+  font-weight: bold;
+  color: red;
+  padding: 2px 8px;
+  margin-top: 2px;
+}
+
+.modal-title{
+  text-align: center;
+  color: #eb8a33;
+}
+
+.spinner{
+  margin-left: 10px;
+  margin-top: 3px;
+}
+
+
+
+
+.accordion-heading.active{
+  background: white;
+}
+
+.accordion-heading{
+  background: #e5e5e5;
+  /*border:1px solid #d4d4d4;*/
+  /*
+  background-image:url('/images/spinner.gif');
+  background-repeat:no-repeat;
+  background-position:center;
+  */
+
+}
+.accordion-heading a{
+  font-size:22px;
+  text-decoration: none;
+}
+
+
+
+.maint p{
+  margin: 0px 0px 0px 0px;
+}
+.maint form{
+  margin: 0px 0px 0px 0px;
+}
+
+.maint{
+  padding-top: 13px;
+  padding-bottom: 13px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.maint .fixed_width{
+  width: 190px;
+}
+
+
+
+#searchSummaryBox{
+  padding: 5px 0px 0px 0px;
+  background: #ffffff;
+}
+
+#searchSummaryBox .lead{
+  margin-left: 20px;
+  margin-bottom: 0px;
+}
+
+#pager{
+  margin-right: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  text-align: right;
+}
+
+#csv{
+  margin-left: 20px;
+  margin-right: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+
+
+#previousCrawlList{
+  float:right;
+}
+
