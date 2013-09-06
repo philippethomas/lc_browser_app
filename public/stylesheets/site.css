@@ -1,8 +1,9 @@
 body{
   padding-top: 70px;
+  color: #4a525a;
 }
 
-#search_filter_button {
+#searchFilterButton {
   -webkit-border-radius: 0 !important;
      -moz-border-radius: 0 !important;
           border-radius: 0 !important;
@@ -17,4 +18,36 @@ body{
 
 .white{
   background: white;
+}
+
+.lc-orange{
+  background: #ff6600;
+  color: white;
+}
+
+.stats{
+  color: #c7254e;
+  border: 1px solid #f9f2f4;
+}
+
+.spinner{
+  margin-top: 2px;
+  margin-left: 20px;
+  display: none;
+}
+
+.bump-down{
+  margin-top: 6px;
+}
+
+.pad-left{
+  margin-left: 20px;
+}
+
+.pad-right{
+  margin-right: 20px;
+}
+
+.txt-right{
+  text-align: right;
 }

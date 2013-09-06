@@ -75,6 +75,18 @@ if (hasPET) {
 }
 
 if (hasGGX) {
+  var ggx_app = require('lc_ggx_crawlers/ggx_app');
+  app.use('/ggx', ggx_app);
+  app.use(express.static(__dirname + '/node_modules/lc_ggx_crawlers/pub'));
+
+  var ggx_filters = require('lc_ggx_crawlers/ggxDocTemplates.js').searchFilters;
+  var ggx_templates = require('lc_ggx_crawlers/ggxDocTemplates.js').templates;
+
+  searchFilters = searchFilters.concat(ggx_filters);
+  docTemplates = docTemplates.concat(ggx_templates);
+
+  require('./node_modules/lc_ggx_crawlers/elasticsearcher.js');
+  GGX_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 }
 
 if (hasTKS) {

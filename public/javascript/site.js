@@ -3,6 +3,9 @@ jQuery(function($){
   // current page
   var loc = document.location.pathname.replace(/\//,'');
 
+  $('#workSpinner').hide();
+  $('#querySpinner').hide();
+
   
   // navbar link selection
   $('ul.nav > li > a[href="/' + loc + '"]').parent().addClass('active');
@@ -44,13 +47,13 @@ jQuery(function($){
 
   //rename dropdown button and set idx to match selection
   //hidden idx input is a self-infliced problem for not using a select input
-  $('#search_filter_list li a').click(function(x){
+  $('#searchFilterList li a').click(function(x){
     var caret = '<span>&nbsp;</span><span class="caret"></span>';
 
     var i = $(this).attr('idx');
     var v = $(this).attr('value');
 
-    var btn = $("#search_filter_button:first-child");
+    var btn = $("#searchFilterButton:first-child");
     btn.attr('value', v);
     btn.attr('idx', i);
 
@@ -82,11 +85,11 @@ function workStatus(){
 
 function populateForm(frm, data) {   
 
-  $(frm).find('input[type=checkbox]:checked').removeAttr('checked')
+  $(frm).find('input[type="checkbox"]:checked').prop('checked', false);
 
-    $.each(data, function(key, value){  
-      var $ctrl = $('[name='+key+']', frm);  
-      switch($ctrl.attr("type"))  
+  $.each(data, function(key, value){  
+    var $ctrl = $('[name='+key+']', frm);  
+    switch($ctrl.attr("type"))  
     {  
       case "text" :   
       case "hidden":  
@@ -95,13 +98,9 @@ function populateForm(frm, data) {
         break;   
       case "radio" : 
       case "checkbox":   
-        $ctrl.each(function(){
-          if($(this).attr('value') == value) {  
-            $(this).attr("checked",value); 
-          }
-        });   
-        break;  
+        $ctrl.prop('checked', true)
+      break;  
     }  
-    });  
+  });  
 }
 

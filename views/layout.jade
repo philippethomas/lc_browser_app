@@ -3,6 +3,9 @@ html
   head
     title= title || 'LogicalCat'
 
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    
+
     script(src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js");
     script(src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js");
 
@@ -12,6 +15,9 @@ html
     //-script(src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js");
 
     link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css", rel="stylesheet")
+
+    //-link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css", rel="stylesheet")
+
     script(src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js")
 
 
@@ -35,5 +41,4 @@ html
 
     include navbar
 
-    .block-content.container
-      block content
+    block content

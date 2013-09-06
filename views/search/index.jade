@@ -4,13 +4,13 @@ block content
   script(src="/javascript/search.js");
   script
     // make the last selected index and query string 'stick'
-    var selected = $('#search_filter_list li a[idx="'+'#{idx}'+'"]');
+    var selected = $('#searchFilterList li a[idx="'+'#{idx}'+'"]');
     var v = selected.attr('value');
     var i = selected.attr('idx');
-    var btn = $("#search_filter_button:first-child");
+    var btn = $("#searchFilterButton:first-child");
     btn.attr('value', v);
     btn.attr('idx', i);
-    $('#search_text').val('#{query}');
+    $('#searchText').val('#{query}');
 
     
 
