@@ -25,6 +25,11 @@ body{
   color: white;
 }
 
+.lc-gray{
+  background: #4a525a;
+  color: white;
+}
+
 .stats{
   color: #c7254e;
   border: 1px solid #f9f2f4;

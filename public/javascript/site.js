@@ -6,13 +6,10 @@ jQuery(function($){
   $('#workSpinner').hide();
   $('#querySpinner').hide();
 
-  
   // navbar link selection
   $('ul.nav > li > a[href="/' + loc + '"]').parent().addClass('active');
 
-
   var socket = io.connect('http://localhost');
-
 
   socket.on('workStart', function(n){
     console.log('received a workStart event!');
@@ -21,7 +18,6 @@ jQuery(function($){
       workStatus();
     });
   });
-
 
   socket.on('workStop', function(data){
     console.log('received a workStop event!  '+data);
@@ -43,7 +39,6 @@ jQuery(function($){
   //  $('#epf_work_box').empty();
   //})
 
- 
 
   //rename dropdown button and set idx to match selection
   //hidden idx input is a self-infliced problem for not using a select input
@@ -60,10 +55,6 @@ jQuery(function($){
     $('#idx').attr('value', i); //set the selected button
   })
       
-  
-
-
-
 
 });
 
@@ -73,6 +64,7 @@ jQuery(function($){
  * This is unlike querySpinner which uses more traditional local vars.
  */
 function workStatus(){
+  console.log('site.js workStatus got called....')
   $.get('/getWorkStatus', function(data){
     if (data.working === 'yes') {
       $('#workSpinner').show();
