@@ -24,7 +24,7 @@ exports.search = function(req, res){
     if(error){
       util.debug(error);
     }else{
-
+      
       result.docs.forEach(function(doc){
         humanizeFields(doc);
       });
@@ -63,36 +63,37 @@ exports.ajaxGetDoc = function(req, res){
         humanizeFields(doc);
       });
 
-      var body = '<dl class="dl-horizontal">';
+      var left = '<dl class="dl-horizontal">';
+      var right = '';
       var doc = result.docs[0];
       var keys = getTemplate(doc.doctype).allFields;
 
       keys.forEach(function(k){
         var val = (doc[k] === undefined) ? '*' : doc[k];
         if (k === 'cloud') {
-          body += '<dt>'+k+'</dt>'
-        body += '<dd>...</dd>'
 
-        if (doc['doctype'] === 'ras') {
-          body += '<div class="well center">';
-          body += '<img src="data:image/png;base64,'+val+'"/>';
-          body += '</div>';
-        } else {
-
-          body += '<pre>'+val+'</pre>'
-        }
+          if (doc['doctype'] === 'ras') {
+            right += '<div class="well center">';
+            right += '<img src="data:image/png;base64,'+val+'"/>';
+            right += '</div>';
+          } else {
+            right += '<pre>'+ val +'</pre>';
+          }
 
         } else {
-          body += '<dt>'+k+'</dt>'
-        body += '<dd>'+val+'</dd>'
+          left += '<dt>'+k+'</dt>';
+          left += '<dd>'+val+'</dd>';
         }
       });
-      body += '</dl>';
+      left += '</dl>';
+
+      console.log(right)
 
       var title = doc.basename;
 
       res.send( { 
-        body: body, 
+        left: left,
+        right: right,
         title: title 
       } );
     }
@@ -116,6 +117,7 @@ exports.ajaxSearch = function(req, res){
       util.debug(error);
       res.end();
     }else{
+
       var t = getTemplate(result.docs[0].doctype).tableFields;
 
       result.docs.forEach(function(doc){

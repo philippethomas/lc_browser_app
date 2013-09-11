@@ -51,7 +51,7 @@ nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
               li
                 a(value = f.show, idx= f.value)= f.show
 
-        input.hidden#idx(name='idx', type='search') //because no selector :(
+        input.hidden#idx(name='idx', type='search', value=searchFilters[0].value)
 
         input.form-control#searchText(name='query', type='search', placeholder='Search')
         .input-group-btn

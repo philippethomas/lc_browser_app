@@ -14,7 +14,9 @@ jQuery(function($){
   socket.on('workStart', function(n){
     console.log('received a workStart event!');
     $.post('/setWorkStatus', {working: 'yes'},  function(data){
-      if (data.working != 'yes') { console.error('problem setting work status'); }
+      if (data.working != 'yes') {
+        console.error('problem setting work status');
+      }
       workStatus();
     });
   });
@@ -22,9 +24,11 @@ jQuery(function($){
   socket.on('workStop', function(data){
     console.log('received a workStop event!  '+data);
     $.post('/setWorkStatus', {working: 'no'},  function(data){
-      if (data.working != 'no') { console.error('problem setting work status'); }
+      if (data.working != 'no') {
+        console.error('problem setting work status');
+      }
       workStatus();
-      location.reload(true);
+      //location.reload(true);
     });
   });
 
@@ -40,18 +44,16 @@ jQuery(function($){
   //})
 
 
+
   //rename dropdown button and set idx to match selection
   //hidden idx input is a self-infliced problem for not using a select input
   $('#searchFilterList li a').click(function(x){
     var caret = '<span>&nbsp;</span><span class="caret"></span>';
-
     var i = $(this).attr('idx');
     var v = $(this).attr('value');
-
     var btn = $("#searchFilterButton:first-child");
     btn.attr('value', v);
     btn.attr('idx', i);
-
     $('#idx').attr('value', i); //set the selected button
   })
       

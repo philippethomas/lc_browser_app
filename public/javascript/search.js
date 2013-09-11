@@ -2,48 +2,52 @@ jQuery(function($){
 
   workStatus();
 
-  // adjustments for dynamically sized modal dialog
-  var modalWidth = $(window).width() * 0.70 + 'px';
   var modalHeight = $(window).height() * 0.70 + 'px';
-  var modalLeft = $(window).width() * 0.15 + 'px';
-  var modalTop = $(window).height() * 0.15 + 'px';
-  var modalBodyHeight = $(window).height() * 0.70 - 130 + 'px';
-
-  $('#modalDocDetail').css(
-      { 
-	      'width': modalWidth,
-        'height': modalHeight,
-        'max-height': modalHeight,
-        'left': modalLeft,
-        'top': modalTop,
-        'margin': '0 auto' 
-      }
-  );
-
-  $('#modalDocDetail .modal-body').css(
-    { 'height': modalBodyHeight, 'max-height': modalBodyHeight }
-    );
 
 
-  // click a search result table row, get a modal popup. (also called after
-  // pagination so that popups still work
+  //click a search result table row, get a modal popup. 
+  //(also called after pagination so that popups still work)
+  //the doctype and guid are stored in the row's id.
+  //id="las.76180c8bd920667a8a2229e060a127cf"
   var modalRowTrigger = function(){
     $('table tr').click(function(a){
-      //the doctype and guid are stored in the row's id.
-      //id="las.76180c8bd920667a8a2229e060a127cf"
       var idx_guid = $(this).attr('id').split('.');
       var idx = idx_guid[0]+'_idx';
       var guid = idx_guid[1];
-      if (guid === undefined) { return };
+
+      if (guid === undefined) {
+        return
+      };
       var arg = { guid: guid, idx: idx };
+
       $.post('/ajaxGetDoc', arg, function(data){
-	      $('#modalDocDetail .modal-body').html(data.body);
+        var s = '<div class="col-md-6">'+data.left+'</div>';
+        s += '<div class="col-md-6">'+data.right+'</div>';
+	      $('#modalDocDetail .modal-body').html(s);
 	      $('#modalDocTitle').text(data.title);
       });
-      $('#modalDocDetail').modal('toggle')
+      var opts = {show:true, height:modalHeight};
+      $('#modalDocDetail').modal(opts)
     });
   }
   modalRowTrigger();
+
+
+
+  //export csv? nope. can't do without faking a form and get a specified name
+  /*
+  $('#csv').click(function(e){
+    $.post('/csvExport', function(data){
+      var uri = 'data:application/csv;charset=UTF-8,' + 
+      encodeURIComponent(data);
+
+      console.log(uri)
+      window.open(uri);
+    });
+  });
+  */
+
+
 
 
   // hijack event to show spinner, etc.
@@ -73,18 +77,18 @@ jQuery(function($){
         $('#summary').text('Showing '+ showEnd + ' of ' + data.total);
       } else if (data.docs.length < perPage) {
 
-	//show all if on the last page has fewer than perPage...
+	      //show all if on the last page has fewer than perPage...
         var end = data.docs.length;
         if (( data.total - showFrom) < perPage){
-	  end = data.total;
-	}
+	        end = data.total;
+	      }
 
         $('#summary').text('Showing '+ showFrom + ' through ' + 
-	  end + ' of ' + data.total);
+	        end + ' of ' + data.total);
 
       } else {
         $('#summary').text('Showing '+ showFrom + ' through ' + 
-	  showEnd + ' of ' + data.total);
+	        showEnd + ' of ' + data.total);
       }
 
       $('#results tr').remove();
@@ -92,17 +96,17 @@ jQuery(function($){
       // table header 
       var h = '<tr>';
       data.showFields.forEach(function(key){
-	h += '<th>'+ key +'</th>';
+	      h += '<th>'+ key +'</th>';
       });
       h += '</tr>';
       $('#results tbody').append(h);
 
       // table rows
       data.docs.forEach(function(doc){
-	var r = '<tr id="'+doc.doctype+'.'+doc.guid+'" class='+doc.doctype+'>';
-	data.realFields.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
-	r += '</tr>'
-	$('#results tbody').append(r);
+        var r = '<tr id="'+doc.doctype+'.'+doc.guid+'" class='+doc.doctype+'>';
+        data.realFields.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
+        r += '</tr>'
+	      $('#results tbody').append(r);
       });
       modalRowTrigger();
 

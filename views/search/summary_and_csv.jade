@@ -1,0 +1,22 @@
+span.col-md-6
+  - var x = (total < size) ? total : size
+    p#summary.lead Showing 1 through #{x} of #{total}
+
+span.col-md-6
+  span.col-md-8
+    #pager
+
+  span.col-md-4
+    form#csv(action='/csvExport', method='post')
+      button.btn.btn-default#csv Export CSV
+
+
+
+script
+  var numPages = Math.ceil(#{total}/#{size});
+  $('#pager').bootpag({
+    total: numPages,
+    page: 1,
+    maxVisible: 5,
+    leaps:false
+  });

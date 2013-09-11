@@ -12,25 +12,24 @@ block content
     btn.attr('idx', i);
     $('#searchText').val('#{query}');
 
-    
 
-  #modalDocDetail.modal.hide.fade
+  #modalDocDetail.modal.container.fade(tabindex='-1', style='display: none;')
+
     .modal-header
-      button.close(type='button', data-dismiss='modal')
-      p.lead.modal-title#modalDocTitle
+      h4.modal-title#modalDocTitle
 
     .modal-body
 
     .modal-footer
-      button.btn(data-dismiss='modal') Close
+      button.btn.btn-default(data-dismiss='modal') Close
 
 
   - if (total === 0)
-    include noResults
+    include no_results
 
   - else
 
-    .row-fluid#results
+    .container#results
       table.table.table-condensed.table-bordered.table-hover.white
         - var t = getTemplate(docs[0].doctype).tableFields
         for f in t.showFields
@@ -42,5 +41,5 @@ block content
               td= doc[f]
 
 
-    .well#searchSummaryBox
-      include summaryAndCSV
+    .container#searchSummaryBox
+      include summary_and_csv

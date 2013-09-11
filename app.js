@@ -49,8 +49,8 @@ if (hasEPF) {
   app.use('/epf', epf_app);
   app.use(express.static(__dirname + '/node_modules/lc_epf_crawlers/pub'));
 
-  var epf_filters = require('lc_epf_crawlers/epfDocTemplates.js').searchFilters;
-  var epf_templates = require('lc_epf_crawlers/epfDocTemplates.js').templates;
+  var epf_filters = require('lc_epf_crawlers/epf_doc_templates.js').searchFilters;
+  var epf_templates = require('lc_epf_crawlers/epf_doc_templates.js').templates;
 
   searchFilters = searchFilters.concat(epf_filters);
   docTemplates = docTemplates.concat(epf_templates);
@@ -64,8 +64,8 @@ if (hasPET) {
   app.use('/pet', pet_app);
   app.use(express.static(__dirname + '/node_modules/lc_pet_crawlers/pub'));
 
-  var pet_filters = require('lc_pet_crawlers/petDocTemplates.js').searchFilters;
-  var pet_templates = require('lc_pet_crawlers/petDocTemplates.js').templates;
+  var pet_filters = require('lc_pet_crawlers/pet_doc_templates.js').searchFilters;
+  var pet_templates = require('lc_pet_crawlers/pet_doc_templates.js').templates;
 
   searchFilters = searchFilters.concat(pet_filters);
   docTemplates = docTemplates.concat(pet_templates);
@@ -79,8 +79,8 @@ if (hasGGX) {
   app.use('/ggx', ggx_app);
   app.use(express.static(__dirname + '/node_modules/lc_ggx_crawlers/pub'));
 
-  var ggx_filters = require('lc_ggx_crawlers/ggxDocTemplates.js').searchFilters;
-  var ggx_templates = require('lc_ggx_crawlers/ggxDocTemplates.js').templates;
+  var ggx_filters = require('lc_ggx_crawlers/ggx_doc_templates.js').searchFilters;
+  var ggx_templates = require('lc_ggx_crawlers/ggx_doc_templates.js').templates;
 
   searchFilters = searchFilters.concat(ggx_filters);
   docTemplates = docTemplates.concat(ggx_templates);
