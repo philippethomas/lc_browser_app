@@ -23,8 +23,11 @@ jQuery(function($){
       $.post('/ajaxGetDoc', arg, function(data){
         var s = '<div class="col-md-6">'+data.left+'</div>';
         s += '<div class="col-md-6">'+data.right+'</div>';
-	      $('#modalDocDetail .modal-body').html(s);
+	      //$('#modalDocDetail .modal-body').html(s);
+
 	      $('#modalDocTitle').text(data.title);
+
+        $('#leftModal').html(data.left);
       });
       var opts = {show:true, height:modalHeight};
       $('#modalDocDetail').modal(opts)

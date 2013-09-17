@@ -87,8 +87,6 @@ exports.ajaxGetDoc = function(req, res){
       });
       left += '</dl>';
 
-      console.log(right)
-
       var title = doc.basename;
 
       res.send( { 
