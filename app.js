@@ -43,6 +43,7 @@ var hasEPF = (fs.existsSync('./node_modules/lc_epf_crawlers')) ? true : false;
 var hasPET = (fs.existsSync('./node_modules/lc_pet_crawlers')) ? true : false;
 var hasGGX = (fs.existsSync('./node_modules/lc_ggx_crawlers')) ? true : false;
 var hasTKS = (fs.existsSync('./node_modules/lc_tks_crawlers')) ? true : false;
+var hasDOX = (fs.existsSync('./node_modules/lc_dox_crawlers')) ? true : false;
 
 if (hasEPF) {
   var epf_app = require('lc_epf_crawlers/epf_app');
@@ -89,7 +90,25 @@ if (hasGGX) {
   GGX_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 }
 
+
 if (hasTKS) {
+  //nobody home yet
+}
+
+
+if (hasDOX) {
+  var dox_app = require('lc_dox_crawlers/dox_app');
+  app.use('/dox', dox_app);
+  app.use(express.static(__dirname + '/node_modules/lc_dox_crawlers/pub'));
+
+  var doxFilters = require('lc_dox_crawlers/dox_doc_templates.js').searchFilters;
+  var doxTemplates = require('lc_dox_crawlers/dox_doc_templates.js').templates;
+
+  searchFilters = searchFilters.concat(doxFilters);
+  docTemplates = docTemplates.concat(doxTemplates);
+
+  require('./node_modules/lc_dox_crawlers/elasticsearcher.js');
+  DOX_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,6 +150,7 @@ global.hasEPF = hasEPF;
 global.hasPET = hasPET;
 global.hasGGX = hasGGX;
 global.hasTKS = hasTKS;
+global.hasDOX = hasDOX;
 
 ////////////////////////////////////////////////////////////////////////////////
 

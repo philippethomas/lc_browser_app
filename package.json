@@ -13,7 +13,8 @@
     "logicalcat",
     "petra",
     "geographix",
-    "kingdom"
+    "kingdom",
+    "eDiscovery"
   ],
   "author": "R. Bryan Hughes",
   "license": "MIT",
@@ -28,7 +29,8 @@
     "humanize": "0.0.x",
     "lc_epf_crawlers": "git://github.com/rbhughes/lc_epf_crawlers#master",
     "lc_pet_crawlers": "git://github.com/rbhughes/lc_pet_crawlers#master",
-    "lc_ggx_crawlers": "git://github.com/rbhughes/lc_ggx_crawlers#master"
+    "lc_ggx_crawlers": "git://github.com/rbhughes/lc_ggx_crawlers#master",
+    "lc_dox_crawlers": "git://github.com/rbhughes/lc_dox_crawlers#master"
   },
   "devDependencies":{
     "mocha": "1.8.x"

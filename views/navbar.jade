@@ -18,6 +18,10 @@ nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
         li 
           a(href='/epf') E&P Files
 
+      - if (hasDOX)
+        li
+          a(href='/dox') Documents
+
       - if (hasPET)
         li
           a(href='/pet') Petra
@@ -29,6 +33,7 @@ nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
       - if (hasTKS)
         li
           a(href='/tks') Kingdom 
+
 
       li.spinner#workSpinner
         img(src='images/gray_boxes.gif')
