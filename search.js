@@ -45,8 +45,9 @@ exports.search = function(req, res){
 
 
 /**
+ * Retrieve a single doc with formatting that can be applied to a modal popup
  */
-exports.ajaxGetDoc = function(req, res){
+exports.docDetail = function(req, res){
 
   var idx = req.body.idx;
   var query = 'guid:'+req.body.guid;
@@ -63,36 +64,37 @@ exports.ajaxGetDoc = function(req, res){
         humanizeFields(doc);
       });
 
-      var left = '<dl class="dl-horizontal">';
-      var right = '';
       var doc = result.docs[0];
-      var keys = getTemplate(doc.doctype).allFields;
+      var template = getTemplate(doc.doctype);
 
-      keys.forEach(function(k){
-        var val = (doc[k] === undefined) ? '*' : doc[k];
-        if (k === 'cloud') {
+      var styler = template.detailStyler;
 
-          if (doc['doctype'] === 'ras') {
-            right += '<div class="well center">';
-            right += '<img src="data:image/png;base64,'+val+'"/>';
-            right += '</div>';
-          } else {
-            right += '<pre>'+ val +'</pre>';
-          }
+      var title = styler(doc, template.detailTitle);
+      var panel = styler(doc, template.detailPanel);
 
-        } else {
-          left += '<dt>'+k+'</dt>';
-          left += '<dd>'+val+'</dd>';
-        }
+      var list = '<dl class="dl-horizontal">';
+      template.detailList.forEach(function(x){
+        list += '<dt>'+ x +'</dt>';
+        list += '<dd>'+ styler(doc, x) +'</dd>';
+      })
+      list += '</dl>';
+
+      var singles = ''
+      template.detailSingles.forEach(function(x){
+        singles += '<div class="well detail-single">';
+        singles += '<strong>'+ x +'</strong><br>';
+        singles += styler(doc, x);
+        singles += '</div>';
       });
-      left += '</dl>';
 
-      var title = doc.basename;
+      var base = styler(doc, template.detailBase);
 
       res.send( { 
-        left: left,
-        right: right,
-        title: title 
+        title: title,
+        panel: panel,
+        list: list,
+        singles: singles,
+        base: base 
       } );
     }
   });

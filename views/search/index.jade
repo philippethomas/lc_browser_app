@@ -7,7 +7,7 @@ block content
     var selected = $('#searchFilterList li a[idx="'+'#{idx}'+'"]');
     var v = selected.attr('value');
     var i = selected.attr('idx');
-    var btn = $("#searchFilterButton:first-child");
+    var btn = $("#searchFilterInput:first-child");
     btn.attr('value', v);
     btn.attr('idx', i);
     $('#searchText').val('#{query}');
@@ -16,11 +16,17 @@ block content
   #modalDocDetail.modal.container.fade(tabindex='-1', style='display: none;')
 
     .modal-header
-      h4.modal-title#modalDocTitle
+      h4.modal-title#title
 
     .modal-body
-      #leftModal
-      #rightModal
+      .row
+        .col-md-6
+          .well#list
+          #singles
+        .col-md-6
+          #panel
+      .row
+        #base
 
     .modal-footer
       button.btn.btn-default(data-dismiss='modal') Close

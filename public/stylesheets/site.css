@@ -3,12 +3,13 @@ body{
   color: #4a525a;
 }
 
-#searchFilterButton {
+#searchFilterInput {
   -webkit-border-radius: 0 !important;
      -moz-border-radius: 0 !important;
           border-radius: 0 !important;
   padding-left: 2px;
   padding-right: 2px;
+  width: 185px
 }
 
 #logo{
@@ -55,4 +56,8 @@ body{
 
 .txt-right{
   text-align: right;
+}
+
+.detail-single{
+  word-wrap: break-word;
 }

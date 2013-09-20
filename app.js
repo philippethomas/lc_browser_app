@@ -178,7 +178,7 @@ app.get('/getWorkStatus',  home.getWorkStatus);
 
 var search = require('./search');
 app.post('/ajaxSearch', search.ajaxSearch);
-app.post('/ajaxGetDoc', search.ajaxGetDoc);
+app.post('/docDetail', search.docDetail);
 app.post('/search', search.search);
 app.post('/csvExport', search.csvExport);
 app.get('/search', home.index);

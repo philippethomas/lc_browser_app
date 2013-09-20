@@ -20,17 +20,17 @@ jQuery(function($){
       };
       var arg = { guid: guid, idx: idx };
 
-      $.post('/ajaxGetDoc', arg, function(data){
-        var s = '<div class="col-md-6">'+data.left+'</div>';
-        s += '<div class="col-md-6">'+data.right+'</div>';
-	      //$('#modalDocDetail .modal-body').html(s);
-
-	      $('#modalDocTitle').text(data.title);
-
-        $('#leftModal').html(data.left);
+      $.post('/docDetail', arg, function(data){
+        console.log(data)
+	      $('#modalDocDetail #title'  ).html(data.title);
+        $('#modalDocDetail #panel'  ).html(data.panel);
+        $('#modalDocDetail #list'   ).html(data.list);
+        $('#modalDocDetail #singles').html(data.singles);
+        $('#modalDocDetail #base'   ).html(data.base);
       });
-      var opts = {show:true, height:modalHeight};
-      $('#modalDocDetail').modal(opts)
+
+      $('#modalDocDetail').modal( {show:true, height:modalHeight} );
+
     });
   }
   modalRowTrigger();
@@ -124,4 +124,5 @@ jQuery(function($){
 
 
 });
+
 

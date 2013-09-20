@@ -51,7 +51,7 @@ jQuery(function($){
     var caret = '<span>&nbsp;</span><span class="caret"></span>';
     var i = $(this).attr('idx');
     var v = $(this).attr('value');
-    var btn = $("#searchFilterButton:first-child");
+    var btn = $("#searchFilterInput:first-child");
     btn.attr('value', v);
     btn.attr('idx', i);
     $('#idx').attr('value', i); //set the selected button
