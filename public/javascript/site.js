@@ -46,17 +46,17 @@ jQuery(function($){
 
 
   //rename dropdown button and set idx to match selection
-  //hidden idx input is a self-infliced problem for not using a select input
+  //hidden idx input is a self-inflicted problem for not using a select input
   $('#searchFilterList li a').click(function(x){
-    var caret = '<span>&nbsp;</span><span class="caret"></span>';
+    //var caret = '<span>&nbsp;</span><span class="caret"></span>';
     var i = $(this).attr('idx');
     var v = $(this).attr('value');
     var btn = $("#searchFilterInput:first-child");
     btn.attr('value', v);
     btn.attr('idx', i);
-    $('#idx').attr('value', i); //set the selected button
+    //$('#idx').attr('value', i); //set the selected hidden input too
+    $('form#search #idx').attr('value', i); // the only one that counts!
   })
-      
 
 });
 

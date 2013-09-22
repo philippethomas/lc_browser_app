@@ -21,7 +21,6 @@ jQuery(function($){
       var arg = { guid: guid, idx: idx };
 
       $.post('/docDetail', arg, function(data){
-        console.log(data)
 	      $('#modalDocDetail #title'  ).html(data.title);
         $('#modalDocDetail #panel'  ).html(data.panel);
         $('#modalDocDetail #list'   ).html(data.list);
@@ -53,7 +52,7 @@ jQuery(function($){
 
 
 
-  // hijack event to show spinner, etc.
+  // hijack search event to show spinner, etc.
   $('#search').submit( function(e){
     $('#querySpinner').show(); // gets hidden on rendering the search index page
     e.preventDefault();
@@ -106,7 +105,7 @@ jQuery(function($){
 
       // table rows
       data.docs.forEach(function(doc){
-        var r = '<tr id="'+doc.doctype+'.'+doc.guid+'" class='+doc.doctype+'>';
+        var r = '<tr id="'+doc.doctype+'.'+doc.guid+'">';
         data.realFields.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
         r += '</tr>'
 	      $('#results tbody').append(r);

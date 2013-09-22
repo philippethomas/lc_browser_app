@@ -35,6 +35,7 @@ exports.search = function(req, res){
         total: result.total,
         size: size,
         idx: idx,
+        session_idx: req.session.idx,
         query: query
       });
     }
@@ -81,7 +82,7 @@ exports.docDetail = function(req, res){
 
       var singles = ''
       template.detailSingles.forEach(function(x){
-        singles += '<div class="well detail-single">';
+        singles += '<div class="well wrap-text">';
         singles += '<strong>'+ x +'</strong><br>';
         singles += styler(doc, x);
         singles += '</div>';
