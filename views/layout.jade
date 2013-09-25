@@ -19,13 +19,27 @@ html
     script(src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js")
 
 
+    link(rel='stylesheet', href='http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css')
+    //if lte IE 8
+      link(rel='stylesheet', href='http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css')
+    script(src='http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js')
+
+
+
     script(src="/socket.io/socket.io.js");
     script(src="/javascript/jquery.bootpag.js");
     script(src="/javascript/bootstrap-modal.js");
     script(src="/javascript/bootstrap-modalmanager.js");
+    script(src="/javascript/leaflet.markercluster.js");
+
     link(rel='stylesheet', href='/stylesheets/site.css');
     link(rel='stylesheet', href='/stylesheets/bootstrap-modal-bs3patch.css');
     link(rel='stylesheet', href='/stylesheets/bootstrap-modal.css');
+    link(rel='stylesheet', href='/stylesheets/MarkerCluster.css');
+    link(rel='stylesheet', href='/stylesheets/MarkerCluster.Default.css');
+    //if lte IE 8
+      link(rel='stylesheet', href='/stylesheets/MarkerCluster.Default.ie.css');
+
     script(src="/javascript/site.js");
 
     - if (hasEPF)

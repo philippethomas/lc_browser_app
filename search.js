@@ -35,7 +35,6 @@ exports.search = function(req, res){
         total: result.total,
         size: size,
         idx: idx,
-        session_idx: req.session.idx,
         query: query
       });
     }
@@ -61,17 +60,20 @@ exports.docDetail = function(req, res){
       res.end();
     }else{
 
-      result.docs.forEach(function(doc){
-        humanizeFields(doc);
-      });
+      //result.docs.forEach(function(doc){
+      //  humanizeFields(doc);
+      //});
 
       var doc = result.docs[0];
+
+      //var geo_loc = doc.geo_loc;
+      humanizeFields(doc);
+
       var template = getTemplate(doc.doctype);
 
       var styler = template.detailStyler;
 
       var title = styler(doc, template.detailTitle);
-      var panel = styler(doc, template.detailPanel);
 
       var list = '<dl class="dl-horizontal">';
       template.detailList.forEach(function(x){
@@ -92,10 +94,10 @@ exports.docDetail = function(req, res){
 
       res.send( { 
         title: title,
-        panel: panel,
         list: list,
         singles: singles,
-        base: base 
+        base: base
+        //geo_loc: geo_loc
       } );
     }
   });

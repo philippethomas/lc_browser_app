@@ -21,8 +21,8 @@ jQuery(function($){
       var arg = { guid: guid, idx: idx };
 
       $.post('/docDetail', arg, function(data){
+
 	      $('#modalDocDetail #title'  ).html(data.title);
-        $('#modalDocDetail #panel'  ).html(data.panel);
         $('#modalDocDetail #list'   ).html(data.list);
         $('#modalDocDetail #singles').html(data.singles);
         $('#modalDocDetail #base'   ).html(data.base);
@@ -33,6 +33,50 @@ jQuery(function($){
     });
   }
   modalRowTrigger();
+
+
+
+
+
+  
+/*
+  function mapper(geo_loc){
+
+    console.log(geo_loc.coordinates);
+    console.log($('#r_map').height());
+
+    var freshURL = 'http://{s}.tile.cloudmade.com/ac00b8ed30954bc3a49fb59af4d62820/997/256/{z}/{x}/{y}.png';
+
+    var cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery &copy <a href="http://cloudmade.com">CloudMade</a>';
+
+    var cloudmadeOptions = { maxzoom: 18, attribution: cloudmadeAttribution }
+    var fresh = new L.TileLayer(freshURL, cloudmadeOptions)
+  
+    $('map').height(300);
+
+    var map = new L.Map('map', {
+      zoom: 10,
+      layers: [fresh]
+    });
+
+    var center = geo_loc.coordinates.reverse();
+    map.setView(center, 13);
+    
+  
+
+    //var marker = L.marker([51.5, -0.09]).addTo(map);
+
+    //var circle = L.circle([51.508, -0.11], 500, {
+    //  color: 'red',
+    //  fillColor: '#f03',
+    //  fillOpacity: 0.5
+    //}).addTo(map);
+  }
+*/
+
+
+
+
 
 
 
@@ -103,13 +147,19 @@ jQuery(function($){
       h += '</tr>';
       $('#results tbody').append(h);
 
+
       // table rows
       data.docs.forEach(function(doc){
         var r = '<tr id="'+doc.doctype+'.'+doc.guid+'">';
         data.realFields.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
         r += '</tr>'
 	      $('#results tbody').append(r);
+
+
       });
+
+      mapPoints(data.docs);
+
       modalRowTrigger();
 
     });
@@ -122,6 +172,59 @@ jQuery(function($){
   //window.onbeforeunload = function(){ console.log('did anything happen')};
 
 
+
+
+
 });
 
 
+var mapPoints = function(docs){
+
+  var theme = 'http://{s}.tile.cloudmade.com/ac00b8ed30954bc3a49fb59af4d62820/997/256/{z}/{x}/{y}.png';
+
+  var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery &copy <a href="http://cloudmade.com">CloudMade</a>';
+
+  var cloudOpts = { maxzoom: 18, attribution: attribution }
+  var tiles = new L.TileLayer(theme, cloudOpts)
+  
+  var map = null;
+  var map = new L.Map('map', {
+    zoom: 10,
+    layers: [tiles]
+  });
+
+
+
+
+  var markers = L.markerClusterGroup();
+  docs.forEach(function(doc){
+    if (doc.geo_loc) {
+      var p = doc.geo_loc.coordinates;
+      //a case for making an "identifier" field in the template
+      var title = doc.uwi;
+			var marker = L.marker(new L.LatLng(p[1], p[0]), { title: title });
+			marker.bindPopup(title);
+			markers.addLayer(marker);
+    }
+  });
+
+
+
+
+  //map.setView(center, 13);
+
+  map.addLayer(markers);
+
+  map.fitBounds(markers.getBounds());
+
+  
+  /*
+  var points = [];
+  docs.forEach(function(doc){
+    if (doc.geo_loc) {
+      points.push(doc.geo_loc.coordinates.reverse());
+    }
+  });
+  console.log(points);
+  */
+}

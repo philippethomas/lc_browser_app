@@ -3,6 +3,12 @@ body{
   color: #4a525a;
 }
 
+
+.wider{
+  width: 98%;
+  margin: 0 auto;
+}
+
 #searchFilterInput {
   -webkit-border-radius: 0 !important;
      -moz-border-radius: 0 !important;
@@ -10,6 +16,15 @@ body{
   padding-left: 2px;
   padding-right: 2px;
   width: 185px
+}
+
+
+#results table{
+  table-layout: fixed;
+}
+
+#results table td{
+  overflow:hidden;
 }
 
 #logo{
@@ -60,4 +75,12 @@ body{
 
 .wrap-text{
   word-wrap: break-word;
+}
+
+#map{
+  height: 300px;
+}
+
+#r_map{
+  height: 300px;
 }
