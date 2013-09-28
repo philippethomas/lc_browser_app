@@ -1,4 +1,6 @@
 jQuery(function($){
+
+
   
   // current page
   var loc = document.location.pathname.replace(/\//,'');

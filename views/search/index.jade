@@ -1,9 +1,7 @@
 extends ../layout
 
 block content
-  script(src="/javascript/search.js");
   script
-    // make the last selected index and query string 'stick'
     var selected = $('#searchFilterList li a[idx="'+'#{idx}'+'"]');
     var v = selected.attr('value');
     var i = selected.attr('idx');
@@ -28,4 +26,21 @@ block content
 
       .col-md-5
         include map
+
+
+
+  //- 1. init #map, 2. define L.Map, 3. run mapPoints
+  script
+    var map = new L.Map('map');
+    var theme = 'http://{s}.tile.cloudmade.com/ac00b8ed30954bc3a49fb59af4d62820/997/256/{z}/{x}/{y}.png';
+
+    var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery &copy <a href="http://cloudmade.com">CloudMade</a>';
+
+    var cloudOpts = { maxzoom: 18, attribution: attribution }
+    var tiles = new L.TileLayer(theme, cloudOpts)
+
+    map.addLayer(tiles);
+    var markers = new L.markerClusterGroup();
+
+    mapPoints(!{JSON.stringify(docs)})
 

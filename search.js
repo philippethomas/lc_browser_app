@@ -12,7 +12,7 @@ exports.search = function(req, res){
   var idx = req.body.idx;
   var query = req.body.query; 
   var from = req.body.from || 0;
-  var size = req.body.size || 10; // this should match the perPage var in $
+  var size = req.body.size || 11; // this should match the perPage var in $
 
   //remember session for csv export and pagination
   req.session.idx = idx;
@@ -59,22 +59,18 @@ exports.docDetail = function(req, res){
       util.debug(error);
       res.end();
     }else{
-
-      //result.docs.forEach(function(doc){
-      //  humanizeFields(doc);
-      //});
-
       var doc = result.docs[0];
 
-      //var geo_loc = doc.geo_loc;
       humanizeFields(doc);
 
-      var template = getTemplate(doc.doctype);
+      var dt = getTemplate(doc.doctype).detailer;
 
-      var styler = template.detailStyler;
+      var title = dt.title(doc);
+      var l_panel = dt.l_panel(doc);
+      var r_panel = dt.r_panel(doc);
+      var base = dt.base(doc);
 
-      var title = styler(doc, template.detailTitle);
-
+      /*
       var list = '<dl class="dl-horizontal">';
       template.detailList.forEach(function(x){
         list += '<dt>'+ x +'</dt>';
@@ -91,13 +87,13 @@ exports.docDetail = function(req, res){
       });
 
       var base = styler(doc, template.detailBase);
+      */
 
       res.send( { 
         title: title,
-        list: list,
-        singles: singles,
+        l_panel: l_panel,
+        r_panel: r_panel,
         base: base
-        //geo_loc: geo_loc
       } );
     }
   });
@@ -121,17 +117,18 @@ exports.ajaxSearch = function(req, res){
       res.end();
     }else{
 
-      var t = getTemplate(result.docs[0].doctype).tableFields;
+      var template = getTemplate(result.docs[0].doctype);
+      var badges = [];
 
       result.docs.forEach(function(doc){
         humanizeFields(doc);
+        badges.push(template.badge(doc))
       });
 
       res.send( { 
-        docs: result.docs, 
-        total: result.total, 
-        realFields: t.realFields,
-        showFields: t.showFields
+        docs: result.docs,
+        badges: badges, 
+        total: result.total
       } );
     }
   });
@@ -145,12 +142,10 @@ exports.ajaxSearch = function(req, res){
  */
 exports.csvExport = function(req, res){
 
-
   var idx = req.session.idx;
   var query = req.session.query; 
   var from = 0;
   var size = 10000;
-
 
   AppES.doSearch(idx, from, size, query, function(error, result){
     if(error){

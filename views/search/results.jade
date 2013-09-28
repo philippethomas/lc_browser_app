@@ -1,16 +1,6 @@
-script
-  mapPoints(!{JSON.stringify(docs)})
+- var template = getTemplate(docs[0].doctype)
+ul.nav.nav-pills.nav-stacked#results
+  for doc in docs
+    != template.badge(doc)
 
-.well.white#results
-  table.table.table-condensed.table-bordered.table-hover.white
-    - var t = getTemplate(docs[0].doctype).tableFields
-    for f in t.showFields
-      th= f
-
-    for doc in docs
-      tr(id=doc.doctype+'.'+doc.guid)
-        for f in t.realFields
-          td= doc[f]
-
-  #searchSummaryBox
-    include summary_and_csv
+include summary_and_csv

@@ -1,16 +1,13 @@
-span.col-md-6
-  - var x = (total < size) ? total : size
-    p#summary.lead Showing 1 through #{x} of #{total}
-
-span.col-md-6
-  span.col-md-8
+.well#searchSummaryBox
+  .col-md-6
     #pager
+  .col-md-4
+    - var x = (total < size) ? total : size
+      p.lead#summary 1 &#10511; #{x} of #{total}
 
-  span.col-md-4
+  .col-md-2.pull-right
     form#csv(action='/csvExport', method='post')
       button.btn.btn-default#csv Export CSV
-
-
 
 script
   var numPages = Math.ceil(#{total}/#{size});

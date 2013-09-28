@@ -10,7 +10,7 @@ jQuery(function($){
   //the doctype and guid are stored in the row's id.
   //id="las.76180c8bd920667a8a2229e060a127cf"
   var modalRowTrigger = function(){
-    $('table tr').click(function(a){
+    $('#results li').click(function(a){
       var idx_guid = $(this).attr('id').split('.');
       var idx = idx_guid[0]+'_idx';
       var guid = idx_guid[1];
@@ -23,8 +23,8 @@ jQuery(function($){
       $.post('/docDetail', arg, function(data){
 
 	      $('#modalDocDetail #title'  ).html(data.title);
-        $('#modalDocDetail #list'   ).html(data.list);
-        $('#modalDocDetail #singles').html(data.singles);
+	      $('#modalDocDetail #l_panel').html(data.l_panel);
+	      $('#modalDocDetail #r_panel').html(data.r_panel);
         $('#modalDocDetail #base'   ).html(data.base);
       });
 
@@ -33,50 +33,6 @@ jQuery(function($){
     });
   }
   modalRowTrigger();
-
-
-
-
-
-  
-/*
-  function mapper(geo_loc){
-
-    console.log(geo_loc.coordinates);
-    console.log($('#r_map').height());
-
-    var freshURL = 'http://{s}.tile.cloudmade.com/ac00b8ed30954bc3a49fb59af4d62820/997/256/{z}/{x}/{y}.png';
-
-    var cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery &copy <a href="http://cloudmade.com">CloudMade</a>';
-
-    var cloudmadeOptions = { maxzoom: 18, attribution: cloudmadeAttribution }
-    var fresh = new L.TileLayer(freshURL, cloudmadeOptions)
-  
-    $('map').height(300);
-
-    var map = new L.Map('map', {
-      zoom: 10,
-      layers: [fresh]
-    });
-
-    var center = geo_loc.coordinates.reverse();
-    map.setView(center, 13);
-    
-  
-
-    //var marker = L.marker([51.5, -0.09]).addTo(map);
-
-    //var circle = L.circle([51.508, -0.11], 500, {
-    //  color: 'red',
-    //  fillColor: '#f03',
-    //  fillOpacity: 0.5
-    //}).addTo(map);
-  }
-*/
-
-
-
-
 
 
 
@@ -96,12 +52,25 @@ jQuery(function($){
 
 
 
-  // hijack search event to show spinner, etc.
+  // hijack search event to show spinner, calculate row count to return
   $('#search').submit( function(e){
     $('#querySpinner').show(); // gets hidden on rendering the search index page
     e.preventDefault();
+    var windowHeight = $(window).height();
+
+    //dynamically pick the number of rows (i.e. size for ElasticSearch) based
+    //on the window height. This affects the pager too!
+    //navbar+padding = 70, searchSummaryBox ~ 70, listItem = 24
+    var size = Math.floor((windowHeight - 180)/24);
+
+    $(this).append('<input type="hidden" id="size" name="size" value="'+ size +'"/>');
+
     this.submit();
   });
+
+
+
+
 
 
   // reload table via ajax pagination
@@ -116,50 +85,32 @@ jQuery(function($){
 
     $.post('/ajaxSearch', pageData, function(data){
 
-      var showFrom = newFrom + 1;
-      var showEnd = showFrom - 1  + data.docs.length;
 
-      if (data.docs.length === 1){
-        $('#summary').text('Showing '+ showEnd + ' of ' + data.total);
-      } else if (data.docs.length < perPage) {
+      var showFrom = newFrom + 1;
+      var showEnd = showFrom - 1  + data.badges.length;
+
+      if (data.badges.length === 1){
+        $('#summary').text(showEnd + ' of ' + data.total);
+      } else if (data.badges.length < perPage) {
 
 	      //show all if on the last page has fewer than perPage...
-        var end = data.docs.length;
+        var end = data.badges.length;
         if (( data.total - showFrom) < perPage){
 	        end = data.total;
 	      }
-
-        $('#summary').text('Showing '+ showFrom + ' through ' + 
-	        end + ' of ' + data.total);
+        $('#summary').html(showFrom +' &#10511; '+ end +' of '+ data.total);
 
       } else {
-        $('#summary').text('Showing '+ showFrom + ' through ' + 
-	        showEnd + ' of ' + data.total);
+        $('#summary').html(showFrom +' &#10511; ' + showEnd +' of '+ data.total);
       }
 
-      $('#results tr').remove();
-
-      // table header 
-      var h = '<tr>';
-      data.showFields.forEach(function(key){
-	      h += '<th>'+ key +'</th>';
-      });
-      h += '</tr>';
-      $('#results tbody').append(h);
-
-
-      // table rows
-      data.docs.forEach(function(doc){
-        var r = '<tr id="'+doc.doctype+'.'+doc.guid+'">';
-        data.realFields.forEach(function(key){ r += '<td>'+doc[key]+'</td>' });
-        r += '</tr>'
-	      $('#results tbody').append(r);
-
-
+      
+      $('#results li').remove();
+      data.badges.forEach(function(i){
+	      $('#results').append(i);
       });
 
       mapPoints(data.docs);
-
       modalRowTrigger();
 
     });
@@ -172,59 +123,34 @@ jQuery(function($){
   //window.onbeforeunload = function(){ console.log('did anything happen')};
 
 
-
-
-
 });
 
 
+
+
+/**
+ * 2013-9-25: using a layerGroup to hold the markers layer caused the
+ * leaflet-tile-container to get visibility=hidden after an ajax reload
+ * if group.clearLayers() was called...???
+ * workaround: just use the markergroup's own clearLayers method 
+ */
 var mapPoints = function(docs){
 
-  var theme = 'http://{s}.tile.cloudmade.com/ac00b8ed30954bc3a49fb59af4d62820/997/256/{z}/{x}/{y}.png';
+  markers.clearLayers();
 
-  var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery &copy <a href="http://cloudmade.com">CloudMade</a>';
-
-  var cloudOpts = { maxzoom: 18, attribution: attribution }
-  var tiles = new L.TileLayer(theme, cloudOpts)
-  
-  var map = null;
-  var map = new L.Map('map', {
-    zoom: 10,
-    layers: [tiles]
-  });
-
-
-
-
-  var markers = L.markerClusterGroup();
   docs.forEach(function(doc){
     if (doc.geo_loc) {
       var p = doc.geo_loc.coordinates;
       //a case for making an "identifier" field in the template
       var title = doc.uwi;
 			var marker = L.marker(new L.LatLng(p[1], p[0]), { title: title });
+
 			marker.bindPopup(title);
 			markers.addLayer(marker);
+    } else {
+      console.warn('no geo_loc for '+doc.guid);
     }
   });
-
-
-
-
-  //map.setView(center, 13);
-
-  map.addLayer(markers);
-
+  map.addLayer(markers)
   map.fitBounds(markers.getBounds());
-
-  
-  /*
-  var points = [];
-  docs.forEach(function(doc){
-    if (doc.geo_loc) {
-      points.push(doc.geo_loc.coordinates.reverse());
-    }
-  });
-  console.log(points);
-  */
 }
