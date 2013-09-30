@@ -148,7 +148,7 @@ var mapPoints = function(docs){
 			marker.bindPopup(title);
 			markers.addLayer(marker);
     } else {
-      console.warn('no geo_loc for '+doc.guid);
+      console.warn('no geo_loc for '+doc.doctype+'.'+doc.guid);
     }
   });
   map.addLayer(markers)

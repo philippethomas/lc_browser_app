@@ -145,7 +145,7 @@ exports.csvExport = function(req, res){
   var idx = req.session.idx;
   var query = req.session.query; 
   var from = 0;
-  var size = 10000;
+  var size = 50000;
 
   AppES.doSearch(idx, from, size, query, function(error, result){
     if(error){
@@ -153,7 +153,7 @@ exports.csvExport = function(req, res){
       res.end();
     }else{
 
-      var header = getTemplate(result.docs[0].doctype).allFields;
+      var header = getTemplate(result.docs[0].doctype).keys;
       var csvString = header.join(',')+'\r\n';
 
       result.docs.forEach(function(doc){

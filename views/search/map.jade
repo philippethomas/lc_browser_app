@@ -1,5 +1,7 @@
 script
-  var rh = $('#results').height() + 64;
+  var h = $('#results').height() + 64;
+  var rh = (h < 300) ? 300 : h
+
 
 .well.white#map
 

@@ -119,7 +119,7 @@ var getTemplate = function(doctype) {
 
 // NOTE: similar function also exists in each scanner for non-browser use
 function csvRowString(doc){
-  var keys = getTemplate(doc.doctype).allFields;
+  var keys = getTemplate(doc.doctype).keys;
   var a = [];
   keys.forEach(function(key){
     var val = doc[key];
