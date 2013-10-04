@@ -70,25 +70,6 @@ exports.docDetail = function(req, res){
       var r_panel = dt.r_panel(doc);
       var base = dt.base(doc);
 
-      /*
-      var list = '<dl class="dl-horizontal">';
-      template.detailList.forEach(function(x){
-        list += '<dt>'+ x +'</dt>';
-        list += '<dd>'+ styler(doc, x) +'</dd>';
-      })
-      list += '</dl>';
-
-      var singles = ''
-      template.detailSingles.forEach(function(x){
-        singles += '<div class="well wrap-text">';
-        singles += '<strong>'+ x +'</strong><br>';
-        singles += styler(doc, x);
-        singles += '</div>';
-      });
-
-      var base = styler(doc, template.detailBase);
-      */
-
       res.send( { 
         title: title,
         l_panel: l_panel,

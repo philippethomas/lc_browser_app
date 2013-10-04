@@ -12,7 +12,6 @@ program
 
 
 
-
 //----------init
 program
 .command('init')
@@ -35,25 +34,21 @@ program
 
 
 //----------count
-/*
 program
 .command('count')
 .description('Show current document counts per index')
 .action(
     function(){
-      ES = new ElasticSearcher({ host:program.es_host, port:program.es_port });
-      epfDoctypes.forEach(function(doctype){
-        ES.countIndex(doctype, function(err, result){ 
-          if (err) {
-            util.puts(util.inspect(err));
-          } else {
-            util.puts(doctype+'_idx count: '+result);
-          }
-        });
+      var ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
+      ES.countIndex('loc', function(err, result){ 
+        if (err) {
+          util.puts(util.inspect(err));
+        } else {
+          util.puts('loc_idx count: '+result);
+        }
       });
     }
     );
-*/
 
 
 program.parse(process.argv);

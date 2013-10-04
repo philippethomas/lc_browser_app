@@ -137,7 +137,11 @@ jQuery(function($){
 var mapPoints = function(docs){
 
   markers.clearLayers();
+  docs.forEach(function(doc){
+    console.log(doc.uwi);
+  });
 
+  /*
   docs.forEach(function(doc){
     if (doc.geo_loc) {
       var p = doc.geo_loc.coordinates;
@@ -153,4 +157,5 @@ var mapPoints = function(docs){
   });
   map.addLayer(markers)
   map.fitBounds(markers.getBounds());
+  */
 }
