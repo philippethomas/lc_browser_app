@@ -40,7 +40,8 @@ block content
     var tiles = new L.TileLayer(theme, cloudOpts)
 
     map.addLayer(tiles);
-    var markers = new L.markerClusterGroup();
+    //var markers = new L.markerClusterGroup();
+    var markers = new L.FeatureGroup();
 
-    mapPoints(!{JSON.stringify(docs)})
+    mapPoints(!{JSON.stringify(locsPerDoc)})
 

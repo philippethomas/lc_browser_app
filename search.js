@@ -20,23 +20,35 @@ exports.search = function(req, res){
   req.session.from = from;
   req.session.size = size;
 
-  AppES.doSearch(idx, from, size, query, function(error, result){
-    if(error){
-      util.debug(error);
+
+  AppES.doSearch(idx, from, size, query, function(err, result){
+    if(err){
+      util.debug(err);
     }else{
       
       result.docs.forEach(function(doc){
         humanizeFields(doc);
       });
+  
+      AppES.addLocations(result.docs, function(err, locsPerDoc){
+        if(err){
+          util.debug(err);
+        }else{
 
-      res.render('search', { 
-        title: 'Search',
-        docs: result.docs,
-        total: result.total,
-        size: size,
-        idx: idx,
-        query: query
-      });
+          res.render('search', { 
+            title: 'Search',
+            docs: result.docs,
+            total: result.total,
+            size: size,
+            idx: idx,
+            query: query,
+            locsPerDoc: locsPerDoc
+          });
+        }
+        
+      }) 
+      
+
     }
 
   });
@@ -83,7 +95,7 @@ exports.docDetail = function(req, res){
 
 
 /**
- *
+ * same as search, but does a send rather than render
  */
 exports.ajaxSearch = function(req, res){
 
@@ -106,11 +118,24 @@ exports.ajaxSearch = function(req, res){
         badges.push(template.badge(doc))
       });
 
-      res.send( { 
-        docs: result.docs,
-        badges: badges, 
-        total: result.total
-      } );
+      AppES.addLocations(result.docs, function(err, locsPerDoc){
+        if(err){
+          util.debug(err);
+        }else{
+
+          res.send({ 
+            title: 'Search',
+            docs: result.docs,
+            total: result.total,
+            locsPerDoc: locsPerDoc,
+            size: size,
+            idx: idx,
+            query: query,
+            badges: badges 
+          });
+        }
+        
+      }) 
     }
   });
 

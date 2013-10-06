@@ -11,7 +11,8 @@ jQuery(function($){
   //id="las.76180c8bd920667a8a2229e060a127cf"
   var modalRowTrigger = function(){
     $('#results li').click(function(a){
-      var idx_guid = $(this).attr('id').split('.');
+      var idx_guid = $(this).attr('id').split('-');
+      console.log(idx_guid)
       var idx = idx_guid[0]+'_idx';
       var guid = idx_guid[1];
 
@@ -106,11 +107,11 @@ jQuery(function($){
 
       
       $('#results li').remove();
-      data.badges.forEach(function(i){
-	      $('#results').append(i);
+      data.badges.forEach(function(b){
+	      $('#results').append(b);
       });
 
-      mapPoints(data.docs);
+      mapPoints(data.locsPerDoc);
       modalRowTrigger();
 
     });
@@ -121,6 +122,36 @@ jQuery(function($){
   });
 
   //window.onbeforeunload = function(){ console.log('did anything happen')};
+
+
+
+
+
+  $('#results li').hover(
+    function(){
+      var id = $(this).attr('id')
+      var exc = '.leaflet-marker-icon[title!='+id+']'
+      var inc = '.leaflet-marker-icon[title='+id+']'
+      $(exc).addClass('faded')
+      $(inc).removeClass('faded')
+      //$('.leaflet-marker-shadow').addClass('faded')
+    }, 
+    function(){
+      var id = $(this).attr('id')
+      var exc = '.leaflet-marker-icon[title!='+id+']'
+      var inc = '.leaflet-marker-icon[title='+id+']'
+      $(exc).addClass('faded')
+      $(inc).removeClass('faded')
+      //$('.leaflet-marker-shadow').removeClass('faded')
+    });
+
+  
+  $('#results').mouseleave(function(){
+      $('.leaflet-marker-shadow').removeClass('faded')
+      $('.leaflet-marker-icon').removeClass('faded')
+    });
+
+
 
 
 });
@@ -134,28 +165,56 @@ jQuery(function($){
  * if group.clearLayers() was called...???
  * workaround: just use the markergroup's own clearLayers method 
  */
-var mapPoints = function(docs){
+var mapPoints = function(locsPerDoc){
 
   markers.clearLayers();
-  docs.forEach(function(doc){
-    console.log(doc.uwi);
+  console.log(locsPerDoc)
+
+  locsPerDoc.forEach(function(set) {
+
+    set.locations.forEach(function(loc){
+      var p = loc.coordinates;
+      var title = loc.title;
+			var marker = L.marker(new L.LatLng(p.lat, p.lon), 
+        { title: loc.loc_class });
+      
+
+			marker.bindPopup(title);
+		  markers.addLayer(marker);
+
+      /*
+      markers.on('click', function(d) {
+        var marker_title = '#' + d.layer.options.title.toLowerCase();
+        if ( $(marker_title) ){
+          console.log(marker_title);
+        }
+      });
+      */
+      
+
+    })
+
   });
 
+  map.addLayer(markers)
+  map.fitBounds(markers.getBounds());
+
+
   /*
-  docs.forEach(function(doc){
-    if (doc.geo_loc) {
-      var p = doc.geo_loc.coordinates;
-      //a case for making an "identifier" field in the template
-      var title = doc.uwi;
-			var marker = L.marker(new L.LatLng(p[1], p[0]), { title: title });
+  locations.forEach(function(loc){
+    if (loc.coordinates) {
+      var p = loc.coordinates;
+      var title = loc.title;
+			var marker = L.marker(new L.LatLng(p.lat, p.lon), { title: title });
 
 			marker.bindPopup(title);
 			markers.addLayer(marker);
     } else {
-      console.warn('no geo_loc for '+doc.doctype+'.'+doc.guid);
+      console.warn('no coordinates for '+loc.loc_id);
     }
   });
   map.addLayer(markers)
+
   map.fitBounds(markers.getBounds());
   */
 }

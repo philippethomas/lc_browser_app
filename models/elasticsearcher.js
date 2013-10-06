@@ -50,20 +50,55 @@ ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callba
 
 
 
-/*
-ElasticSearcher.prototype.uwiLocations = function(docs, callback){
+/**
+ * Collect uwis from docs if present. Search loc_idx for matches and then
+ * add lat/lon back to original docs. A single query_string using the OR 
+ * operator is probably better than doing a single call for every UWI--
+ * particularly for zones and formations.
+ *
+ * TODO: The size parameter might need some tweaking
+ */
+ElasticSearcher.prototype.addLocations = function(docs, callback){
+
+  var uwis = [];
+  quwi = []
+
+  docs.forEach(function(doc){
+    if (doc.uwis) {
+      uwis = uwis.concat(doc.uwis)
+    } else if (doc.uwi) {
+      uwis.push(doc.uwi)
+    }
+  });
+
+  uwis.forEach(function(uwi){
+    if (uwi.match(/\d/)) {
+      quwi.push('\"'+uwi+'\"');
+    } else {
+      quwi.push(uwi);
+    }
+  });
+
+  //if (quwi.length === 0) {
+  //  callback(null, docs)
+  //}
+
+
 
   var qryObj = {
-    "from": from,
-    "size": size,
-    "query": { "query_string": { "query": query, "default_operator": "AND" } },
-    "sort": [ { "crawled": {"order": "desc"} } ]
-  };
+    "from": 0,
+    "size": 50000,
+    "query": { "query_string": {
+      "fields": ["uwi"],
+      "query": quwi.join(' '),
+      "default_operator":"OR"
+    }}
+  }
 
   var total = 0;
-  var docs = [];
+  var locs = [];
 
-  ESClient.search(indices, qryObj)
+  ESClient.search('loc_idx', qryObj)
 
     .on('error', function(error) {
       return callback(error);
@@ -74,20 +109,64 @@ ElasticSearcher.prototype.uwiLocations = function(docs, callback){
     if (data.error){
       return callback(data.error);
     }else{
-      total = data.hits.total;
+      //total = data.hits.total;
       data.hits.hits.forEach(function(hit){
-        docs.push(hit._source);
+        locs.push(hit._source);
       });
     }
   })
 
   .on('done', function(){
-    //return callback(null, { total: total, docs: docs });
+
+    var locsPerDoc = [];
+
+    docs.forEach(function(doc){
+
+      var set = { id: doc.doctype+'-'+doc.guid, locations: [] };
+
+      //if there is a single doc.uwi (wll, ras, las, etc.)
+      if (doc.uwi) {
+
+        var p = locs.filter(function(o){
+          return (o.uwi === doc.uwi);
+        });
+        if (p.length > 0) {
+          var loc = {
+            coordinates:  p[0].location.coordinates,
+            loc_class: doc.doctype+'-'+doc.guid, //matches the badge id
+            title: doc.uwi
+          }
+          set.locations.push(loc);
+        }
+
+      //if this doc may have many uwis (frm, zon)
+      } else if (doc.uwis && doc.uwis.length > 0) {
+
+        doc.uwis.forEach(function(uwi){
+          var p = locs.filter(function(o){
+            return (o.uwi === uwi);
+          });
+          if (p.length > 0) {
+            loc = {
+              coordinates:  p[0].location.coordinates,
+              loc_class: doc.doctype+'-'+doc.guid,
+              title: doc.name
+            }
+            set.locations.push(loc);
+          }
+        });
+
+      }
+
+      locsPerDoc.push(set);
+
+    });
+    return callback(null, locsPerDoc);
   }).exec()
+
 
 }
 
-*/
 
 
 
