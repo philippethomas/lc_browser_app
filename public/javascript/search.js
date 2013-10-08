@@ -12,7 +12,6 @@ jQuery(function($){
   var modalRowTrigger = function(){
     $('#results li').click(function(a){
       var idx_guid = $(this).attr('id').split('-');
-      console.log(idx_guid)
       var idx = idx_guid[0]+'_idx';
       var guid = idx_guid[1];
 
@@ -59,9 +58,11 @@ jQuery(function($){
     e.preventDefault();
     var windowHeight = $(window).height();
 
-    //dynamically pick the number of rows (i.e. size for ElasticSearch) based
-    //on the window height. This affects the pager too!
-    //navbar+padding = 70, searchSummaryBox ~ 70, listItem = 24
+    /**
+    /* dynamically pick the number of rows (i.e. size for ElasticSearch) based
+    /* on the window height. This affects the pager too!
+    /* navbar+padding = 70, searchSummaryBox ~ 70, listItem = 24
+     */
     var size = Math.floor((windowHeight - 180)/24);
 
     $(this).append('<input type="hidden" id="size" name="size" value="'+ size +'"/>');
@@ -85,7 +86,6 @@ jQuery(function($){
     var pageData = { from: newFrom };
 
     $.post('/ajaxSearch', pageData, function(data){
-
 
       var showFrom = newFrom + 1;
       var showEnd = showFrom - 1  + data.badges.length;
@@ -121,38 +121,6 @@ jQuery(function($){
 
   });
 
-  //window.onbeforeunload = function(){ console.log('did anything happen')};
-
-
-
-
-
-  $('#results li').hover(
-    function(){
-      var id = $(this).attr('id')
-      var exc = '.leaflet-marker-icon[title!='+id+']'
-      var inc = '.leaflet-marker-icon[title='+id+']'
-      $(exc).addClass('faded')
-      $(inc).removeClass('faded')
-      //$('.leaflet-marker-shadow').addClass('faded')
-    }, 
-    function(){
-      var id = $(this).attr('id')
-      var exc = '.leaflet-marker-icon[title!='+id+']'
-      var inc = '.leaflet-marker-icon[title='+id+']'
-      $(exc).addClass('faded')
-      $(inc).removeClass('faded')
-      //$('.leaflet-marker-shadow').removeClass('faded')
-    });
-
-  
-  $('#results').mouseleave(function(){
-      $('.leaflet-marker-shadow').removeClass('faded')
-      $('.leaflet-marker-icon').removeClass('faded')
-    });
-
-
-
 
 });
 
@@ -166,55 +134,70 @@ jQuery(function($){
  * workaround: just use the markergroup's own clearLayers method 
  */
 var mapPoints = function(locsPerDoc){
-
   markers.clearLayers();
-  console.log(locsPerDoc)
 
   locsPerDoc.forEach(function(set) {
-
     set.locations.forEach(function(loc){
       var p = loc.coordinates;
       var title = loc.title;
 			var marker = L.marker(new L.LatLng(p.lat, p.lon), 
         { title: loc.loc_class });
-      
-
 			marker.bindPopup(title);
 		  markers.addLayer(marker);
-
-      /*
-      markers.on('click', function(d) {
-        var marker_title = '#' + d.layer.options.title.toLowerCase();
-        if ( $(marker_title) ){
-          console.log(marker_title);
-        }
-      });
-      */
-      
-
     })
-
   });
 
   map.addLayer(markers)
   map.fitBounds(markers.getBounds());
+  setHoverFade();
+}
 
 
-  /*
-  locations.forEach(function(loc){
-    if (loc.coordinates) {
-      var p = loc.coordinates;
-      var title = loc.title;
-			var marker = L.marker(new L.LatLng(p.lat, p.lon), { title: title });
-
-			marker.bindPopup(title);
-			markers.addLayer(marker);
-    } else {
-      console.warn('no coordinates for '+loc.loc_id);
+  /**
+   * For documents with one or more UWI fields...
+   * 1. The loc_idx index contains uwi/lat-lon pairs
+   * 2. If a doc has one or more uwis, look up the lat-lons and as the markers
+   * 3. Hijack markers title attribute to be doctype-guid (there is no addClass
+   *   for markers, and creating a bunch of dynamic layers is overkill)
+   * 4. Each #results li field's id is also doctype-guid. This allows us to 
+   *   hide/show markers when hovering on a list item.
+   * 5. We also add a glyphicon to the badge/list to indicate which list items 
+   *   should be mapped.
+   */
+var setHoverFade = function(){
+  //add a globe icon to the result list row if its content is mappable
+  $('#results li').each(function(x){
+    var id = $(this).attr('id')
+    var hits = $('.leaflet-marker-icon[title='+id+']'); 
+    if (hits.length > 0) {
+      var span = $(this).find('span.mappit').addClass('glyphicon glyphicon-globe')
     }
-  });
-  map.addLayer(markers)
+  })
 
-  map.fitBounds(markers.getBounds());
-  */
+  //fade in/out markers on hover over list item
+  $('#results li').hover(
+    function(){
+      var id = $(this).attr('id')
+      $('.leaflet-marker-icon[title!='+id+']').addClass('faded')
+      $('.leaflet-marker-icon[title='+id+']').removeClass('faded')
+    }, 
+    function(){
+      var id = $(this).attr('id')
+      $('.leaflet-marker-icon[title!='+id+']').addClass('faded')
+      $('.leaflet-marker-icon[title='+id+']').removeClass('faded')
+    });
+  
+
+  //remove all marker shadows (they make markers too hard to see >200ish)
+  $('#results').mouseenter(function(){
+    $('.leaflet-marker-shadow').hide();
+    
+  });
+
+  //remove all fades and restore shadows when mouse leaves the results list
+  $('#results').mouseleave(function(){
+    $('.leaflet-marker-shadow').removeClass('faded')
+    $('.leaflet-marker-icon').removeClass('faded')
+    $('.leaflet-marker-shadow').show();
+  });
 }

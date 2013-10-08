@@ -52,16 +52,14 @@ ElasticSearcher.prototype.doSearch = function(indices, from, size, query, callba
 
 /**
  * Collect uwis from docs if present. Search loc_idx for matches and then
- * add lat/lon back to original docs. A single query_string using the OR 
- * operator is probably better than doing a single call for every UWI--
- * particularly for zones and formations.
+ * add lat/lon back to original docs. 
  *
- * TODO: The size parameter might need some tweaking
+ * TODO: expose the hard-coded size limit somewhere?
+ *
  */
 ElasticSearcher.prototype.addLocations = function(docs, callback){
 
   var uwis = [];
-  quwi = []
 
   docs.forEach(function(doc){
     if (doc.uwis) {
@@ -71,28 +69,19 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
     }
   });
 
-  uwis.forEach(function(uwi){
-    if (uwi.match(/\d/)) {
-      quwi.push('\"'+uwi+'\"');
-    } else {
-      quwi.push(uwi);
-    }
-  });
-
-  //if (quwi.length === 0) {
-  //  callback(null, docs)
-  //}
-
-
-
   var qryObj = {
-    "from": 0,
-    "size": 50000,
-    "query": { "query_string": {
-      "fields": ["uwi"],
-      "query": quwi.join(' '),
-      "default_operator":"OR"
-    }}
+    "query": {
+      "constant_score": {
+        "filter": {
+          "terms" : {
+            "uwi" : uwis,
+            "execution" : "bool"
+          }
+        }
+      }
+    },
+    "from":0,
+    "size": 50000
   }
 
   var total = 0;
@@ -109,7 +98,6 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
     if (data.error){
       return callback(data.error);
     }else{
-      //total = data.hits.total;
       data.hits.hits.forEach(function(hit){
         locs.push(hit._source);
       });
