@@ -135,23 +135,64 @@ jQuery(function($){
  */
 var mapPoints = function(locsPerDoc){
   markers.clearLayers();
-
+  
   locsPerDoc.forEach(function(set) {
     set.locations.forEach(function(loc){
-      var p = loc.coordinates;
-      var title = loc.title;
-			var marker = L.marker(new L.LatLng(p.lat, p.lon), 
-        { title: loc.loc_class });
-			marker.bindPopup(title);
-		  markers.addLayer(marker);
+      if (loc.type === 'point') {
+
+        var p = loc.coordinates;
+        var title = loc.title;
+        var marker = L.marker(new L.LatLng(p.lat, p.lon), 
+          { title: loc.loc_class });
+        marker.bindPopup(title);
+
+        var obj = $('#results li#'+loc.loc_class)
+        handleFades(obj, marker);
+
+        markers.addLayer(marker);
+
+      } else if (loc.type === 'box') {
+
+        var p = loc.coordinates;
+        var title = loc.title;
+
+        var sw = new L.LatLng(loc.sw_lat, loc.sw_lon);
+        var ne = new L.LatLng(loc.ne_lat, loc.ne_lon);
+        var bounds = new L.LatLngBounds(sw, ne);
+
+        var rect = L.rectangle(bounds, {color: "#ff7800", weight: 1})
+
+        rect.bindPopup(title);
+
+        var obj = $('#results li#'+loc.loc_class)
+        handleFades(obj, rect);
+
+        markers.addLayer(rect);
+
+      }
     })
   });
 
   map.addLayer(markers)
   map.fitBounds(markers.getBounds());
-  setHoverFade();
+  //setHoverFade();
 }
 
+
+var handleFades = function(obj, shape){
+  $(obj).mouseenter(function(e){
+    if (shape._latlngs) {
+      console.log('______polygon_______');
+      shape.setStyle({opacity:'0.1', fillOpacity:'0.1'})
+    } else if (shape._latlng) {
+      console.log('______point_______');
+      shape.setOpacity(0.1)
+    }
+
+  })
+
+  //rect.setStyle({opacity:'0.1', fillOpacity:'0.1'}))
+}
 
   /**
    * For documents with one or more UWI fields...
@@ -185,13 +226,13 @@ var setHoverFade = function(){
       var id = $(this).attr('id')
       $('.leaflet-marker-icon[title!='+id+']').addClass('faded')
       $('.leaflet-marker-icon[title='+id+']').removeClass('faded')
-    });
+    }
+  );
   
 
   //remove all marker shadows (they make markers too hard to see >200ish)
   $('#results').mouseenter(function(){
     $('.leaflet-marker-shadow').hide();
-    
   });
 
   //remove all fades and restore shadows when mouse leaves the results list

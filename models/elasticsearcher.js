@@ -120,6 +120,7 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
         });
         if (p.length > 0) {
           var loc = {
+            type: 'point',
             coordinates:  p[0].location.coordinates,
             loc_class: doc.doctype+'-'+doc.guid, //matches the badge id
             title: doc.uwi
@@ -136,6 +137,7 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
           });
           if (p.length > 0) {
             loc = {
+              type: 'point',
               coordinates:  p[0].location.coordinates,
               loc_class: doc.doctype+'-'+doc.guid,
               title: doc.name
@@ -144,6 +146,25 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
           }
         });
 
+      } else if (doc.bounding_box) {
+        //switch around the points for leaflet
+        var c = doc.bounding_box.coordinates;
+
+        var sw_lat = c[1][1];
+        var sw_lon = c[0][0];
+        var ne_lat = c[0][1];
+        var ne_lon = c[1][0];
+        
+        loc = {
+          type: 'box',
+          sw_lat: sw_lat,
+          sw_lon: sw_lon,
+          ne_lat: ne_lat,
+          ne_lon: ne_lon,
+          loc_class: doc.doctype+'-'+doc.guid,
+          title: doc.name
+        }
+        set.locations.push(loc);
       }
 
       locsPerDoc.push(set);
@@ -165,7 +186,9 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
 // spatial mappings ////////////////////////////////////////////////////////////
 
 //loc_idx stores a single kind of doc, a "loc" geopoint.
-var spatialESMapping = { "loc":{ "properties":{
+var spatialESMapping = { 
+  
+  "loc":{ "properties":{
     "guid":          {"type":"string"},
     "doctype":       {"type":"string"},
     "source":        {"type":"string"},
@@ -174,7 +197,9 @@ var spatialESMapping = { "loc":{ "properties":{
     "lat":           {"type":"float", "index":"not_analyzed"},
     "lon":           {"type":"float", "index":"not_analyzed"},
     "location":      {"type":"geo_point"}
-}}}
+  }}
+
+}
 
 
 
