@@ -32,6 +32,7 @@ block content
   //- 1. init #map, 2. define L.Map, 3. run mapPoints
   script
     var map;
+    var mappedItems = {}; //keep track of objects for highlighting
     var markers = new L.FeatureGroup();
 
 
@@ -51,7 +52,18 @@ block content
 
       map.addLayer(tiles);
       //var markers = new L.markerClusterGroup();
+      var locsPerDoc = !{JSON.stringify(locsPerDoc)}
 
-      mapPoints(!{JSON.stringify(locsPerDoc)})
+      //only try to map if locations are present
+      var mappable = false;
+      for (var key in locsPerDoc) {
+        if (locsPerDoc[key].locations.length > 0) {
+          mappable = true;
+        }
+      }
+
+      if (mappable) {
+        mapResults(locsPerDoc);
+      }
 
     }

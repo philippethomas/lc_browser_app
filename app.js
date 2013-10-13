@@ -205,8 +205,11 @@ app.configure('production', function(){
 ////////////////////////////////////////////////////////////////////////////////
 
 
-app.on('parsedDoc', function(data){
-  io.sockets.emit('parsedDoc', data);
+app.on('parsedDoc', function(data){ 
+  //send everything but loc (lat/lon points) to UI
+  if (data.doctype != 'loc') { 
+    io.sockets.emit('parsedDoc', data);
+  }
 });
 
 app.on('workStart', function(data){

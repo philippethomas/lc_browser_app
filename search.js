@@ -12,14 +12,13 @@ exports.search = function(req, res){
   var idx = req.body.idx;
   var query = req.body.query; 
   var from = req.body.from || 0;
-  var size = req.body.size || 11; // this should match the perPage var in $
+  var size = req.body.size || 10; // this should match the perPage var in $
 
   //remember session for csv export and pagination
   req.session.idx = idx;
   req.session.query = query;
   req.session.from = from;
   req.session.size = size;
-
 
   AppES.doSearch(idx, from, size, query, function(err, result){
     if(err){

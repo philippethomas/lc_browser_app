@@ -122,7 +122,7 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
           var loc = {
             type: 'point',
             coordinates:  p[0].location.coordinates,
-            loc_class: doc.doctype+'-'+doc.guid, //matches the badge id
+            id_tag: doc.doctype+'-'+doc.guid, //matches the badge id
             title: doc.uwi
           }
           set.locations.push(loc);
@@ -139,7 +139,7 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
             loc = {
               type: 'point',
               coordinates:  p[0].location.coordinates,
-              loc_class: doc.doctype+'-'+doc.guid,
+              id_tag: doc.doctype+'-'+doc.guid,
               title: doc.name
             }
             set.locations.push(loc);
@@ -161,7 +161,7 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
           sw_lon: sw_lon,
           ne_lat: ne_lat,
           ne_lon: ne_lon,
-          loc_class: doc.doctype+'-'+doc.guid,
+          id_tag: doc.doctype+'-'+doc.guid,
           title: doc.name
         }
         set.locations.push(loc);

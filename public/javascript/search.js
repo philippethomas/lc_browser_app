@@ -53,20 +53,12 @@ jQuery(function($){
 
 
   // hijack search event to show spinner, calculate row count to return
+  // as a hidden field on form before rendering the search index page
   $('#search').submit( function(e){
-    $('#querySpinner').show(); // gets hidden on rendering the search index page
+    $('#querySpinner').show(); 
     e.preventDefault();
-    var windowHeight = $(window).height();
-
-    /**
-    /* dynamically pick the number of rows (i.e. size for ElasticSearch) based
-    /* on the window height. This affects the pager too!
-    /* navbar+padding = 70, searchSummaryBox ~ 70, listItem = 24
-     */
-    var size = Math.floor((windowHeight - 180)/24);
-
+    var size = resultRowCount();
     $(this).append('<input type="hidden" id="size" name="size" value="'+ size +'"/>');
-
     this.submit();
   });
 
@@ -77,9 +69,10 @@ jQuery(function($){
 
   // reload table via ajax pagination
   $('#pager').on("page", function(event, num){
+
     $('#querySpinner').show();
 
-    var perPage = 10; //should match what's in controller
+    var perPage = resultRowCount();
 
     var newFrom = (num * perPage) - perPage;
 
@@ -105,13 +98,26 @@ jQuery(function($){
         $('#summary').html(showFrom +' &#10511; ' + showEnd +' of '+ data.total);
       }
 
+      mappedItems = {} //defined on index
       
       $('#results li').remove();
       data.badges.forEach(function(b){
 	      $('#results').append(b);
       });
 
-      mapPoints(data.locsPerDoc);
+      //only try to map if locations are present
+      var mappable = false;
+      for (var key in data.locsPerDoc) {
+        if (data.locsPerDoc[key].locations.length > 0) {
+          mappable = true;
+        }
+      }
+
+      if (mappable) {
+        mapResults(data.locsPerDoc);
+      }
+
+      //mapResults(data.locsPerDoc);
       modalRowTrigger();
 
     });
@@ -122,9 +128,21 @@ jQuery(function($){
   });
 
 
+
+
 });
 
 
+/**
+/* dynamically pick the number of rows (i.e. size for ElasticSearch) based
+/* on the window height. This affects the pager too!
+/* navbar+padding = 70, searchSummaryBox ~ 70, listItem = 24
+*/
+var resultRowCount = function(){
+  var windowHeight = $(window).height();
+  var size = Math.floor((windowHeight - 180)/24);
+  return size
+}
 
 
 /**
@@ -133,23 +151,24 @@ jQuery(function($){
  * if group.clearLayers() was called...???
  * workaround: just use the markergroup's own clearLayers method 
  */
-var mapPoints = function(locsPerDoc){
+var mapResults = function(locsPerDoc){
   markers.clearLayers();
+
   
   locsPerDoc.forEach(function(set) {
+
+    var locations = [];
     set.locations.forEach(function(loc){
+
       if (loc.type === 'point') {
 
         var p = loc.coordinates;
         var title = loc.title;
-        var marker = L.marker(new L.LatLng(p.lat, p.lon), 
-          { title: loc.loc_class });
+        var marker = L.marker(new L.LatLng(p.lat, p.lon), { title: title });
         marker.bindPopup(title);
-
-        var obj = $('#results li#'+loc.loc_class)
-        handleFades(obj, marker);
-
         markers.addLayer(marker);
+
+        locations.push(marker);
 
       } else if (loc.type === 'box') {
 
@@ -159,86 +178,72 @@ var mapPoints = function(locsPerDoc){
         var sw = new L.LatLng(loc.sw_lat, loc.sw_lon);
         var ne = new L.LatLng(loc.ne_lat, loc.ne_lon);
         var bounds = new L.LatLngBounds(sw, ne);
-
-        var rect = L.rectangle(bounds, {color: "#ff7800", weight: 1})
-
+        var rect = L.rectangle(bounds, {color: "#428bca", weight: 2})
         rect.bindPopup(title);
-
-        var obj = $('#results li#'+loc.loc_class)
-        handleFades(obj, rect);
-
         markers.addLayer(rect);
+
+        locations.push(rect)
 
       }
     })
+    mappedItems[set.id] = locations;
+
   });
 
   map.addLayer(markers)
   map.fitBounds(markers.getBounds());
-  //setHoverFade();
+  highlighter()
 }
 
 
-var handleFades = function(obj, shape){
-  $(obj).mouseenter(function(e){
-    if (shape._latlngs) {
-      console.log('______polygon_______');
-      shape.setStyle({opacity:'0.1', fillOpacity:'0.1'})
-    } else if (shape._latlng) {
-      console.log('______point_______');
-      shape.setOpacity(0.1)
+
+var highlighter = function(){
+
+  //mark mappable list items with a little globe
+  for(var key in mappedItems){
+    if (mappedItems[key].length > 0) {
+      $('#results li#'+key).find('span.mappit').addClass('glyphicon glyphicon-globe')
     }
+  }
 
-  })
-
-  //rect.setStyle({opacity:'0.1', fillOpacity:'0.1'}))
-}
-
-  /**
-   * For documents with one or more UWI fields...
-   * 1. The loc_idx index contains uwi/lat-lon pairs
-   * 2. If a doc has one or more uwis, look up the lat-lons and as the markers
-   * 3. Hijack markers title attribute to be doctype-guid (there is no addClass
-   *   for markers, and creating a bunch of dynamic layers is overkill)
-   * 4. Each #results li field's id is also doctype-guid. This allows us to 
-   *   hide/show markers when hovering on a list item.
-   * 5. We also add a glyphicon to the badge/list to indicate which list items 
-   *   should be mapped.
-   */
-var setHoverFade = function(){
-  //add a globe icon to the result list row if its content is mappable
-  $('#results li').each(function(x){
-    var id = $(this).attr('id')
-    var hits = $('.leaflet-marker-icon[title='+id+']'); 
-    if (hits.length > 0) {
-      var span = $(this).find('span.mappit').addClass('glyphicon glyphicon-globe')
+  //show/hide shapes based on badge hovers
+  $('#results li').mouseover(function(){
+    var id = $(this).attr('id');
+    for(var key in mappedItems) {
+      if (id === key) {
+        mappedItems[key].forEach(function(shape){ showIt(shape); });
+      } else {
+        mappedItems[key].forEach(function(shape){ fadeIt(shape); });
+      }
     }
-  })
+  });
 
-  //fade in/out markers on hover over list item
-  $('#results li').hover(
-    function(){
-      var id = $(this).attr('id')
-      $('.leaflet-marker-icon[title!='+id+']').addClass('faded')
-      $('.leaflet-marker-icon[title='+id+']').removeClass('faded')
-    }, 
-    function(){
-      var id = $(this).attr('id')
-      $('.leaflet-marker-icon[title!='+id+']').addClass('faded')
-      $('.leaflet-marker-icon[title='+id+']').removeClass('faded')
-    }
-  );
-  
-
-  //remove all marker shadows (they make markers too hard to see >200ish)
+  //remove marker shadows on entering #results (too messy if 200+ markers)
   $('#results').mouseenter(function(){
     $('.leaflet-marker-shadow').hide();
   });
 
-  //remove all fades and restore shadows when mouse leaves the results list
+  //restore opacity and shadows when mouse leaves the results list
   $('#results').mouseleave(function(){
-    $('.leaflet-marker-shadow').removeClass('faded')
-    $('.leaflet-marker-icon').removeClass('faded')
+    for(var key in mappedItems) {
+      mappedItems[key].forEach(function(shape){ showIt(shape); });
+    }
     $('.leaflet-marker-shadow').show();
   });
+}
+
+// _latlng implies point  |  _latlngs implies polygon
+var fadeIt = function(o){
+  if (o._latlng) {
+    o.setOpacity(0.05);
+  } else if (o._latlngs) {
+    o.setStyle({opacity:'0.1', fillOpacity:'0.05'});
+  }
+}
+var showIt = function(o){
+  if (o._latlng) {
+    o.setOpacity(1.0);
+  } else if (o._latlngs) {
+    o.setStyle({opacity:'0.6', fillOpacity:'0.3'});
+  }
 }
