@@ -10,36 +10,33 @@ nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
 
   .collapse.navbar-collapse.navbar-ex1-collapse
     ul.nav.navbar-nav
-      li
+      li.crawler
         a.navbar-brand#logo(href='/')
           img(src='images/big_logo.png', height='44px')
 
       - if (hasEPF)
-        li 
+        li.crawler 
           a(href='/epf') E&P Files
 
       - if (hasDOX)
-        li
+        li.crawler
           a(href='/dox') Documents
 
       - if (hasPET)
-        li
+        li.crawler
           a(href='/pet') Petra
 
       - if (hasGGX) 
-        li
+        li.crawler
           a(href='/ggx') Discovery
 
       - if (hasTKS)
-        li
+        li.crawler
           a(href='/tks') Kingdom 
 
 
       li.spinner#workSpinner
-        img(src='images/gray_boxes.gif')
-
-      li.spinner#querySpinner
-        img(src='images/orange_boxes.gif')
+        img(src='images/boxxy.gif')
 
     
     form#search.navbar-form(role='search', action='/search', method='POST')

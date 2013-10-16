@@ -6,7 +6,6 @@ jQuery(function($){
   var loc = document.location.pathname.replace(/\//,'');
 
   $('#workSpinner').hide();
-  $('#querySpinner').hide();
 
   // navbar link selection
   $('ul.nav > li > a[href="/' + loc + '"]').parent().addClass('active');
@@ -14,7 +13,9 @@ jQuery(function($){
   var socket = io.connect('http://localhost');
 
   socket.on('workStart', function(n){
-    console.log('received a workStart event!');
+    $('.navbar-nav li.crawler').each(function(i,n){
+      $(n).addClass('disabled');
+    });
     $.post('/setWorkStatus', {working: 'yes'},  function(data){
       if (data.working != 'yes') {
         console.error('problem setting work status');
@@ -24,7 +25,9 @@ jQuery(function($){
   });
 
   socket.on('workStop', function(data){
-    console.log('received a workStop event!  '+data);
+    $('.navbar-nav li.crawler').each(function(i,n){
+      $(n).removeClass('disabled');
+    });
     $.post('/setWorkStatus', {working: 'no'},  function(data){
       if (data.working != 'no') {
         console.error('problem setting work status');
@@ -104,9 +107,9 @@ jQuery(function($){
 });
 
 
-/** workSpinner depends on the global 'working' variable, which workStatus
+/** 
+ * workSpinner depends on the global 'working' variable, which workStatus
  * checks any time a new page loads to see if it should still be visible. 
- * This is unlike querySpinner which uses more traditional local vars.
  */
 function workStatus(){
   console.log('site.js workStatus got called....')

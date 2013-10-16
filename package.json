@@ -1,7 +1,7 @@
 {
   "name": "lc_browser_app",
-  "version": "0.0.1",
-  "description":"file and proj crawler UI and search interface",
+  "version": "3.0.0",
+  "description":"Framework LogicalCat crawler apps, search and reporting.",
   "scripts": {
     "test": "mocha -R spec"
   },
@@ -36,5 +36,8 @@
   "devDependencies":{
     "mocha": "1.8.x"
   },
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/rbhughes/lc_browser_app/issues"
+  }
 }

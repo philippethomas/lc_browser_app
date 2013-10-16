@@ -12,6 +12,8 @@ var io = require('socket.io').listen(server);
 //var humanize = require('humanize');
 
 
+var config = require('./config.json')
+
 // Configuration
 var store  = new express.session.MemoryStore;
 app.use(express.bodyParser());
@@ -58,7 +60,7 @@ if (hasEPF) {
   docTemplates = docTemplates.concat(epfTemplates);
 
   require('./node_modules/lc_epf_crawlers/elasticsearcher.js');
-  EPF_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
+  EPF_ES = new ElasticSearcher({ host: config.es_host, port: config.es_port });
 }
 
 if (hasPET) {
@@ -73,7 +75,7 @@ if (hasPET) {
   docTemplates = docTemplates.concat(petTemplates);
 
   require('./node_modules/lc_pet_crawlers/elasticsearcher.js');
-  PET_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
+  PET_ES = new ElasticSearcher({ host: config.es_host, port: config.es_port });
 }
 
 if (hasGGX) {
@@ -88,7 +90,7 @@ if (hasGGX) {
   docTemplates = docTemplates.concat(ggxTemplates);
 
   require('./node_modules/lc_ggx_crawlers/elasticsearcher.js');
-  GGX_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
+  GGX_ES = new ElasticSearcher({ host: config.es_host, port: config.es_port });
 }
 
 
@@ -109,7 +111,7 @@ if (hasDOX) {
   docTemplates = docTemplates.concat(doxTemplates);
 
   require('./node_modules/lc_dox_crawlers/elasticsearcher.js');
-  DOX_ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
+  DOX_ES = new ElasticSearcher({ host: config.es_host, port: config.es_port });
 }
 
 ////////////////////////////////////////////////////////////////////////////////

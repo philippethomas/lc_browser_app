@@ -4,6 +4,7 @@ var util = require('util');
 var http = require('http');
 
 
+//TODO: memoize this?
 ElasticSearcher = function(opts){
   ESClient = new ElasticSearchClient({ host: opts.host, port: opts.port });
 };

@@ -4,12 +4,37 @@ extends ../layout
 block content
 
   .container
-    .well
+    .col-md-5.well
+      .well.white
+        p
+          strong= app_name
+          &nbsp | &nbsp
+          | version: 
+          = app_vers
+        p
+          = app_desc
+        p
+          a(href="#{app_bugs}")= app_bugs
+
+
+
+      for x in crawlers
+        .well.white
+          p
+            strong= x.name
+            &nbsp | &nbsp
+            | version: 
+            = x.vers
+
+          p
+            = x.desc
+          p
+            a(href="#{x.bugs}")= x.bugs
+
+
+      
       p module version info
 
-    .well
+    .col-md-5
       p some sort of helpful blurb or pictures
 
-
-  .container
-    //-#map

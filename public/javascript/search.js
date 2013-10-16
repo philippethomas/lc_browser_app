@@ -55,7 +55,7 @@ jQuery(function($){
   // hijack search event to show spinner, calculate row count to return
   // as a hidden field on form before rendering the search index page
   $('#search').submit( function(e){
-    $('#querySpinner').show(); 
+    $('#workSpinner').show(); 
     e.preventDefault();
     var size = resultRowCount();
     $(this).append('<input type="hidden" id="size" name="size" value="'+ size +'"/>');
@@ -70,7 +70,7 @@ jQuery(function($){
   // reload table via ajax pagination
   $('#pager').on("page", function(event, num){
 
-    $('#querySpinner').show();
+    $('#workSpinner').show();
 
     var perPage = resultRowCount();
 
@@ -123,7 +123,7 @@ jQuery(function($){
     });
 
 
-    $('#querySpinner').hide();
+    $('#workSpinner').hide();
 
   });
 
