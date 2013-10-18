@@ -89,6 +89,10 @@ body{
   word-wrap: break-word;
 }
 
+.rm-prev{
+  margin-top: 12px;
+}
+
 #map{
   height: 300px;
 }

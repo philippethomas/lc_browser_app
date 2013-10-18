@@ -31,7 +31,7 @@ app.use(express.static(__dirname + '/public'));
 
 require('./models/elasticsearcher.js');
 //note it's global...
-AppES = new ElasticSearcher({ host: 'localhost', port: 9200 });
+AppES = new ElasticSearcher({ host: config.es_host, port: config.es_port });
 
 ////////////////////////////////////////////////////////////////////////////////
 

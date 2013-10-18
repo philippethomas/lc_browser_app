@@ -289,19 +289,76 @@ ElasticSearcher.prototype.initIndex = function(doctype, callback){
 }
 
 
+ElasticSearcher.prototype.globalStats = function(idxGroups, callback){
 
+  idxStats = {};
+  ESClient.stats('/')
+    .on('data', function(data){
+      data = JSON.parse(data);
+
+      idxStats.numDocs = data._all.total.docs.count;
+      idxStats.idxSize = data._all.total.store.size; 
+
+
+      //store only the index name from the huge chunk of stats to compare later
+      var idx = [];
+      for (var i in data.indices){
+        idx.push(i)
+      }
+
+      //assign indexes and stats per group
+      for (g in idxGroups) {
+        idxStats[g] = []
+
+        idx.forEach(function(i){
+
+          var index = idxGroups[g].filter(function(x){ return x === i; })[0];
+          if (index){
+            var docs = data.indices[i].total.docs.count;
+            var size = data.indices[i].total.store.size;
+            var o = {index: index, docs: docs, size: size}
+            idxStats[g].push(o)
+          }
+
+        });
+      }
+
+
+    })
+    .on('done', function(){
+      return callback(null, idxStats);
+    }).exec()
+  
+
+};
+
+
+
+/*
+ * revisit this later? count expects a query, but querystring.stringify nulls it
+ElasticSearcher.prototype.countIndex = function(doctype, callback){
+  var idxName = doctype+'_idx';
+
+  ESClient.count("loc_idx", "loc", "loc")
+    .on('data', function(data){
+      data = JSON.parse(data);
+      console.log(data._shards.failures[0])
+      callback(null, data)
+    }).exec()
+}
+*/
 
 /**
- * the ESClient count wasn't working, and this is more direct...
+ * the ESClient count wasn't working without a query, just do it manually...
  *
  */
 ElasticSearcher.prototype.countIndex = function(doctype, callback){
   var idxName = doctype+'_idx';
-  var self = this;
+  var config = require('../config.json')
 
   var options = {
-    hostname: 'localhost',
-    port: '9200',
+    hostname: config.es_host,
+    port: config.es_port,
     path: '/'+idxName+'/_count',
     method: 'GET'
   };
@@ -310,7 +367,6 @@ ElasticSearcher.prototype.countIndex = function(doctype, callback){
     res.setEncoding('utf8');
     res.on('data', function (chunk) {
       data = JSON.parse(chunk);
-      //util.puts(idxName+': '+data.count)
       return callback(null, data.count)
     });
   });
@@ -321,7 +377,6 @@ ElasticSearcher.prototype.countIndex = function(doctype, callback){
 
   req.end();
 }  
-
 
 
 

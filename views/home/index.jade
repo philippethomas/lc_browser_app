@@ -7,6 +7,8 @@ block content
     .col-md-5.well
       .well.white
         p
+          span.glyphicon.glyphicon-home
+          &nbsp
           strong= app_name
           &nbsp | &nbsp
           | version: 
@@ -14,13 +16,21 @@ block content
         p
           = app_desc
         p
+          span.glyphicon.glyphicon-warning-sign
+          &nbsp
           a(href="#{app_bugs}")= app_bugs
+        p
+          span.glyphicon.glyphicon-user
+          &nbsp
+          a(href="#{app_wiki}")= app_wiki
 
 
 
       for x in crawlers
         .well.white
           p
+            span.glyphicon.glyphicon-th-large
+            &nbsp
             strong= x.name
             &nbsp | &nbsp
             | version: 
@@ -29,11 +39,14 @@ block content
           p
             = x.desc
           p
+            span.glyphicon.glyphicon-warning-sign
+            &nbsp
             a(href="#{x.bugs}")= x.bugs
+          p
+            span.glyphicon.glyphicon-user
+            &nbsp
+            a(href="#{x.wiki}")= x.wiki
 
-
-      
-      p module version info
 
     .col-md-5
       p some sort of helpful blurb or pictures
