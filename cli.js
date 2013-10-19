@@ -18,8 +18,8 @@ program
 .description('(Re)initialize the spatial index')
 .action(
     function(){
-      //TODO: these defaults might need tweaking via the installer...
-      var ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
+      var config = require('./config.json')
+      var ES = new ElasticSearcher({host:config.es_host, port:config.es_port});
 
       ES.initIndex('loc', function(err, result){ 
         if (err) {

@@ -3,31 +3,90 @@ extends ../layout
 
 block content
 
-  .container
-    .col-md-5.well
+    .col-md-7
       .well.white
+        p.lead.center.simpleton Simple Geoscience Search
         p
-          span.glyphicon.glyphicon-home
+          | Use LogicalCat to scan your network and collect metadata from
+          | common E&P data files, business documents like Excel and projects 
+          | from interpretation software like Petra. Everything is immediately 
+          | searchable. It really is as easy as 1, 2, 3...
+        hr
+
+        p.h4 1. Select your crawl type from the menu above.
+        p.h4 2. Review any existing crawl sets by their user-defined label.
+        p.h4 3. Define and run a crawl anywhere on your local PC or network.
+       
+        hr
+
+        p
+          | Click any of the crawler-specific links on this page to report a 
+          | bug or review how-to documents.
+        br
+
+        p.lead.center
+          span.glyphicon.glyphicon-envelope
           &nbsp
-          strong= app_name
-          &nbsp | &nbsp
-          | version: 
-          = app_vers
-        p
-          = app_desc
-        p
-          span.glyphicon.glyphicon-warning-sign
+          | info@logicalcat.com
+          &nbsp 
+          &nbsp 
+          span.glyphicon.glyphicon-phone
           &nbsp
-          a(href="#{app_bugs}")= app_bugs
-        p
-          span.glyphicon.glyphicon-user
-          &nbsp
-          a(href="#{app_wiki}")= app_wiki
+          | 303-949-8125 
 
 
+
+      .well.white.container
+        .col-md-8
+          p.center
+            strong.lead LogicalCat Browser App
+          p
+            span.glyphicon.glyphicon-home
+            &nbsp
+            strong= app_name
+            &nbsp | &nbsp
+            | version: 
+            = app_vers
+          p
+            = app_desc
+          p
+            span.glyphicon.glyphicon-warning-sign
+            &nbsp
+            a(href="#{app_bugs}")= app_bugs
+          p
+            span.glyphicon.glyphicon-user
+            &nbsp
+            a(href="#{app_wiki}")= app_wiki
+          br
+
+          p
+            | UWI Lat/Lon Points Index:
+
+          table.table.table-condensed.table-striped.table-bordered
+            thead
+              th index
+              th size
+              th points
+            tbody
+              tr
+                td= loc_stat.index
+                td= loc_stat.size
+                td= loc_stat.docs
+
+        .col-md-4
+          button#initLocs.btn.btn-default(type='button')
+            | Clear Locations Index
+            
+
+
+    .col-md-5
 
       for x in crawlers
         .well.white
+        
+
+          p.center
+            strong.lead= x.longName
           p
             span.glyphicon.glyphicon-th-large
             &nbsp
@@ -47,7 +106,22 @@ block content
             &nbsp
             a(href="#{x.wiki}")= x.wiki
 
+          br
 
-    .col-md-5
-      p some sort of helpful blurb or pictures
+          table.table.table-condensed.table-striped.table-bordered
+            thead
+              th index
+              th size
+              th docs
+            tbody
+            each i in x.indexes
+              tr
+                td= i.index
+                td= i.size
+                td= i.docs
+
+
+
+
+     p some sort of helpful blurb or pictures
 

@@ -176,6 +176,7 @@ var home = require('./home');
 app.get('/',               home.index);
 app.post('/setWorkStatus', home.setWorkStatus);
 app.get('/getWorkStatus',  home.getWorkStatus);
+app.post('/initLocs',      home.initLocs);
 
 ////////////////////////////////////////////////////////////////////////////////
 

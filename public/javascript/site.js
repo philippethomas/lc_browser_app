@@ -65,42 +65,22 @@ jQuery(function($){
 
 
 
+  // init locs handler
+  $('#initLocs').click(function(e){
+    var a = confirm('This will remove all documents in the locations index! '+
+      'Are you sure?');
+    if (a) {
+      $.post('/initLocs', {doctype: 'loc'}, function(data){
+        if (data.match(/^Deleted.*Created/)){
+          location.reload(true);
+        } else {
+          console.error(err);
+        }
+      });
+    } 
+    });
 
 
-
-
-
-  //var map = L.map('map').setView([51.505, -0.09], 13);
-
-  /*
-  var redAlertURL = 'http://{s}.tile.cloudmade.com/ac00b8ed30954bc3a49fb59af4d62820/8/256/{z}/{x}/{y}.png';
-  var freshURL = 'http://{s}.tile.cloudmade.com/ac00b8ed30954bc3a49fb59af4d62820/997/256/{z}/{x}/{y}.png';
-
-  var cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>';
-
-  var cloudmadeOptions = { maxzoom: 18, attribution: cloudmadeAttribution }
-  var redAlert = new L.TileLayer(redAlertURL, cloudmadeOptions)
-  var fresh = new L.TileLayer(freshURL, cloudmadeOptions)
-  
-
-  var map = new L.Map('map', {
-    zoom: 10,
-    layers: [redAlert,fresh]
-  });
-
-  map.setView([43.505, -106.09], 13)
-  
-
-  var marker = L.marker([51.5, -0.09]).addTo(map);
-
-  var circle = L.circle([51.508, -0.11], 500, {
-    color: 'red',
-      fillColor: '#f03',
-      fillOpacity: 0.5
-  }).addTo(map);
-  
-  */
-  
 
 
 

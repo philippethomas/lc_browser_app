@@ -2,8 +2,6 @@ var util = require('util');
 
 
 exports.index = function(req, res){
-  
-
 
   var a = require('./package.json');
   var crawlers = [];
@@ -100,23 +98,22 @@ exports.index = function(req, res){
     });
   }
 
+  //collect the local loc's index too
+  idxGroup['loc'] = ['loc_idx'];
+
   AppES.globalStats(idxGroup, function(err, result){
     if (err) {
       //render err like if missing path
     } else {
 
-      console.log('--------------------')
-      console.log(result)
-      console.log('--------------------')
-      console.log(crawlers)
+      loc_stat = result['loc'][0];
 
+      //add the array of index counts/sizes to crawlers object
       crawlers.filter(function(c){ 
         for (type in result) {
-
           if (c.type === type) {
-            console.log(type)
+            c['indexes'] = result[type]
           }
-
         }
       });
 
@@ -127,6 +124,7 @@ exports.index = function(req, res){
         app_desc: a.description,
         app_bugs: a.bugs.url,
         app_wiki: a.wiki.url,
+        loc_stat: loc_stat,
         crawlers: crawlers
       });
 
@@ -135,6 +133,19 @@ exports.index = function(req, res){
   
 };
 
+
+/**
+ *
+ */
+exports.initLocs = function(req, res){
+  AppES.initIndex('loc', function(error, result){ 
+    if (error) {
+      util.puts(util.inspect(error));
+    } else {
+      res.send(result[0]+' --- '+result[1]);
+    }
+  });
+}
 
 
 exports.setWorkStatus = function(req, res){
