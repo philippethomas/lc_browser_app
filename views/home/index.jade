@@ -1,8 +1,6 @@
 extends ../layout
 
-
 block content
-
     .col-md-7
       .well.white
         p.lead.center.simpleton Simple Geoscience Search
@@ -33,7 +31,6 @@ block content
           span.glyphicon.glyphicon-phone
           &nbsp
           | 303-949-8125 
-
 
 
       .well.white.container
@@ -84,7 +81,6 @@ block content
       for x in crawlers
         .well.white
         
-
           p.center
             strong.lead= x.longName
           p
@@ -94,7 +90,6 @@ block content
             &nbsp | &nbsp
             | version: 
             = x.vers
-
           p
             = x.desc
           p

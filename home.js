@@ -1,7 +1,90 @@
 var util = require('util');
-
+var async = require('async');
 
 exports.index = function(req, res){
+ 
+  var func0 = function(cb){
+    checkHealth(function(err, result){
+      if (err) {
+        cb(err);
+      } else {
+        cb(null, result)
+      }
+    });
+  }
+
+  var func1 = function(cb){
+    collectStats(function(err, result){
+      if (err) {
+        cb(err);
+      } else {
+        cb(null, result)
+      }
+    });
+  }
+
+  async.series([func0, func1], function(err, result){
+    if (err) {
+      var tip;
+
+      if (err.match(/ECONNREFUSED/)) {
+        
+        tip = 'ElasticSearch does not appear to be running. Try launching the '+
+              '.exe or Windows Service before this LogicalCat browser app.'
+      } else {
+
+        tip = 'Is ElasticSearch running and healthy? If it is running, then '+
+              'try diagnosing the problem with '+
+              '<a href="http://bigdesk.org/v/master">BigDesk</a>'
+      }
+
+      res.render('home/error', {
+        title: 'Fatal Error',
+        error: util.inspect(err),
+        tip: tip
+      });
+
+    } else {
+
+      var health = result[0];
+      var stats = result[1];
+
+      if (health.status === 'red') {
+        var tip = 'ElasticSearch shard code RED! Investigate the problem '+
+                  'with <a href="http://bigdesk.org/v/master">BigDesk</a>'
+
+        res.render('home/error', {
+          title: 'Fatal Error',
+          error: util.inspect(health),
+          tip: tip
+        });
+
+      } else {
+        res.render('home/index', stats);
+      }
+
+    }
+  });
+
+}
+
+
+var checkHealth = function(callback){
+  AppES.health(function(err, result){
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, result);
+    }
+  });
+}
+
+
+
+
+//exports.indexZZZ = function(req, res){
+
+var collectStats = function(callback){
 
   var a = require('./package.json');
   var crawlers = [];
@@ -103,7 +186,13 @@ exports.index = function(req, res){
 
   AppES.globalStats(idxGroup, function(err, result){
     if (err) {
-      //render err like if missing path
+      callback(err);
+      /*
+      res.render('home/error', {
+        title: 'Fatal Error',
+        error: util.inspect(err)
+      });
+      */
     } else {
 
       loc_stat = result['loc'][0];
@@ -117,6 +206,20 @@ exports.index = function(req, res){
         }
       });
 
+      var o = { 
+        title: 'LogicalCat Home',
+        app_name: a.name,
+        app_vers: a.version,
+        app_desc: a.description,
+        app_bugs: a.bugs.url,
+        app_wiki: a.wiki.url,
+        loc_stat: loc_stat,
+        crawlers: crawlers
+      };
+
+      callback(null, o)
+
+      /*
       res.render('home/index', { 
         title: 'LogicalCat Home',
         app_name: a.name,
@@ -127,11 +230,14 @@ exports.index = function(req, res){
         loc_stat: loc_stat,
         crawlers: crawlers
       });
+      */
 
     }
   });
   
 };
+
+
 
 
 /**

@@ -68,9 +68,12 @@ jQuery(function($){
 
 
   // reload table via ajax pagination
-  $('#pager').on("page", function(event, num){
+  $('#pager')
+    .on("click", function(){
+      $('#workSpinner').show();
+    })
+    .on("page", function(event, num){
 
-    $('#workSpinner').show();
 
     var perPage = resultRowCount();
 
@@ -120,10 +123,12 @@ jQuery(function($){
       //mapResults(data.locsPerDoc);
       modalRowTrigger();
 
+    }).then(function(){
+      console.log('hello')
+      $('#workSpinner').hide();
     });
 
 
-    $('#workSpinner').hide();
 
   });
 

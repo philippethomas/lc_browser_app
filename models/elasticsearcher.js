@@ -379,6 +379,36 @@ ElasticSearcher.prototype.countIndex = function(doctype, callback){
 }  
 
 
+/**
+ * Must check health directly. Trying to use elasticsearchclient gets 
+ * an uncatchable ECONNREFUSED if ElasticSearch is not running.
+ */
+ElasticSearcher.prototype.health = function(callback){
+  var config = require('../config.json')
+
+  var options = {
+    hostname: config.es_host,
+    port: config.es_port,
+    path: '/_cluster/health',
+    method: 'GET'
+  };
+
+  var req = http.request(options, function(res) {
+    res.setEncoding('utf8');
+    res.on('data', function (chunk) {
+      data = JSON.parse(chunk);
+      return callback(null, data)
+    });
+  });
+
+  req.on('error', function(e) {
+    callback('problem with request: '+e.message)
+  });
+
+  req.end();
+}  
+
+
 
 
 

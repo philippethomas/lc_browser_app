@@ -1,0 +1,14 @@
+extends ../layout
+block content
+
+  div.alert.alert-block.alert-danger.fade.in.col-md-10.col-md-offset-1
+    button.close(type='button', data-dismiss='alert', aria-hidden='true')
+      | x
+    p.h2
+      | Oh Noes! Fatal Error!
+    hr
+    p= error
+    hr
+    p.h4!= tip
+
+
