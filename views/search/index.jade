@@ -19,15 +19,12 @@ block content
 
   - else
 
-
     .row.wider
-      .col-md-7
-        include results
 
-      .col-md-5
-        include map
+      include results
 
-
+      include map
+      
 
   //- 1. init #map, 2. define L.Map, 3. run mapPoints
   script
@@ -64,6 +61,8 @@ block content
 
       if (mappable) {
         mapResults(locsPerDoc);
+      } else {
+        hideMap();
       }
 
     }

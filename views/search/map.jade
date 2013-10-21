@@ -1,9 +1,17 @@
-script
-  var h = $('#results').height() + 64;
-  var rh = (h < 300) ? 300 : h
+#map_panel.col-md-5
+  script
+    var h = $('#results').height() + 64;
+    var rh = (h < 300) ? 300 : h
 
+  .well.white#no_map(style="display:none")
+    p.lead.center
+      br
+      br
+      br
+      | Sorry, cannot map objects in this result set.
 
-.well.white#map
+  .well.white#map
 
-script
-  $('#map').height(rh);
+  script
+    $('#map').height(rh);
+    $('#no_map').height(rh);

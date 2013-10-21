@@ -8,7 +8,7 @@
 
 body{
   padding-top: 70px;
-  color: #4a525a;
+  /*color: #4a525a;*/
   /*background: gray;*/
   /*font-family: 'Telex', sans-serif;*/
 }
@@ -60,6 +60,19 @@ body{
 }
 */
 
+/*
+#epfProgressBoxes{
+  overflow: auto;
+}
+*/
+
+
+
+
+
+
+
+
 
 #logo{
   padding: 3px 0px 3px 0px;
@@ -70,20 +83,11 @@ body{
   background: white;
 }
 
-.lc-orange{
-  background: #ff6600;
-  color: white;
-}
-
-.lc-gray{
-  background: #4a525a;
-  color: white;
-}
-
 
 .stats{
-  color: #c7254e;
-  border: 1px solid #f9f2f4;
+  color: #428bca; /*blue*/
+  background: #f8f8f8;
+
 }
 
 .spinner{
@@ -116,7 +120,6 @@ body{
   word-wrap: break-word;
 }
 
-
 #map{
   height: 300px;
 }
@@ -129,7 +132,6 @@ body{
   margin-top: 210px;
 }
 
-
 #searchSummaryBox{
   margin-top: 20px;
   margin-bottom: 0px;
@@ -141,3 +143,111 @@ body{
 .pagination{
   margin: 0px;
 }
+
+
+
+/* universal to stats and crawl panels */
+
+.btn-crawl{
+  margin-top: 8px;
+  margin-left: 30px;
+}
+
+.statsPanel h3{
+  margin-top: 4px;
+}
+
+.panel-default .panel-heading{
+  background: #f8f8f8;
+}
+
+.statsPanel .panel-footer{
+  background: #f8f8f8;
+  padding: 8px;
+}
+
+.progressBox{
+  float: left;
+  width: 36px;
+  height: 36px;
+  margin: 2px;
+}
+
+.abbr{
+  line-height: 36px;
+  color: white;
+  font-weight: bold;
+  font-size: 28px;
+  text-align:center;
+}
+
+.deleteByTxt{
+  width: 300px;
+  margin-right: 10px;
+}
+
+.form-group{
+  margin-bottom: 5px
+}
+
+
+
+/* custom css buttons (not compiled in less) */
+
+.btn-lc-gray {
+  background-color: #4a525a;
+  border-color: #4a525a;
+}
+.btn-lc-gray:hover,
+.btn-lc-gray:focus,
+.btn-lc_gray:active,
+.btn-lc_gray.active {
+  background-color: #3e454c;
+  border-color: #33393e;
+}
+.btn-lc-gray.disabled:hover,
+.btn-lc-gray.disabled:focus,
+.btn-lc-gray.disabled:active,
+.btn-lc-gray.disabled.active,
+.btn-lc-gray[disabled]:hover,
+.btn-lc-gray[disabled]:focus,
+.btn-lc-gray[disabled]:active,
+.btn-lc-gray[disabled].active,
+fieldset[disabled] .btn-lc-gray:hover,
+fieldset[disabled] .btn-lc-gray:focus,
+fieldset[disabled] .btn-lc-gray:active,
+fieldset[disabled] .btn-lc-gray.active {
+  background-color: #4a525a;
+  border-color: #4a525a;
+}
+
+
+.btn-lc-orange {
+  background-color: #ff6600;
+  border-color: #ff6600;
+  color: #ffffff;
+}
+.btn-lc-orange:hover,
+.btn-lc-orange:focus,
+.btn-lc-orange:active,
+.btn-lc-orange.active {
+  background-color: #e65c00;
+  border-color: #cc5200;
+}
+.btn-lc-orange.disabled:hover,
+.btn-lc-orange.disabled:focus,
+.btn-lc-orange.disabled:active,
+.btn-lc-orange.disabled.active,
+.btn-lc-orange[disabled]:hover,
+.btn-lc-orange[disabled]:focus,
+.btn-lc-orange[disabled]:active,
+.btn-lc-orange[disabled].active,
+fieldset[disabled] .btn-lc-orange:hover,
+fieldset[disabled] .btn-lc-orange:focus,
+fieldset[disabled] .btn-lc-orange:active,
+fieldset[disabled] .btn-lc-orange.active {
+  background-color: #ff6600;
+  border-color: #ff6600;
+}
+
+

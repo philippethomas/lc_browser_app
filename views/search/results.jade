@@ -1,6 +1,7 @@
-- var template = getTemplate(docs[0].doctype)
-ul.nav.nav-pills.nav-stacked#results
-  for doc in docs
-    != template.badge(doc)
+#results_panel.col-md-7
+  - var template = getTemplate(docs[0].doctype)
+  ul.nav.nav-pills.nav-stacked#results
+    for doc in docs
+      != template.badge(doc)
 
-include summary_and_csv
+  include summary_and_csv

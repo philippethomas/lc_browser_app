@@ -4,7 +4,6 @@ jQuery(function($){
 
   var modalHeight = $(window).height() * 0.70 + 'px';
 
-
   //click a search result table row, get a modal popup. 
   //(also called after pagination so that popups still work)
   //the doctype and guid are stored in the row's id.
@@ -68,12 +67,7 @@ jQuery(function($){
 
 
   // reload table via ajax pagination
-  $('#pager')
-    .on("click", function(){
-      $('#workSpinner').show();
-    })
-    .on("page", function(event, num){
-
+  $('#pager').on("page", function(event, num){
 
     var perPage = resultRowCount();
 
@@ -81,6 +75,7 @@ jQuery(function($){
 
     var pageData = { from: newFrom };
 
+    $('#workSpinner').show();
     $.post('/ajaxSearch', pageData, function(data){
 
       var showFrom = newFrom + 1;
@@ -117,14 +112,16 @@ jQuery(function($){
       }
 
       if (mappable) {
+        showMap();
         mapResults(data.locsPerDoc);
+      } else {
+        hideMap();
+        markers.clearLayers();
       }
 
-      //mapResults(data.locsPerDoc);
       modalRowTrigger();
 
     }).then(function(){
-      console.log('hello')
       $('#workSpinner').hide();
     });
 
@@ -136,6 +133,18 @@ jQuery(function($){
 
 
 });
+
+
+var showMap = function(){
+  $('#no_map').hide();
+  $('#map').fadeIn();
+}
+
+var hideMap = function(){
+  $('#map').hide();
+  $('#no_map').fadeIn();
+}
+
 
 
 /**
@@ -159,7 +168,6 @@ var resultRowCount = function(){
 var mapResults = function(locsPerDoc){
   markers.clearLayers();
 
-  
   locsPerDoc.forEach(function(set) {
 
     var locations = [];
@@ -195,9 +203,9 @@ var mapResults = function(locsPerDoc){
 
   });
 
-  map.addLayer(markers)
+  map.addLayer(markers);
   map.fitBounds(markers.getBounds());
-  highlighter()
+  highlighter();
 }
 
 
