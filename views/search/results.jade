@@ -1,7 +1,14 @@
 #results_panel.col-md-7
   - var template = getTemplate(docs[0].doctype)
-  ul.nav.nav-pills.nav-stacked#results
-    for doc in docs
-      != template.badge(doc)
+  table.table.table-condensed.table-hover.table-responsive#results
+    thead
+      th label
+      th primary id
+      th(colspan="2") other identifiers
+      th crawled
+    tbody
+      
+      for doc in docs
+        != template.row(doc)
 
   include summary_and_csv

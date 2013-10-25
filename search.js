@@ -110,11 +110,11 @@ exports.ajaxSearch = function(req, res){
     }else{
 
       var template = getTemplate(result.docs[0].doctype);
-      var badges = [];
+      var rows = [];
 
       result.docs.forEach(function(doc){
         humanizeFields(doc);
-        badges.push(template.badge(doc))
+        rows.push(template.row(doc))
       });
 
       AppES.addLocations(result.docs, function(err, locsPerDoc){
@@ -130,7 +130,7 @@ exports.ajaxSearch = function(req, res){
             size: size,
             idx: idx,
             query: query,
-            badges: badges 
+            rows: rows 
           });
         }
         

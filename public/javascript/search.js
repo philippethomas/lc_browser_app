@@ -9,7 +9,7 @@ jQuery(function($){
   //the doctype and guid are stored in the row's id.
   //id="las.76180c8bd920667a8a2229e060a127cf"
   var modalRowTrigger = function(){
-    $('#results li').click(function(a){
+    $('#results tr').click(function(a){
       var idx_guid = $(this).attr('id').split('-');
       var idx = idx_guid[0]+'_idx';
       var guid = idx_guid[1];
@@ -54,6 +54,7 @@ jQuery(function($){
   // hijack search event to show spinner, calculate row count to return
   // as a hidden field on form before rendering the search index page
   $('#search').submit( function(e){
+    $('.navbar-nav button').remove(); //the run crawl button briefly visible?
     $('#workSpinner').show(); 
     e.preventDefault();
     var size = resultRowCount();
@@ -79,14 +80,14 @@ jQuery(function($){
     $.post('/ajaxSearch', pageData, function(data){
 
       var showFrom = newFrom + 1;
-      var showEnd = showFrom - 1  + data.badges.length;
+      var showEnd = showFrom - 1  + data.rows.length;
 
-      if (data.badges.length === 1){
+      if (data.rows.length === 1){
         $('#summary').text(showEnd + ' of ' + data.total);
-      } else if (data.badges.length < perPage) {
+      } else if (data.rows.length < perPage) {
 
 	      //show all if on the last page has fewer than perPage...
-        var end = data.badges.length;
+        var end = data.rows.length;
         if (( data.total - showFrom) < perPage){
 	        end = data.total;
 	      }
@@ -98,15 +99,18 @@ jQuery(function($){
 
       mappedItems = {} //defined on index
       
-      $('#results li').remove();
-      data.badges.forEach(function(b){
-	      $('#results').append(b);
+      $('#results tbody tr').remove();
+      data.rows.forEach(function(r){
+	      $('#results tbody').append(r);
       });
 
       //only try to map if locations are present
       var mappable = false;
+      var mappableCount = 0;
       for (var key in data.locsPerDoc) {
-        if (data.locsPerDoc[key].locations.length > 0) {
+        var mc = data.locsPerDoc[key].locations.length;
+        if (mc > 0) {
+          mappableCount += mc;
           mappable = true;
         }
       }
@@ -150,11 +154,12 @@ var hideMap = function(){
 /**
 /* dynamically pick the number of rows (i.e. size for ElasticSearch) based
 /* on the window height. This affects the pager too!
-/* navbar+padding = 70, searchSummaryBox ~ 70, listItem = 24
+/* navbar+padding = 70, searchSummaryBox ~ 70, tr = 31
 */
 var resultRowCount = function(){
+  var slop = 225;
   var windowHeight = $(window).height();
-  var size = Math.floor((windowHeight - 180)/24);
+  var size = Math.floor((windowHeight - slop)/31);
   return size
 }
 
@@ -177,7 +182,16 @@ var mapResults = function(locsPerDoc){
 
         var p = loc.coordinates;
         var title = loc.title;
-        var marker = L.marker(new L.LatLng(p.lat, p.lon), { title: title });
+        //var marker = L.marker(new L.LatLng(p.lat, p.lon), { title: title });
+        //
+        var marker = L.circle(new L.LatLng(p.lat, p.lon), 100, {
+          color: '#428bca',
+          opacity: 0.6,
+          fillColor: '#428bca',
+          fillOpacity: 0.3,
+          title: title
+        })
+
         marker.bindPopup(title);
         markers.addLayer(marker);
 
@@ -215,12 +229,12 @@ var highlighter = function(){
   //mark mappable list items with a little globe
   for(var key in mappedItems){
     if (mappedItems[key].length > 0) {
-      $('#results li#'+key).find('span.mappit').addClass('glyphicon glyphicon-globe')
+      $('#results tr#'+key).find('span.mappit').addClass('glyphicon glyphicon-globe')
     }
   }
 
-  //show/hide shapes based on badge hovers
-  $('#results li').mouseover(function(){
+  //show/hide shapes based on table row hovers
+  $('#results tr').mouseover(function(){
     var id = $(this).attr('id');
     for(var key in mappedItems) {
       if (id === key) {
@@ -231,31 +245,37 @@ var highlighter = function(){
     }
   });
 
+  //switched from markers to circles. uncomment shadow stuff if using markers.
   //remove marker shadows on entering #results (too messy if 200+ markers)
+  /*
   $('#results').mouseenter(function(){
     $('.leaflet-marker-shadow').hide();
   });
+  */
 
   //restore opacity and shadows when mouse leaves the results list
   $('#results').mouseleave(function(){
     for(var key in mappedItems) {
       mappedItems[key].forEach(function(shape){ showIt(shape); });
     }
-    $('.leaflet-marker-shadow').show();
+    //$('.leaflet-marker-shadow').show();
   });
 }
 
 // _latlng implies point  |  _latlngs implies polygon
+// if using regular markers, use setOpacity; if using circle, same as polygon
 var fadeIt = function(o){
   if (o._latlng) {
-    o.setOpacity(0.05);
+    //o.setOpacity(0.05);
+    o.setStyle({opacity:'0.1', fillOpacity:'0.05'});
   } else if (o._latlngs) {
     o.setStyle({opacity:'0.1', fillOpacity:'0.05'});
   }
 }
 var showIt = function(o){
   if (o._latlng) {
-    o.setOpacity(1.0);
+    //o.setOpacity(1.0);
+    o.setStyle({opacity:'0.6', fillOpacity:'0.3'});
   } else if (o._latlngs) {
     o.setStyle({opacity:'0.6', fillOpacity:'0.3'});
   }

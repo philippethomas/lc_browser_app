@@ -19,18 +19,19 @@ block content
 
   - else
 
-    .row.wider
+    .row.wider.well.light
 
       include results
 
       include map
+
       
 
   //- 1. init #map, 2. define L.Map, 3. run mapPoints
   script
     var map;
     var mappedItems = {}; //keep track of objects for highlighting
-    var markers = new L.FeatureGroup();
+    var markers;
 
 
     // keep quiet if there are no hits (like when no_results is called)
@@ -48,16 +49,40 @@ block content
       var tiles = new L.TileLayer(theme, cloudOpts)
 
       map.addLayer(tiles);
-      //var markers = new L.markerClusterGroup();
       var locsPerDoc = !{JSON.stringify(locsPerDoc)}
 
-      //only try to map if locations are present
+      // Only try to map if locations are present!
+      //
+      // After experimenting with markers and markerCluster, a good compromise
+      // seems to be markerCluster with a zoom of 10 (based on density of 
+      // the teapot dome dataset). Larger but equally dense basins might cause
+      // browser grief. Uncomment the "mappableCount" stuff and check 
+      // public/search.js to revisit if this becomes an issue
+      
       var mappable = false;
+
+      //TODO: refactor this marker crap to handle result sets that may contain
+      //both points and polygons or whatever else. 
+
+      var groupType = 'point';
+
       for (var key in locsPerDoc) {
-        if (locsPerDoc[key].locations.length > 0) {
-          mappable = true;
-        }
+        var loc = locsPerDoc[key];
+        var count = 0;
+        loc.locations.forEach(function(x){
+          count += 1;
+          groupType = x.type;
+        })
+        mappable = (count > 0) ? true : false ;
+
       }
+
+      if (groupType === 'point') {
+        markers = new L.markerClusterGroup({disableClusteringAtZoom: 10});
+      } else {
+        markers = new L.FeatureGroup();
+      }
+
 
       if (mappable) {
         mapResults(locsPerDoc);
