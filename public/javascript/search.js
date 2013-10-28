@@ -9,7 +9,7 @@ jQuery(function($){
   //the doctype and guid are stored in the row's id.
   //id="las.76180c8bd920667a8a2229e060a127cf"
   var modalRowTrigger = function(){
-    $('#results tr').click(function(a){
+    $('#results tbody tr').click(function(a){
       var idx_guid = $(this).attr('id').split('-');
       var idx = idx_guid[0]+'_idx';
       var guid = idx_guid[1];
@@ -64,13 +64,17 @@ jQuery(function($){
 
 
 
-
+  var perPage = resultRowCount();
 
 
   // reload table via ajax pagination
   $('#pager').on("page", function(event, num){
 
-    var perPage = resultRowCount();
+    //NOPE. defining perPage in the on("page" action gets screwy if the user 
+    //resizes the window while progressing through pages. There is no simple 
+    //way to reinitialize #pager from within this on("page" action.
+    
+    //var perPage = resultRowCount();
 
     var newFrom = (num * perPage) - perPage;
 
@@ -106,11 +110,9 @@ jQuery(function($){
 
       //only try to map if locations are present
       var mappable = false;
-      var mappableCount = 0;
       for (var key in data.locsPerDoc) {
         var mc = data.locsPerDoc[key].locations.length;
         if (mc > 0) {
-          mappableCount += mc;
           mappable = true;
         }
       }
@@ -120,7 +122,8 @@ jQuery(function($){
         mapResults(data.locsPerDoc);
       } else {
         hideMap();
-        markers.clearLayers();
+        pointMarkers.clearLayers();
+        polyMarkers.clearLayers();
       }
 
       modalRowTrigger();
@@ -160,18 +163,19 @@ var resultRowCount = function(){
   var slop = 225;
   var windowHeight = $(window).height();
   var size = Math.floor((windowHeight - slop)/31);
+  size = (size < 1) ? 1 : size; //in case the window is too small for even one
   return size
 }
 
 
 /**
- * 2013-9-25: using a layerGroup to hold the markers layer caused the
- * leaflet-tile-container to get visibility=hidden after an ajax reload
- * if group.clearLayers() was called...???
- * workaround: just use the markergroup's own clearLayers method 
+ * pointMarkers (MarkerClusterGroup and polyMarkers (FeatureGroup) are defined 
+ * on search/index. Not sure if it's a bug, but trying to put them in a "combo"
+ * FeatureGroup and then add that to the map causes tiles to vanish (?)
  */
 var mapResults = function(locsPerDoc){
-  markers.clearLayers();
+  pointMarkers.clearLayers();
+  polyMarkers.clearLayers();
 
   locsPerDoc.forEach(function(set) {
 
@@ -193,7 +197,7 @@ var mapResults = function(locsPerDoc){
         })
 
         marker.bindPopup(title);
-        markers.addLayer(marker);
+        pointMarkers.addLayer(marker);
 
         locations.push(marker);
 
@@ -207,7 +211,7 @@ var mapResults = function(locsPerDoc){
         var bounds = new L.LatLngBounds(sw, ne);
         var rect = L.rectangle(bounds, {color: "#428bca", weight: 2})
         rect.bindPopup(title);
-        markers.addLayer(rect);
+        polyMarkers.addLayer(rect);
 
         locations.push(rect)
 
@@ -217,8 +221,15 @@ var mapResults = function(locsPerDoc){
 
   });
 
-  map.addLayer(markers);
-  map.fitBounds(markers.getBounds());
+  var combo = new L.FeatureGroup();
+  combo.addLayer(pointMarkers);
+  combo.addLayer(polyMarkers);
+
+  map.addLayer(pointMarkers);
+  map.addLayer(polyMarkers);
+  //note, we don't actually add combo to the map--just use to get bounds
+  map.fitBounds(combo.getBounds());
+
   highlighter();
 }
 

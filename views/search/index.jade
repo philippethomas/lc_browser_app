@@ -27,11 +27,12 @@ block content
 
       
 
-  //- 1. init #map, 2. define L.Map, 3. run mapPoints
+  //- 1. init #map, 2. define L.Map, 3. mapResults()
   script
     var map;
     var mappedItems = {}; //keep track of objects for highlighting
-    var markers;
+    var pointMarkers;
+    var polyMarkers;
 
 
     // keep quiet if there are no hits (like when no_results is called)
@@ -51,8 +52,6 @@ block content
       map.addLayer(tiles);
       var locsPerDoc = !{JSON.stringify(locsPerDoc)}
 
-      // Only try to map if locations are present!
-      //
       // After experimenting with markers and markerCluster, a good compromise
       // seems to be markerCluster with a zoom of 10 (based on density of 
       // the teapot dome dataset). Larger but equally dense basins might cause
@@ -60,9 +59,6 @@ block content
       // public/search.js to revisit if this becomes an issue
       
       var mappable = false;
-
-      //TODO: refactor this marker crap to handle result sets that may contain
-      //both points and polygons or whatever else. 
 
       var groupType = 'point';
 
@@ -74,15 +70,10 @@ block content
           groupType = x.type;
         })
         mappable = (count > 0) ? true : false ;
-
       }
 
-      if (groupType === 'point') {
-        markers = new L.markerClusterGroup({disableClusteringAtZoom: 10});
-      } else {
-        markers = new L.FeatureGroup();
-      }
-
+      pointMarkers = new L.markerClusterGroup({disableClusteringAtZoom: 10});
+      polyMarkers = new L.FeatureGroup();
 
       if (mappable) {
         mapResults(locsPerDoc);
