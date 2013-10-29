@@ -17,19 +17,19 @@ nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
         li.crawler 
           a(href='/epf') E&P Files
 
-      - if (hasDOX)
+      - if (locals.hasDOX)
         li.crawler
           a(href='/dox') Documents
 
-      - if (hasPET)
+      - if (locals.hasPET)
         li.crawler
           a(href='/pet') Petra
 
-      - if (hasGGX) 
+      - if (locals.hasGGX) 
         li.crawler
           a(href='/ggx') Discovery
 
-      - if (hasTKS)
+      - if (locals.hasTKS)
         li.crawler
           a(href='/tks') Kingdom 
 
@@ -46,13 +46,13 @@ nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
           span.glyphicon.glyphicon-filter
 
         span.input-group-btn
-          input#searchFilterInput.btn.btn-default.dropdown-toggle(type='dropdown', data-toggle='dropdown', value= searchFilters[0].show)
+          input#searchFilterInput.btn.btn-default.dropdown-toggle(type='dropdown', data-toggle='dropdown', value= locals.searchFilters[0].show)
           ul.dropdown-menu#searchFilterList
-            for f in searchFilters
+            for f in locals.searchFilters
               li
                 a(value = f.show, idx= f.value)= f.show
 
-        input.hidden#idx(name='idx', type='search', value=searchFilters[0].value)
+        input.hidden#idx(name='idx', type='search', value=locals.searchFilters[0].value)
 
         input.form-control#searchText(name='query', type='search', placeholder='Search')
         .input-group-btn

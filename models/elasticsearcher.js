@@ -129,7 +129,7 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
           set.locations.push(loc);
         }
 
-      //if this doc may have many uwis (frm, zon)
+      //if this doc has many uwis (frm, zon)
       } else if (doc.uwis && doc.uwis.length > 0) {
 
         doc.uwis.forEach(function(uwi){
@@ -141,7 +141,8 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
               type: 'point',
               coordinates:  p[0].location.coordinates,
               id_tag: doc.doctype+'-'+doc.guid,
-              title: doc.name
+              //title: doc.name
+              title: uwi
             }
             set.locations.push(loc);
           }

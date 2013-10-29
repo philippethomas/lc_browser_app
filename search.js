@@ -20,7 +20,7 @@ exports.search = function(req, res){
   req.session.from = from;
   req.session.size = size;
 
-  AppES.doSearch(idx, from, size, query, function(err, result){
+  res.locals.app_ES.doSearch(idx, from, size, query, function(err, result){
     if(err){
       util.debug(err);
     }else{
@@ -29,7 +29,7 @@ exports.search = function(req, res){
         humanizeFields(doc);
       });
   
-      AppES.addLocations(result.docs, function(err, locsPerDoc){
+      res.locals.app_ES.addLocations(result.docs, function(err, locsPerDoc){
         if(err){
           util.debug(err);
         }else{
@@ -65,7 +65,7 @@ exports.docDetail = function(req, res){
   var from = 0;
   var size = 1;
 
-  AppES.doSearch(idx, from, size, query, function(error, result){
+  res.locals.app_ES.doSearch(idx, from, size, query, function(error, result){
     if(error){
       util.debug(error);
       res.end();
@@ -74,7 +74,7 @@ exports.docDetail = function(req, res){
 
       humanizeFields(doc);
 
-      var dt = getTemplate(doc.doctype).detailer;
+      var dt = res.locals.getTemplate(doc.doctype).detailer;
 
       var title = dt.title(doc);
       var l_panel = dt.l_panel(doc);
@@ -103,13 +103,13 @@ exports.ajaxSearch = function(req, res){
   var from = req.body.from || req.session.from; // usually from the pager
   var size = req.body.size || req.session.size;
 
-  AppES.doSearch(idx, from, size, query, function(error, result){
+  res.locals.app_ES.doSearch(idx, from, size, query, function(error, result){
     if(error){
       util.debug(error);
       res.end();
     }else{
 
-      var template = getTemplate(result.docs[0].doctype);
+      var template = res.locals.getTemplate(result.docs[0].doctype);
       var rows = [];
 
       result.docs.forEach(function(doc){
@@ -117,7 +117,7 @@ exports.ajaxSearch = function(req, res){
         rows.push(template.row(doc))
       });
 
-      AppES.addLocations(result.docs, function(err, locsPerDoc){
+      res.locals.app_ES.addLocations(result.docs, function(err, locsPerDoc){
         if(err){
           util.debug(err);
         }else{
@@ -152,17 +152,17 @@ exports.csvExport = function(req, res){
   var from = 0;
   var size = 50000;
 
-  AppES.doSearch(idx, from, size, query, function(error, result){
+  res.locals.app_ES.doSearch(idx, from, size, query, function(error, result){
     if(error){
       util.debug(error);
       res.end();
     }else{
 
-      var header = getTemplate(result.docs[0].doctype).keys;
+      var header = res.locals.getTemplate(result.docs[0].doctype).keys;
       var csvString = header.join(',')+'\r\n';
 
       result.docs.forEach(function(doc){
-        csvString += csvRowString(doc); //in browser app.js, not scanner(s)
+        csvString += res.locals.csvRowString(doc); //in browser app.js, not scanner(s)
       });
 
       res.attachment('export.csv');

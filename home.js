@@ -1,10 +1,11 @@
 var util = require('util');
 var async = require('async');
+var app = require('./app')
 
 exports.index = function(req, res){
  
   var func0 = function(cb){
-    checkHealth(function(err, result){
+    checkHealth(res.locals.app_ES, function(err, result){
       if (err) {
         cb(err);
       } else {
@@ -14,7 +15,7 @@ exports.index = function(req, res){
   }
 
   var func1 = function(cb){
-    collectStats(function(err, result){
+    collectStats(res.locals, function(err, result){
       if (err) {
         cb(err);
       } else {
@@ -69,8 +70,8 @@ exports.index = function(req, res){
 }
 
 
-var checkHealth = function(callback){
-  AppES.health(function(err, result){
+var checkHealth = function(app_ES, callback){
+  app_ES.health(function(err, result){
     if (err) {
       callback(err);
     } else {
@@ -84,7 +85,7 @@ var checkHealth = function(callback){
 
 //exports.indexZZZ = function(req, res){
 
-var collectStats = function(callback){
+var collectStats = function(locals, callback){
 
   var a = require('./package.json');
   var crawlers = [];
@@ -95,7 +96,7 @@ var collectStats = function(callback){
    * previously defined doctype/index names from its template to group
    * indexes by crawler type.
    */
-  if (hasEPF){ 
+  if (locals.hasEPF){ 
     var x = require('./node_modules/lc_epf_crawlers/package.json')
     idxGroup['epf'] = [];
     var template = require('lc_epf_crawlers/epf_doc_templates');
@@ -112,7 +113,7 @@ var collectStats = function(callback){
       wiki: x.wiki.url
     });
   }
-  if (hasDOX){ 
+  if (locals.hasDOX){ 
     var x = require('./node_modules/lc_dox_crawlers/package.json')
     idxGroup['dox'] = [];
     var template = require('lc_dox_crawlers/dox_doc_templates');
@@ -129,7 +130,7 @@ var collectStats = function(callback){
       wiki: x.wiki.url
     });
   }
-  if (hasPET){ 
+  if (locals.hasPET){ 
     var x = require('./node_modules/lc_dox_crawlers/package.json')
     idxGroup['pet'] = [];
     var template = require('lc_pet_crawlers/pet_doc_templates');
@@ -146,7 +147,7 @@ var collectStats = function(callback){
       wiki: x.wiki.url
     });
   }
-  if (hasGGX){ 
+  if (locals.hasGGX){ 
     var x = require('./node_modules/lc_ggx_crawlers/package.json')
     idxGroup['ggx'] = [];
     var template = require('lc_ggx_crawlers/ggx_doc_templates');
@@ -163,7 +164,7 @@ var collectStats = function(callback){
       wiki: x.wiki.url
     });
   }
-  if (hasTKS){ 
+  if (locals.hasTKS){ 
     var x = require('./node_modules/lc_tks_crawlers/package.json')
     idxGroup['tks'] = [];
     var template = require('lc_tks_crawlers/tks_doc_templates');
@@ -184,7 +185,7 @@ var collectStats = function(callback){
   //collect the local loc's index too
   idxGroup['loc'] = ['loc_idx'];
 
-  AppES.globalStats(idxGroup, function(err, result){
+  locals.app_ES.globalStats(idxGroup, function(err, result){
     if (err) {
       callback(err);
       /*
@@ -219,19 +220,6 @@ var collectStats = function(callback){
 
       callback(null, o)
 
-      /*
-      res.render('home/index', { 
-        title: 'LogicalCat Home',
-        app_name: a.name,
-        app_vers: a.version,
-        app_desc: a.description,
-        app_bugs: a.bugs.url,
-        app_wiki: a.wiki.url,
-        loc_stat: loc_stat,
-        crawlers: crawlers
-      });
-      */
-
     }
   });
   
@@ -244,7 +232,7 @@ var collectStats = function(callback){
  *
  */
 exports.initLocs = function(req, res){
-  AppES.initIndex('loc', function(error, result){ 
+  res.locals.app_ES.initIndex('loc', function(error, result){ 
     if (error) {
       util.puts(util.inspect(error));
     } else {
@@ -255,12 +243,12 @@ exports.initLocs = function(req, res){
 
 
 exports.setWorkStatus = function(req, res){
-  working = req.body.working; 
-  res.send ({ working: working });
+  app.working = req.body.working; 
+  res.send ({ working: app.working });
 };
 
 exports.getWorkStatus = function(req, res){
-  res.send ({ working: working });
+  res.send ({ working: app.working });
 };
 
 

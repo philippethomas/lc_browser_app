@@ -43,17 +43,16 @@ html
     script(src="/javascript/site.js");
     script(src="/javascript/search.js");
 
-    - if (hasEPF)
+    - if (locals.hasEPF)
       link(rel='stylesheet', href='/ss/epf.css');
-    - if (hasPET)
+    - if (locals.hasPET)
       link(rel='stylesheet', href='/ss/pet.css');
-    - if (hasGGX)
+    - if (locals.hasGGX)
       link(rel='stylesheet', href='/ss/ggx.css');
-    - if (hasTKS)
+    - if (locals.hasTKS)
       link(rel='stylesheet', href='/ss/tks.css');
-    - if (hasDOX)
+    - if (locals.hasDOX)
       link(rel='stylesheet', href='/ss/dox.css');
-
 
     
   body
