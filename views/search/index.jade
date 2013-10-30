@@ -59,18 +59,14 @@ block content
       // public/search.js to revisit if this becomes an issue
       
       var mappable = false;
-
-      var groupType = 'point';
-
+      var count = 0;
       for (var key in locsPerDoc) {
         var loc = locsPerDoc[key];
-        var count = 0;
         loc.locations.forEach(function(x){
           count += 1;
-          groupType = x.type;
         })
-        mappable = (count > 0) ? true : false ;
       }
+      mappable = (count > 0) ? true : false ;
 
       pointMarkers = new L.markerClusterGroup({disableClusteringAtZoom: 10});
       polyMarkers = new L.FeatureGroup();

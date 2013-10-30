@@ -169,7 +169,7 @@ var resultRowCount = function(){
 
 
 /**
- * pointMarkers (MarkerClusterGroup and polyMarkers (FeatureGroup) are defined 
+ * pointMarkers (MarkerClusterGroup) and polyMarkers (FeatureGroup) are defined 
  * on search/index. Not sure if it's a bug, but trying to put them in a "combo"
  * FeatureGroup and then add that to the map causes tiles to vanish (?)
  */
@@ -186,8 +186,7 @@ var mapResults = function(locsPerDoc){
 
         var p = loc.coordinates;
         var title = loc.title;
-        //var marker = L.marker(new L.LatLng(p.lat, p.lon), { title: title });
-        //
+
         var marker = L.circle(new L.LatLng(p.lat, p.lon), 100, {
           color: '#428bca',
           opacity: 0.6,

@@ -1,27 +1,25 @@
 extends ../layout
 
 block content
-    .col-md-7
+  .row.wider
+    .col-md-6
       .well.white
-        p.lead.center.simpleton Simple Geoscience Search
-        p
-          | Use LogicalCat to scan your network and collect metadata from
-          | common E&P data files, business documents like Excel and projects 
-          | from interpretation software like Petra. Everything is immediately 
-          | searchable. It really is as easy as 1, 2, 3...
-        hr
+        p.lead.center Welcome to Simple Geoscience Search!
 
-        p.h4 1. Select your crawl type from the menu above.
-        p.h4 2. Review any existing crawl sets by their user-defined label.
-        p.h4 3. Define and run a crawl anywhere on your local PC or network.
-       
-        hr
+        .well
+          h4 1. Select a crawler type from the menu above.
+          h4 2. Review any existing crawl sets by their user-defined label.
+          h4 3. Define and run a crawl to collect new metadata on your network.
 
         p
-          | Click any of the crawler-specific links on this page to report a 
-          | bug or review how-to documents.
+          | LogicalCat indexes text content within files and select tables from 
+          | project databases. It works like your favorite search engine &mdash;
+          | enter more terms to limit results. You can use wildcards (*) too.
+          | If possible, bounding boxes of shapefiles/projects and wells will be 
+          | mapped.
+
         br
-
+       
         p.lead.center
           span.glyphicon.glyphicon-envelope
           &nbsp
@@ -33,54 +31,57 @@ block content
           | 303-949-8125 
 
 
-      .well.white.container
-        .col-md-8
-          p.center
-            strong.lead LogicalCat Browser App
-          p
-            span.glyphicon.glyphicon-home
-            &nbsp
-            strong= app_name
-            &nbsp | &nbsp
-            | version: 
-            = app_vers
-          p
-            = app_desc
-          p
-            span.glyphicon.glyphicon-warning-sign
-            &nbsp
-            a(href="#{app_bugs}")= app_bugs
-          p
-            span.glyphicon.glyphicon-user
-            &nbsp
-            a(href="#{app_wiki}")= app_wiki
-          br
+    .col-md-6
+      .well.white
+        p.center
+          strong.lead LogicalCat Browser App
 
-          p
-            | UWI Lat/Lon Points Index:
 
-          table.table.table-condensed.table-striped.table-bordered
-            thead
-              th index
-              th size
-              th points
-            tbody
-              tr
-                td= loc_stat.index
-                td= loc_stat.size
-                td= loc_stat.docs
+        p
+          span.glyphicon.glyphicon-home
+          &nbsp
+          strong= app_name
+          &nbsp | &nbsp
+          | version: 
+          = app_vers
+        p
+          = app_desc
+        p
+          span.glyphicon.glyphicon-warning-sign
+          &nbsp
+          a(href="#{app_bugs}")= app_bugs
+        p
+          span.glyphicon.glyphicon-user
+          &nbsp
+          a(href="#{app_wiki}")= app_wiki
 
-        .col-md-4
-          button#initLocs.btn.btn-default(type='button')
+          button#initLocs.btn.btn-default.redtxt(type='button')
             | Clear Locations Index
-            
+        br
 
+        p
+          | UWI Lat/Lon Points Index:
 
-    .col-md-5
+        table.table.table-condensed.table-striped.table-bordered
+          thead
+            th index
+            th size
+            th points
+          tbody
+            tr
+              td= loc_stat.index
+              td= loc_stat.size
+              td= loc_stat.docs
 
-      for x in crawlers
+          
+
+  br
+  .row.wider
+
+    for x in crawlers
+      .col-md-6
+      
         .well.white
-        
           p.center
             strong.lead= x.longName
           p

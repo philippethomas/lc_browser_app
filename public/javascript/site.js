@@ -72,7 +72,10 @@ jQuery(function($){
     if (a) {
       $.post('/initLocs', {doctype: 'loc'}, function(data){
         if (data.match(/^Deleted.*Created/)){
-          location.reload(true);
+          setTimeout(function(){ 
+            console.log('pausing a bit to let ElasticSearch recover...');
+            location.reload();
+          }, 1000);
         } else {
           console.error(err);
         }

@@ -215,7 +215,7 @@ var collectStats = function(locals, callback){
         app_bugs: a.bugs.url,
         app_wiki: a.wiki.url,
         loc_stat: loc_stat,
-        crawlers: crawlers
+        crawlers: crawlers.reverse()
       };
 
       callback(null, o)
