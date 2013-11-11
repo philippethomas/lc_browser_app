@@ -3,8 +3,9 @@ var express = require('express');
 var S = require('string');
 //var flash = require('connect-flash');
 var app = express();
-var server = app.listen(3000, function(){
-  console.log('LogicalCat browser listening on port 3000');
+var app_port = process.argv[2] || 8008
+var server = app.listen(app_port, function(){
+  console.log('LogicalCat browser listening on port '+app_port);
 });
 var io = require('socket.io').listen(server);
 //io.set('transports', [ 'jsonp-polling' ]);
@@ -29,11 +30,17 @@ app.use(express.session({ secret: 'lOgIcAlCaT', store: store }));
 app.use(express.static(__dirname + '/public'));
 
 ////////////////////////////////////////////////////////////////////////////////
+//set hasXXX conditionals all to false too
 
 require('./models/elasticsearcher.js');
 var app_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
 app.use(function(req, res, next){
   res.locals.app_ES = app_es;
+  res.locals.hasDOX = false;
+  res.locals.hasEPF = false;
+  res.locals.hasGGX = false;
+  res.locals.hasPET = false;
+  res.locals.hasTKS = false;
   next();
 });
 
@@ -45,17 +52,22 @@ var docTemplates = [];
 ////////////////////////// MODULARIZATION STUFF BELOW //////////////////////////
 // IMPORTANT: modify navlinks.jade and layout.jade if adding any new modules
 
-var has_epf = (fs.existsSync('./node_modules/lc_epf_crawlers')) ? true : false;
-var has_pet = (fs.existsSync('./node_modules/lc_pet_crawlers')) ? true : false;
-var has_ggx = (fs.existsSync('./node_modules/lc_ggx_crawlers')) ? true : false;
-var has_tks = (fs.existsSync('./node_modules/lc_tks_crawlers')) ? true : false;
-var has_dox = (fs.existsSync('./node_modules/lc_dox_crawlers')) ? true : false;
+var has_epf = (fs.existsSync(__dirname+'/node_modules/lc_epf_crawlers'))
+  ? true : false;
+var has_pet = (fs.existsSync(__dirname+'/node_modules/lc_pet_crawlers'))
+  ? true : false;
+var has_ggx = (fs.existsSync(__dirname+'/node_modules/lc_ggx_crawlers'))
+  ? true : false;
+var has_tks = (fs.existsSync(__dirname+'/node_modules/lc_tks_crawlers'))
+  ? true : false;
+var has_dox = (fs.existsSync(__dirname+'/node_modules/lc_dox_crawlers'))
+  ? true : false;
 
 ////////////////////////////////////////////////////////////////////////////////
 // first, declare app.use stuff before ANY middleware app.router stuff...
 
 if (has_epf) {
-  require('./node_modules/lc_epf_crawlers/elasticsearcher.js');
+  require(__dirname+'/node_modules/lc_epf_crawlers/elasticsearcher.js');
   var epf_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
 
   var epfFilt = require('lc_epf_crawlers/epf_doc_templates.js').searchFilters;
@@ -73,7 +85,7 @@ if (has_epf) {
 }
 
 if (has_dox) {
-  require('./node_modules/lc_dox_crawlers/elasticsearcher.js');
+  require(__dirname+'/node_modules/lc_dox_crawlers/elasticsearcher.js');
   var dox_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
 
   var doxFilt = require('lc_dox_crawlers/dox_doc_templates.js').searchFilters;
@@ -91,7 +103,7 @@ if (has_dox) {
 }
 
 if (has_pet) {
-  require('./node_modules/lc_pet_crawlers/elasticsearcher.js');
+  require(__dirname+'/node_modules/lc_pet_crawlers/elasticsearcher.js');
   var pet_es = new ElasticSearcher({host: config.es_host, port:config.es_port});
 
   var petFilt = require('lc_pet_crawlers/pet_doc_templates.js').searchFilters;
@@ -108,7 +120,7 @@ if (has_pet) {
 }
 
 if (has_ggx) {
-  require('./node_modules/lc_ggx_crawlers/elasticsearcher.js');
+  require(__dirname+'/node_modules/lc_ggx_crawlers/elasticsearcher.js');
   var ggx_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
 
   var ggxFilt = require('lc_ggx_crawlers/ggx_doc_templates.js').searchFilters;
@@ -126,7 +138,7 @@ if (has_ggx) {
 }
 
 if (has_tks) { //not actually here yet
-  require('./node_modules/lc_tks_crawlers/elasticsearcher.js');
+  require(__dirname+'/node_modules/lc_tks_crawlers/elasticsearcher.js');
   var tks_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
 
   var tksFilters = require('lc_tks_crawlers/tks_doc_templates.js').searchFilters;
@@ -264,7 +276,7 @@ app.on('workStop', function(data){
 });
 
 ////////////////////////////////////////////////////////////////////////////////
-// "working" is global and controls spinner and flow during and after a crawl
+// "working" is controls spinner and flow during and after a crawl
 var working = 'no';
 ////////////////////////////////////////////////////////////////////////////////
 

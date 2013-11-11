@@ -144,6 +144,7 @@ exports.ajaxSearch = function(req, res){
 /**
  * Simplest possible CSV file download--it's just a string. This avoids
  * worrying about temp file clean up, but could eat memory.
+ * TODO: investigate scan/scroll if bigger exports are required.
  */
 exports.csvExport = function(req, res){
 
