@@ -9,7 +9,7 @@
     form#csv(action='/csvExport', method='post')
       button.btn.btn-default#csv Export CSV
 
-script
+script.
   var numPages = Math.ceil(#{total}/#{size});
   $('#pager').bootpag({
     total: numPages,

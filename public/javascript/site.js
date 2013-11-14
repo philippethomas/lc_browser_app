@@ -92,7 +92,7 @@ jQuery(function($){
  * checks any time a new page loads to see if it should still be visible. 
  */
 function workStatus(){
-  console.log('site.js workStatus got called....')
+  //console.log('site.js workStatus got called....')
   $.get('/getWorkStatus', function(data){
     if (data.working === 'yes') {
       $('#workSpinner').show();

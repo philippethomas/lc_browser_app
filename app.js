@@ -1,17 +1,25 @@
 var fs = require('graceful-fs');
 var express = require('express');
+var winston = require('winston');
 var S = require('string');
-//var flash = require('connect-flash');
 var app = express();
 var app_port = process.argv[2] || 8008
+
+var logger = require('./logging');
+
+//io.set('transports', [ 'jsonp-polling' ]);
+//var flash = require('connect-flash');
+//var expressValidator = require('express-validator');
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 var server = app.listen(app_port, function(){
-  console.log('LogicalCat browser listening on port '+app_port);
+  logger.info('launching LogicalCat browser on port '+app_port);
 });
 var io = require('socket.io').listen(server);
-//io.set('transports', [ 'jsonp-polling' ]);
-//var expressValidator = require('express-validator');
-//var humanize = require('humanize');
 
+////////////////////////////////////////////////////////////////////////////////
 
 var config = require('./config.json')
 
@@ -43,6 +51,7 @@ app.use(function(req, res, next){
   res.locals.hasTKS = false;
   next();
 });
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -78,7 +87,6 @@ if (has_epf) {
 
   app.use(function(req, res, next){
     res.locals.hasEPF = true;
-    app.locals.hasEPF = true;
     res.locals.epf_ES = epf_es;
     next();
   });
@@ -96,7 +104,6 @@ if (has_dox) {
 
   app.use(function(req, res, next){
     res.locals.hasDOX = true;
-    app.locals.hasDOX = true;
     res.locals.dox_ES = dox_es;
     next();
   });
@@ -113,7 +120,6 @@ if (has_pet) {
   docTemplates = docTemplates.concat(petTemplates);
   app.use(function(req, res, next){
     res.locals.hasPET = true;
-    app.locals.hasPET = true;
     res.locals.pet_ES = pet_es;
     next();
   });
@@ -131,7 +137,6 @@ if (has_ggx) {
 
   app.use(function(req, res, next){
     res.locals.hasGGX = true;
-    app.locals.hasGGX = true;
     res.locals.ggx_ES = ggx_es;
     next();
   });
@@ -149,7 +154,6 @@ if (has_tks) { //not actually here yet
 
   app.use(function(req, res, next){
     res.locals.hasTKS = true;
-    app.locals.hasTKS = true;
     res.locals.tks_ES = tks_es;
     next();
   });
@@ -201,7 +205,6 @@ function csvRowString(doc){
   keys.forEach(function(key){
     var val = doc[key];
     if (val === undefined) {
-      //util.debug('Weird: undefined document key: '+key);
       a.push(null);
     } else if (val === null) {
       a.push(null);
@@ -268,6 +271,7 @@ app.on('workStart', function(data){
 });
 
 app.on('crawlError', function(data){
+  logger.error(data)
   io.sockets.emit('crawlError', data);
 });
 
@@ -276,9 +280,10 @@ app.on('workStop', function(data){
 });
 
 ////////////////////////////////////////////////////////////////////////////////
-// "working" is controls spinner and flow during and after a crawl
+// "working" controls spinner and flow during and after a crawl
 var working = 'no';
 ////////////////////////////////////////////////////////////////////////////////
+
 
 exports.working = working;
 module.exports.app = app;

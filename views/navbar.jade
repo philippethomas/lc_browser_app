@@ -13,7 +13,7 @@ nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
       a.pull-left#logo(href='/')
         img(src='images/big_logo.png', height='44px')
 
-      - if (hasEPF)
+      - if (locals.hasEPF)
         li.crawler 
           a(href='/epf') E&P Files
 

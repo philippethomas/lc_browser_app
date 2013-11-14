@@ -143,13 +143,15 @@ jQuery(function($){
 
 
 var showMap = function(){
-  $('#no_map').hide();
+  $('#results_panel').removeClass('col-md-12')
+  $('#results_panel').addClass('col-md-7')
   $('#map').fadeIn();
 }
 
 var hideMap = function(){
+  $('#results_panel').removeClass('col-md-7')
+  $('#results_panel').addClass('col-md-12')
   $('#map').hide();
-  $('#no_map').fadeIn();
 }
 
 

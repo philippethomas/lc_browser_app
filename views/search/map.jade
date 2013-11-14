@@ -1,19 +1,9 @@
 #map_panel.col-md-5
-  script
+  script.
     var h = $('#results').height() + 75;
     var rh = (h < 300) ? 300 : h
 
-  .well.white#no_map(style="display:none")
-    br
-    br
-    br
-    h1.center
-      span.glyphicon.glyphicon-globe
-    p.lead.center
-      | Sorry, cannot map objects in this result set.
-
   .well.white#map
 
-  script
+  script.
     $('#map').height(rh);
-    $('#no_map').height(rh);

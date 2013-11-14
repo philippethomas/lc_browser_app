@@ -19,6 +19,7 @@
   "author": "R. Bryan Hughes",
   "license": "MIT",
   "dependencies": {
+
     "socket.io": "0.9.x",
     "express": "3.4.x",
     "jade": "0.35.x",
@@ -29,10 +30,20 @@
     "string": "1.6.x",
     "humanize": "0.0.x",
     "winston": "0.7.x",
-    "lc_epf_crawlers": "git://github.com/rbhughes/lc_epf_crawlers#master",
-    "lc_pet_crawlers": "git://github.com/rbhughes/lc_pet_crawlers#master",
-    "lc_ggx_crawlers": "git://github.com/rbhughes/lc_ggx_crawlers#master",
-    "lc_dox_crawlers": "git://github.com/rbhughes/lc_dox_crawlers#master"
+
+
+    "filewalker": "0.1.x",
+    "merge": "1.1.x",
+    "validator": "2.0.x",
+    "stream-splitter": "0.3.x",
+
+    "xml2js": "0.2.x",
+    "date-utils": "1.2.x",
+    "adm-zip": "0.4.x",
+    "node-dbf": "0.1.x",
+    "gm": "1.13.x"
+
+      
   },
   "devDependencies":{
     "mocha": "1.14.x"

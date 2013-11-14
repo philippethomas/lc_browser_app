@@ -3,13 +3,14 @@ extends ../layout
 block content
   .row.wider
     .col-md-6
-      .well.white
-        p.lead.center Welcome to Simple Geoscience Search!
+      .well.white#home_top_left.light
+        p.lead.center
+          strong Welcome to Simple Geoscience Search!
 
-        .well
+        .well.white
           h4 1. Select a crawler type from the menu above.
           h4 2. Review any existing crawl sets by their user-defined label.
-          h4 3. Define and run a crawl to collect new metadata on your network.
+          h4 3. Define/run a crawl to collect new metadata on your network.
 
         p
           | LogicalCat indexes text content within files and select tables from 
@@ -32,7 +33,7 @@ block content
 
 
     .col-md-6
-      .well.white
+      .well.white#home_top_right
         p.center
           strong.lead LogicalCat Browser App
 
@@ -55,9 +56,6 @@ block content
           &nbsp
           a(href="#{app_wiki}")= app_wiki
 
-          button#initLocs.btn.btn-default.redtxt(type='button')
-            | Clear Locations Index
-        br
 
         p
           | UWI Lat/Lon Points Index:
@@ -73,6 +71,9 @@ block content
               td= loc_stat.size
               td= loc_stat.docs
 
+        br
+        button#initLocs.btn.btn-default.redtxt(type='button')
+          | Clear Locations Index
           
 
   br
