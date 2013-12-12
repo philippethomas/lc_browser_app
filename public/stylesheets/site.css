@@ -1,7 +1,7 @@
 * {
-  -webkit-border-radius: 3 !important;
-     -moz-border-radius: 3 !important;
-          border-radius: 3 !important;
+  -webkit-border-radius: 0 !important;
+     -moz-border-radius: 0 !important;
+          border-radius: 0 !important;
 }
 
 
@@ -9,9 +9,8 @@
 body{
   padding-top: 70px;
   color: #4a525a;
-  /*background: #d1d6e7;*/
+  /*background: #ddd;*/
   background-image:url('/images/square.png');
-  /*background-image:url('/images/whitey.png');*/
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -420,8 +419,15 @@ fieldset[disabled] .btn-lc-orange.active {
 
 
 
-
-
+#footer {
+  height: 25px;
+  min-height: 25px;
+  border-top: solid #bbc1d3 1px;
+}
+.footer-text{
+  font-size: 80%;
+  margin-top: 4px;
+}
 
 
 

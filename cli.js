@@ -1,15 +1,18 @@
 #!/usr/bin/env node --use_strict
 
-
+var ElasticSearcher = require('./models/elasticsearcher');
 var program = require('commander');
-var util = require('util');
-require('./models/elasticsearcher');
+var logger = require('./logging');
 
 
 program
 .version('0.0.1')
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+var config = require('./config.json')
+var es = new ElasticSearcher({host:config.es_host, port:config.es_port});
 
 
 //----------init
@@ -18,14 +21,11 @@ program
 .description('(Re)initialize the spatial index')
 .action(
     function(){
-      var config = require('./config.json')
-      var ES = new ElasticSearcher({host:config.es_host, port:config.es_port});
-
-      ES.initIndex('loc', function(err, result){ 
+      es.initIndex('loc', function(err, result){ 
         if (err) {
-          util.puts(util.inspect(err));
+          logger.error(err, {stack:err.stack, src:'init'});
         } else {
-          util.puts(result[0]+' --- '+result[1]);
+          logger.info(result[0]+' --- '+result[1]);
         }
       });
 
@@ -39,12 +39,11 @@ program
 .description('Show current document counts per index')
 .action(
     function(){
-      var ES = new ElasticSearcher({ host: 'localhost', port: 9200 });
-      ES.countIndex('loc', function(err, result){ 
+      es.countIndex('loc', function(err, result){ 
         if (err) {
-          util.puts(util.inspect(err));
+          logger.error(err, {stack:err.stack, src:'count'});
         } else {
-          util.puts('loc_idx count: '+result);
+          logger.info('loc_idx count: '+result);
         }
       });
     }

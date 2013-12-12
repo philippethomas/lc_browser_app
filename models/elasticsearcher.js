@@ -94,86 +94,86 @@ ElasticSearcher.prototype.addLocations = function(docs, callback){
       return callback(error);
     })
 
-  .on('data', function(data) {
-    data = JSON.parse(data);
-    if (data.error){
-      return callback(data.error);
-    }else{
-      data.hits.hits.forEach(function(hit){
-        locs.push(hit._source);
-      });
-    }
-  })
-
-  .on('done', function(){
-
-    var locsPerDoc = [];
-
-    docs.forEach(function(doc){
-
-      var set = { id: doc.doctype+'-'+doc.guid, locations: [] };
-
-      //if there is a single doc.uwi (wll, ras, las, etc.)
-      if (doc.uwi) {
-
-        var p = locs.filter(function(o){
-          return (o.uwi === doc.uwi);
+    .on('data', function(data) {
+      data = JSON.parse(data);
+      if (data.error){
+        return callback(data.error);
+      }else{
+        data.hits.hits.forEach(function(hit){
+          locs.push(hit._source);
         });
-        if (p.length > 0) {
-          var loc = {
-            type: 'point',
-            coordinates:  p[0].location.coordinates,
-            id_tag: doc.doctype+'-'+doc.guid, //matches the badge id
-            title: doc.uwi
+      }
+    })
+
+    .on('done', function(){
+
+      var locsPerDoc = [];
+
+      docs.forEach(function(doc){
+
+        var set = { id: doc.doctype+'-'+doc.guid, locations: [] };
+
+        //if there is a single doc.uwi (wll, ras, las, etc.)
+        if (doc.uwi) {
+
+          var p = locs.filter(function(o){
+            return (o.uwi === doc.uwi);
+          });
+          if (p.length > 0) {
+            var loc = {
+              type: 'point',
+              coordinates:  p[0].location.coordinates,
+              id_tag: doc.doctype+'-'+doc.guid, //matches the badge id
+              title: doc.uwi
+            }
+            set.locations.push(loc);
+          }
+
+        //if this doc has many uwis (frm, zon)
+        } else if (doc.uwis && doc.uwis.length > 0) {
+
+          doc.uwis.forEach(function(uwi){
+            var p = locs.filter(function(o){
+              return (o.uwi === uwi);
+            });
+            if (p.length > 0) {
+              loc = {
+                type: 'point',
+                coordinates:  p[0].location.coordinates,
+                id_tag: doc.doctype+'-'+doc.guid,
+                //title: doc.name
+                title: uwi
+              }
+              set.locations.push(loc);
+            }
+          });
+
+        } else if (doc.bounding_box) {
+          //switch around the points for leaflet
+          var c = doc.bounding_box.coordinates;
+
+          var sw_lat = c[1][1];
+          var sw_lon = c[0][0];
+          var ne_lat = c[0][1];
+          var ne_lon = c[1][0];
+          
+          loc = {
+            type: 'box',
+            sw_lat: sw_lat,
+            sw_lon: sw_lon,
+            ne_lat: ne_lat,
+            ne_lon: ne_lon,
+            id_tag: doc.doctype+'-'+doc.guid,
+            title: doc.name
           }
           set.locations.push(loc);
         }
 
-      //if this doc has many uwis (frm, zon)
-      } else if (doc.uwis && doc.uwis.length > 0) {
+        locsPerDoc.push(set);
 
-        doc.uwis.forEach(function(uwi){
-          var p = locs.filter(function(o){
-            return (o.uwi === uwi);
-          });
-          if (p.length > 0) {
-            loc = {
-              type: 'point',
-              coordinates:  p[0].location.coordinates,
-              id_tag: doc.doctype+'-'+doc.guid,
-              //title: doc.name
-              title: uwi
-            }
-            set.locations.push(loc);
-          }
-        });
-
-      } else if (doc.bounding_box) {
-        //switch around the points for leaflet
-        var c = doc.bounding_box.coordinates;
-
-        var sw_lat = c[1][1];
-        var sw_lon = c[0][0];
-        var ne_lat = c[0][1];
-        var ne_lon = c[1][0];
-        
-        loc = {
-          type: 'box',
-          sw_lat: sw_lat,
-          sw_lon: sw_lon,
-          ne_lat: ne_lat,
-          ne_lon: ne_lon,
-          id_tag: doc.doctype+'-'+doc.guid,
-          title: doc.name
-        }
-        set.locations.push(loc);
-      }
-
-      locsPerDoc.push(set);
-
-    });
-    return callback(null, locsPerDoc);
-  }).exec()
+      });
+      return callback(null, locsPerDoc);
+    }).exec()
 
 
 }

@@ -1,8 +1,9 @@
 var path = require('path');
 var fs = require('fs');
 var S = require('string');
-var util = require('util');
+//var util = require('util');
 var humanize = require('humanize');
+var logger = require('./logging');
 
 /**
  *
@@ -22,7 +23,7 @@ exports.search = function(req, res){
 
   res.locals.app_ES.doSearch(idx, from, size, query, function(err, result){
     if(err){
-      util.debug(err);
+      logger.error(err, {stack:err.stack, src:'search'});
     }else{
       
       result.docs.forEach(function(doc){
@@ -31,7 +32,7 @@ exports.search = function(req, res){
   
       res.locals.app_ES.addLocations(result.docs, function(err, locsPerDoc){
         if(err){
-          util.debug(err);
+          logger.error(err, {stack:err.stack, src:'addLocations'});
         }else{
 
           res.render('search', { 
@@ -65,9 +66,9 @@ exports.docDetail = function(req, res){
   var from = 0;
   var size = 1;
 
-  res.locals.app_ES.doSearch(idx, from, size, query, function(error, result){
-    if(error){
-      util.debug(error);
+  res.locals.app_ES.doSearch(idx, from, size, query, function(err, result){
+    if(err){
+      logger.error(err, {stack:err.stack, src:'docDetail'});
       res.end();
     }else{
       var doc = result.docs[0];
@@ -103,9 +104,9 @@ exports.ajaxSearch = function(req, res){
   var from = req.body.from || req.session.from; // usually from the pager
   var size = req.body.size || req.session.size;
 
-  res.locals.app_ES.doSearch(idx, from, size, query, function(error, result){
-    if(error){
-      util.debug(error);
+  res.locals.app_ES.doSearch(idx, from, size, query, function(err, result){
+    if(err){
+      logger.error(err, {stack:err.stack, src:'ajaxSearch'});
       res.end();
     }else{
 
@@ -119,7 +120,7 @@ exports.ajaxSearch = function(req, res){
 
       res.locals.app_ES.addLocations(result.docs, function(err, locsPerDoc){
         if(err){
-          util.debug(err);
+          logger.error(err, {stack:err.stack, src:'addLocations'});
         }else{
 
           res.send({ 
@@ -153,9 +154,9 @@ exports.csvExport = function(req, res){
   var from = 0;
   var size = 50000;
 
-  res.locals.app_ES.doSearch(idx, from, size, query, function(error, result){
-    if(error){
-      util.debug(error);
+  res.locals.app_ES.doSearch(idx, from, size, query, function(err, result){
+    if(err){
+      logger.error(err, {stack:err.stack, src:'csvExport/doSearch'});
       res.end();
     }else{
 

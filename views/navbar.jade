@@ -1,4 +1,4 @@
-nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
+.navbar.navbar-default.navbar-fixed-top(role='navigation')
   .navbar-header
     button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-ex1-collapse')
       span.sr-only Toggle navigation
@@ -60,5 +60,12 @@ nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
             span.glyphicon.glyphicon-search
 
 
+
+#footer.navbar.navbar-default.navbar-fixed-bottom
+  .container.footer-text
+    span#status
+    span.pull-right user profile: 
+      = process.env.USERPROFILE
+   
 
 

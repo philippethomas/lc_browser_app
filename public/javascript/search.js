@@ -162,7 +162,8 @@ var hideMap = function(){
 /* navbar+padding = 70, searchSummaryBox ~ 70, tr = 31
 */
 var resultRowCount = function(){
-  var slop = 225;
+  //var slop = 248;
+  var slop = 260;
   var windowHeight = $(window).height();
   var size = Math.floor((windowHeight - slop)/31);
   size = (size < 1) ? 1 : size; //in case the window is too small for even one

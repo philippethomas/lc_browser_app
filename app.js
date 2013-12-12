@@ -1,21 +1,19 @@
 var fs = require('graceful-fs');
 var express = require('express');
-var winston = require('winston');
+//var winston = require('winston');
 var S = require('string');
 var app = express();
 var app_port = process.argv[2] || 8008
-
 var logger = require('./logging');
 
 //io.set('transports', [ 'jsonp-polling' ]);
 //var flash = require('connect-flash');
 //var expressValidator = require('express-validator');
 
-
 ////////////////////////////////////////////////////////////////////////////////
 
 var server = app.listen(app_port, function(){
-  logger.info('launching LogicalCat browser on port '+app_port);
+  logger.info('_____ launching LogicalCat browser on port '+app_port);
 });
 var io = require('socket.io').listen(server);
 
@@ -40,10 +38,10 @@ app.use(express.static(__dirname + '/public'));
 ////////////////////////////////////////////////////////////////////////////////
 //set hasXXX conditionals all to false too
 
-require('./models/elasticsearcher.js');
-var app_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
+var app_es = require('./models/elasticsearcher.js');
+var app_ES = new app_es({host:config.es_host, port:config.es_port});
 app.use(function(req, res, next){
-  res.locals.app_ES = app_es;
+  res.locals.app_ES = app_ES;
   res.locals.hasDOX = false;
   res.locals.hasEPF = false;
   res.locals.hasGGX = false;
@@ -61,23 +59,23 @@ var docTemplates = [];
 ////////////////////////// MODULARIZATION STUFF BELOW //////////////////////////
 // IMPORTANT: modify navlinks.jade and layout.jade if adding any new modules
 
-var has_epf = (fs.existsSync(__dirname+'/node_modules/lc_epf_crawlers'))
+var has_epf = (fs.existsSync(__dirname+'/node_modules/lc_epf_crawlers/cli.js'))
   ? true : false;
-var has_pet = (fs.existsSync(__dirname+'/node_modules/lc_pet_crawlers'))
+var has_pet = (fs.existsSync(__dirname+'/node_modules/lc_pet_crawlers/cli.js'))
   ? true : false;
-var has_ggx = (fs.existsSync(__dirname+'/node_modules/lc_ggx_crawlers'))
+var has_ggx = (fs.existsSync(__dirname+'/node_modules/lc_ggx_crawlers/cli.js'))
   ? true : false;
-var has_tks = (fs.existsSync(__dirname+'/node_modules/lc_tks_crawlers'))
+var has_tks = (fs.existsSync(__dirname+'/node_modules/lc_tks_crawlers/cli.js'))
   ? true : false;
-var has_dox = (fs.existsSync(__dirname+'/node_modules/lc_dox_crawlers'))
+var has_dox = (fs.existsSync(__dirname+'/node_modules/lc_dox_crawlers/cli.js'))
   ? true : false;
 
 ////////////////////////////////////////////////////////////////////////////////
 // first, declare app.use stuff before ANY middleware app.router stuff...
 
 if (has_epf) {
-  require(__dirname+'/node_modules/lc_epf_crawlers/elasticsearcher.js');
-  var epf_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
+  var epf_es = require(__dirname+'/node_modules/lc_epf_crawlers/elasticsearcher.js');
+  var epf_ES = new epf_es({host:config.es_host, port:config.es_port});
 
   var epfFilt = require('lc_epf_crawlers/epf_doc_templates.js').searchFilters;
   filters = filters.concat(epfFilt);
@@ -87,14 +85,14 @@ if (has_epf) {
 
   app.use(function(req, res, next){
     res.locals.hasEPF = true;
-    res.locals.epf_ES = epf_es;
+    res.locals.epf_ES = epf_ES;
     next();
   });
 }
 
 if (has_dox) {
-  require(__dirname+'/node_modules/lc_dox_crawlers/elasticsearcher.js');
-  var dox_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
+  var dox_es = require(__dirname+'/node_modules/lc_dox_crawlers/elasticsearcher.js');
+  var dox_ES = new dox_es({host:config.es_host, port:config.es_port});
 
   var doxFilt = require('lc_dox_crawlers/dox_doc_templates.js').searchFilters;
   filters = filters.concat(doxFilt);
@@ -104,14 +102,14 @@ if (has_dox) {
 
   app.use(function(req, res, next){
     res.locals.hasDOX = true;
-    res.locals.dox_ES = dox_es;
+    res.locals.dox_ES = dox_ES;
     next();
   });
 }
 
 if (has_pet) {
-  require(__dirname+'/node_modules/lc_pet_crawlers/elasticsearcher.js');
-  var pet_es = new ElasticSearcher({host: config.es_host, port:config.es_port});
+  var pet_es = require(__dirname+'/node_modules/lc_pet_crawlers/elasticsearcher.js');
+  var pet_ES = new pet_es({host: config.es_host, port:config.es_port});
 
   var petFilt = require('lc_pet_crawlers/pet_doc_templates.js').searchFilters;
   filters = filters.concat(petFilt);
@@ -120,14 +118,14 @@ if (has_pet) {
   docTemplates = docTemplates.concat(petTemplates);
   app.use(function(req, res, next){
     res.locals.hasPET = true;
-    res.locals.pet_ES = pet_es;
+    res.locals.pet_ES = pet_ES;
     next();
   });
 }
 
 if (has_ggx) {
-  require(__dirname+'/node_modules/lc_ggx_crawlers/elasticsearcher.js');
-  var ggx_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
+  var ggx_es = require(__dirname+'/node_modules/lc_ggx_crawlers/elasticsearcher.js');
+  var ggx_ES = new ggx_es({host:config.es_host, port:config.es_port});
 
   var ggxFilt = require('lc_ggx_crawlers/ggx_doc_templates.js').searchFilters;
   filters = filters.concat(ggxFilt);
@@ -137,14 +135,14 @@ if (has_ggx) {
 
   app.use(function(req, res, next){
     res.locals.hasGGX = true;
-    res.locals.ggx_ES = ggx_es;
+    res.locals.ggx_ES = ggx_ES;
     next();
   });
 }
 
 if (has_tks) { //not actually here yet
-  require(__dirname+'/node_modules/lc_tks_crawlers/elasticsearcher.js');
-  var tks_es = new ElasticSearcher({host:config.es_host, port:config.es_port});
+  var tks_es = require(__dirname+'/node_modules/lc_tks_crawlers/elasticsearcher.js');
+  var tks_ES = new tks_es({host:config.es_host, port:config.es_port});
 
   var tksFilters = require('lc_tks_crawlers/tks_doc_templates.js').searchFilters;
   filters = filters.concat(tksFilters);
@@ -154,7 +152,7 @@ if (has_tks) { //not actually here yet
 
   app.use(function(req, res, next){
     res.locals.hasTKS = true;
-    res.locals.tks_ES = tks_es;
+    res.locals.tks_ES = tks_ES;
     next();
   });
 }
@@ -198,7 +196,7 @@ var getTemplate = function(doctype) {
   return docTemplates.filter(function(t){ return t.doctype === doctype; })[0];
 }
 
-// NOTE: similar function also exists in each scanner for non-browser use
+// NOTE: similar function also exists in each scanner for command-line use
 function csvRowString(doc){
   var keys = getTemplate(doc.doctype).keys;
   var a = [];
@@ -270,9 +268,8 @@ app.on('workStart', function(data){
   io.sockets.emit('workStart', data);
 });
 
-app.on('crawlError', function(data){
-  logger.error(data)
-  io.sockets.emit('crawlError', data);
+app.on('browserMessage', function(data){
+  io.sockets.emit('browserMessage', data);
 });
 
 app.on('workStop', function(data){

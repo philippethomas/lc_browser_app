@@ -1,6 +1,7 @@
 var util = require('util');
 var async = require('async');
 var app = require('./app')
+var logger = require('./logging');
 
 exports.index = function(req, res){
  
@@ -232,9 +233,9 @@ var collectStats = function(locals, callback){
  *
  */
 exports.initLocs = function(req, res){
-  res.locals.app_ES.initIndex('loc', function(error, result){ 
-    if (error) {
-      util.puts(util.inspect(error));
+  res.locals.app_ES.initIndex('loc', function(err, result){ 
+    if (err) {
+      logger.error(err, {stack:err.stack, src:'initLocs'});
     } else {
       res.send(result[0]+' --- '+result[1]);
     }
